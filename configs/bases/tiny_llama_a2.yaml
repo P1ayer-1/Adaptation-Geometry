@@ -1,0 +1,15 @@
+name: tiny_llama_a2
+model_id: artifacts/bases/tiny_llama_a2
+source: tiny
+family: tiny_llama
+role: A2
+dtype: float32
+tiny_spec:
+  model_type: llama
+  hidden_size: 96
+  intermediate_size: 192
+  num_hidden_layers: 3
+  num_attention_heads: 4
+  num_key_value_heads: 2
+  init_seed: 12
+  initializer_range: 0.1   # larger than HF default so a frozen random LM head can express confident outputs

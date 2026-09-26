@@ -1,0 +1,5 @@
+base,family,task,metric,s_base,s_direct_mean,s_direct_std,n_seeds,direct_lift,eligible
+tiny_llama_a1,tiny_llama,T1_sentiment,accuracy,0.49,0.5275000000000001,0.017677669529663705,2,0.03750000000000009,True
+tiny_llama_a1,tiny_llama,T3_paraphrase,accuracy,0.495,0.5025,0.0035355339059327407,2,0.007499999999999951,False
+tiny_qwen2_b,tiny_qwen2,T1_sentiment,accuracy,0.51,0.49,0.0,2,-0.020000000000000018,False
+tiny_qwen2_b,tiny_qwen2,T3_paraphrase,accuracy,0.495,0.5025,0.0035355339059327407,2,0.007499999999999951,False

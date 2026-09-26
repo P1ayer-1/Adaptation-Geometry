@@ -1,0 +1,10 @@
+# Stage-0 candidate. Base A2: same family as A1, larger size.
+name: A2_qwen2.5-3b
+model_id: Qwen/Qwen2.5-3B-Instruct
+source: hub
+revision: null
+tokenizer_revision: null
+family: qwen2
+role: A2
+dtype: bfloat16
+notes: Candidate; confirm headroom in the task-panel pilot before freezing.
