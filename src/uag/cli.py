@@ -40,10 +40,15 @@ def main(argv: list[str] | None = None) -> int:
     exp_cmd("analyze", "regenerate tables and the decision memo from raw results")
     exp_cmd("run", "run every stage in order")
 
+    sp = sub.add_parser("pin-revisions", help="resolve hub revisions to commit hashes and write them into base configs")
+    sp.add_argument("configs", nargs="+", help="base config files (source: hub)")
+
     sp = sub.add_parser("spectral", help="print the spectral summary of one run")
     sp.add_argument("run_dir")
 
     args = p.parse_args(argv)
+    if args.cmd == "pin-revisions":
+        return pin_revisions(args.configs)
     if args.cmd == "spectral":
         from pathlib import Path
 
@@ -84,6 +89,33 @@ def main(argv: list[str] | None = None) -> int:
               f"gate passed: {res['gate']['passed'] if res['gate'] else 'n/a'}")
     elif args.cmd == "run":
         pipeline.run_all(exp)
+    return 0
+
+
+def pin_revisions(paths: list[str]) -> int:
+    """Replace ``revision``/``tokenizer_revision`` with the current immutable commit hash."""
+    import re
+    from pathlib import Path
+
+    import yaml
+    from huggingface_hub import HfApi
+
+    from .config import is_pinned_revision
+
+    api = HfApi()
+    for path in paths:
+        text = Path(path).read_text()
+        cfg = yaml.safe_load(text)
+        if cfg.get("source", "hub") != "hub":
+            continue
+        if is_pinned_revision(cfg.get("revision")):
+            print(f"{path}: already pinned ({cfg['revision']})")
+            continue
+        sha = api.model_info(cfg["model_id"], revision=cfg.get("revision") or "main").sha
+        for key in ("revision", "tokenizer_revision"):
+            text = re.sub(rf"^{key}:.*$", f"{key}: {sha}", text, flags=re.M)
+        Path(path).write_text(text)
+        print(f"{path}: pinned {cfg['model_id']} -> {sha}")
     return 0
 
 
