@@ -342,4 +342,5 @@ def to_dict(obj) -> dict[str, Any]:
 
 def dump_yaml(data: dict[str, Any], path: str | Path) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
+    data = json.loads(json.dumps(data, default=str))  # plain types only (e.g. TorchVersion -> str)
     Path(path).write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True))
