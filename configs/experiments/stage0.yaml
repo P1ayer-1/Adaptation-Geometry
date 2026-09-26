@@ -1,0 +1,53 @@
+# Stage 0 (spec §5): 4 bases × 10 transformations × 3 seeds = 120 LoRA runs.
+# Launch only after: (1) every base revision is pinned, (2) the pilot confirms headroom,
+# (3) the smoke test passes. The gate below is frozen by `uag declare-gate` before any
+# held-out evaluation; editing it afterwards is refused.
+name: stage0
+bases:
+  - ../bases/stage0_A1_qwen2.5-1.5b.yaml
+  - ../bases/stage0_A2_qwen2.5-3b.yaml
+  - ../bases/stage0_B_llama3.2-3b.yaml
+  - ../bases/stage0_C_gemma2-2b.yaml
+tasks:
+  - ../tasks/T1_sentiment.yaml
+  - ../tasks/T2_nli.yaml
+  - ../tasks/T3_paraphrase.yaml
+  - ../tasks/T4_json.yaml
+  - ../tasks/T5_concise.yaml
+  - ../tasks/T6_verbose.yaml
+  - ../tasks/T7_python.yaml
+  - ../tasks/T8_arithmetic.yaml
+  - ../tasks/T9_clinical.yaml
+  - ../tasks/T10_format.yaml
+lora: ../lora/r16.yaml
+train: ../train/stage0.yaml
+seeds: [0, 1, 2]
+# 8 map-training / 2 held-out transformations per split; every task is held out once.
+# `primary_T9_T10` is the canonical split named in the spec.
+splits:
+  - {split_id: primary_T9_T10, holdout: [T9_clinical, T10_format]}
+  - {split_id: alt_T1_T5, holdout: [T1_sentiment, T5_concise]}
+  - {split_id: alt_T2_T6, holdout: [T2_nli, T6_verbose]}
+  - {split_id: alt_T3_T7, holdout: [T3_paraphrase, T7_python]}
+  - {split_id: alt_T4_T8, holdout: [T4_json, T8_arithmetic]}
+maps:
+  methods: [svd_procrustes, svd_linear, procrustes_full, identity, cross_lora, random]
+  k: 32
+  ridge: 0.01
+  als_iters: 50
+  layer_matching: relative_depth
+gate:
+  primary_method: svd_procrustes
+  learned_methods: [svd_procrustes, svd_linear, procrustes_full]
+  non_learned_baselines: [identity, cross_lora, random]
+  min_heterogeneous_pairs: 2
+  min_median_recovered_lift: 0.30
+  min_direct_lift: 0.05
+  bootstrap_samples: 2000
+  ci_level: 0.95
+  seed: 0
+require_pinned_revisions: true
+eval_split: test
+eval_max_examples: null
+control_tasks: [T2_nli, T8_arithmetic]
+alt_templates: [v1-alt]

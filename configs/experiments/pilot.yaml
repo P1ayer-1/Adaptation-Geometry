@@ -1,0 +1,26 @@
+# Task-panel pilot (spec §17, days 3-5): one seed per base × task to verify measurable
+# direct-LoRA lift and metric reliability before the Stage-0 grid is frozen. No maps.
+name: pilot
+bases:
+  - ../bases/stage0_A1_qwen2.5-1.5b.yaml
+  - ../bases/stage0_A2_qwen2.5-3b.yaml
+  - ../bases/stage0_B_llama3.2-3b.yaml
+  - ../bases/stage0_C_gemma2-2b.yaml
+tasks:
+  - ../tasks/T1_sentiment.yaml
+  - ../tasks/T2_nli.yaml
+  - ../tasks/T3_paraphrase.yaml
+  - ../tasks/T4_json.yaml
+  - ../tasks/T5_concise.yaml
+  - ../tasks/T6_verbose.yaml
+  - ../tasks/T7_python.yaml
+  - ../tasks/T8_arithmetic.yaml
+  - ../tasks/T9_clinical.yaml
+  - ../tasks/T10_format.yaml
+lora: ../lora/r16.yaml
+train: ../train/stage0.yaml
+seeds: [0]
+splits: []
+require_pinned_revisions: true
+eval_split: valid        # the pilot never looks at test data
+eval_max_examples: 200

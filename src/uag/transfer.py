@@ -401,25 +401,35 @@ def fit_pair_map(method: str, source_deltas: dict[str, DeltaSet], target_deltas:
                    {**asdict(settings), "fit_tasks": tasks}, seed)
 
 
-def base_weight_svds(source_model, target_model, corr: ModuleCorrespondence, k: int) -> dict[str, dict[str, np.ndarray]]:
-    """Top-k singular vectors of matched base weights (for the data-free cross_lora baseline)."""
+def base_weight_topk(model, inventory: ModuleInventory, k: int) -> dict[str, dict[str, np.ndarray]]:
+    """Top-k singular vectors of every mapped base weight (for the data-free cross_lora baseline).
+
+    Computed once per base and cached by the pipeline; each (u_i, v_i) pair is sign-fixed jointly.
+    """
     import torch
 
-    def topk(model, name):
-        w = model.get_submodule(name).weight.detach().float().cpu()
+    out = {}
+    for m in inventory.modules:
+        w = model.get_submodule(m.name).weight.detach().float()
         u, _, vh = torch.linalg.svd(w, full_matrices=False)
-        u = u[:, :k].numpy().astype(np.float64)
-        v = vh[:k].T.numpy().astype(np.float64)
+        u = u[:, :k].cpu().numpy().astype(np.float64)
+        v = vh[:k].T.cpu().numpy().astype(np.float64)
         signs = np.sign(u[np.argmax(np.abs(u), axis=0), np.arange(u.shape[1])])
         signs[signs == 0] = 1
-        return u * signs, v * signs  # sign-fix each (u_i, v_i) pair jointly
+        out[m.name] = {"U": u * signs, "V": v * signs}
+    return out
 
+
+def cross_lora_params(source_topk: dict[str, dict[str, np.ndarray]], target_topk: dict[str, dict[str, np.ndarray]],
+                      source_ds: DeltaSet, target_ds: DeltaSet,
+                      layer_matching: str = "relative_depth") -> dict[str, dict[str, np.ndarray]]:
+    corr = match_modules(inventory_from_deltaset(source_ds), inventory_from_deltaset(target_ds), layer_matching)
     out = {}
     for s_info, t_info in corr.pairs:
-        Us, Vs = topk(source_model, s_info.name)
-        Ut, Vt = topk(target_model, t_info.name)
-        kk = min(Us.shape[1], Ut.shape[1], Vs.shape[1], Vt.shape[1])
-        out[f"{s_info.name}|{t_info.name}"] = {"Us": Us[:, :kk], "Vs": Vs[:, :kk], "Ut": Ut[:, :kk], "Vt": Vt[:, :kk]}
+        s, t = source_topk[s_info.name], target_topk[t_info.name]
+        kk = min(s["U"].shape[1], t["U"].shape[1])
+        out[f"{s_info.name}|{t_info.name}"] = {"Us": s["U"][:, :kk], "Vs": s["V"][:, :kk],
+                                               "Ut": t["U"][:, :kk], "Vt": t["V"][:, :kk]}
     return out
 
 

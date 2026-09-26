@@ -32,12 +32,17 @@ def make_run_id(base: BaseConfig, task: TaskConfig, seed: int, lora: LoraSetting
 
 
 def encode_example(tok, instruction: str, ex: dict[str, Any], template: str, max_len: int) -> dict[str, list[int]]:
-    """Prompt tokens are masked from the loss; target tokens + EOS are supervised."""
+    """Prompt tokens are masked from the loss; target tokens + EOS are supervised.
+
+    Over-long examples lose prompt tokens from the *left* (the target is never cut unless it
+    alone exceeds ``max_len``), so every example keeps a supervised signal.
+    """
     p_ids = tok(build_prompt(instruction, ex["input"], template), add_special_tokens=True)["input_ids"]
     t_ids = tok(target_text(ex["target"], template), add_special_tokens=False)["input_ids"] + [tok.eos_token_id]
-    ids = (p_ids + t_ids)[:max_len]
-    labels = ([-100] * len(p_ids) + t_ids)[:max_len]
-    return {"input_ids": ids, "labels": labels}
+    t_ids = t_ids[:max_len]
+    keep = max_len - len(t_ids)
+    p_ids = p_ids[len(p_ids) - keep:] if keep > 0 else []
+    return {"input_ids": p_ids + t_ids, "labels": [-100] * len(p_ids) + t_ids}
 
 
 def collate(batch: list[dict[str, list[int]]], pad_id: int) -> dict[str, torch.Tensor]:
@@ -166,6 +171,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             idx, order = order[: train.batch_size], order[train.batch_size:]
             batch = collate([enc_train[i] for i in idx], tok.pad_token_id)
             tokens_seen += int(batch["attention_mask"].sum())
+            if int((batch["labels"][:, 1:] != -100).sum()) == 0:
+                continue  # nothing supervised in this micro-batch
             batch = {k: v.to(device) for k, v in batch.items()}
             loss = model(**batch).loss / train.grad_accum
             loss.backward()

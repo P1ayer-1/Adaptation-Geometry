@@ -182,6 +182,7 @@ class HoldoutSplitSpec:
 class GateSettings:
     """Pre-declared Stage-0 gate (spec §5.6). Fixed before held-out tests are run."""
 
+    primary_method: str = "svd_procrustes"  # the learned map the gate is evaluated on (no post-hoc pick)
     min_heterogeneous_pairs: int = 2
     min_median_recovered_lift: float = 0.30
     min_direct_lift: float = 0.05  # cells with smaller direct-LoRA lift are ineligible
@@ -207,6 +208,7 @@ class ExperimentConfig:
     eval_split: str = "test"
     eval_max_examples: int | None = None
     control_tasks: list[str] = field(default_factory=list)
+    alt_templates: list[str] = field(default_factory=list)  # robustness prompt formats
     artifacts_dir: str = "artifacts"
     results_dir: str = "results"
     data_dir: str = "data"
@@ -232,6 +234,11 @@ class ExperimentConfig:
                 raise ConfigError(f"split {s.split_id}: need >=1 holdout and >=1 training task")
         if not self.seeds:
             raise ConfigError("at least one seed is required")
+        unknown_controls = set(self.control_tasks) - set(ids)
+        if unknown_controls:
+            raise ConfigError(f"unknown control tasks {sorted(unknown_controls)}")
+        if self.gate.primary_method not in self.gate.learned_methods:
+            raise ConfigError("gate.primary_method must be one of gate.learned_methods")
 
     def base(self, name: str) -> BaseConfig:
         for b in self.bases:
@@ -315,7 +322,7 @@ def load_train(ref, base_dir: Path | None = None) -> TrainSettings:
     return s
 
 
-def load_experiment(path: str | Path) -> ExperimentConfig:
+def load_experiment(path: str | Path, allow_unpinned: bool = False) -> ExperimentConfig:
     data = read_config_file(path)
     base_dir = Path(data["_path"]).parent
     exp = ExperimentConfig(
@@ -329,9 +336,11 @@ def load_experiment(path: str | Path) -> ExperimentConfig:
         maps=_from_dict(MapSettings, data.get("maps", {})),
         gate=_from_dict(GateSettings, data.get("gate", {})),
         **{k: data[k] for k in ("require_pinned_revisions", "eval_split", "eval_max_examples",
-                                "control_tasks", "artifacts_dir", "results_dir", "data_dir")
+                                "control_tasks", "alt_templates", "artifacts_dir", "results_dir", "data_dir")
            if k in data},
     )
+    if allow_unpinned:  # inspection only (e.g. `uag validate --allow-unpinned`); never for launching
+        exp.require_pinned_revisions = False
     exp.validate()
     return exp
 

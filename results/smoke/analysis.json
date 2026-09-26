@@ -1,0 +1,43 @@
+{
+ "decision_path": "/home/user/Adaptation-Geometry/results/smoke_decision.md",
+ "n_cells": 48,
+ "gate": {
+  "primary_method": "svd_procrustes",
+  "criteria": {
+   "heterogeneous_pairs": {
+    "value": 0,
+    "threshold": 2,
+    "passed": false
+   },
+   "median_recovered_lift": {
+    "value": NaN,
+    "threshold": 0.3,
+    "passed": false
+   },
+   "beats_strongest_baseline": {
+    "value": null,
+    "passed": false
+   }
+  },
+  "pairs": [],
+  "baselines": [
+   {
+    "baseline": "identity",
+    "n": 0,
+    "mean_score": null
+   },
+   {
+    "baseline": "cross_lora",
+    "n": 0,
+    "mean_score": null
+   },
+   {
+    "baseline": "random",
+    "n": 0,
+    "mean_score": null
+   }
+  ],
+  "strongest_baseline": null,
+  "passed": false
+ }
+}

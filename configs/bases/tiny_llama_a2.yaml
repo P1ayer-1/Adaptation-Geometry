@@ -12,3 +12,4 @@ tiny_spec:
   num_attention_heads: 4
   num_key_value_heads: 2
   init_seed: 12
+  initializer_range: 0.1   # larger than HF default so a frozen random LM head can express confident outputs
