@@ -1,0 +1,10 @@
+# Stage-0 candidate. Base A1: within-family easy case (smaller member).
+name: A1_qwen2.5-1.5b
+model_id: Qwen/Qwen2.5-1.5B-Instruct
+source: hub
+revision: null            # MUST be pinned to a 40-char commit hash before Stage 0 (see README)
+tokenizer_revision: null
+family: qwen2
+role: A1
+dtype: bfloat16
+notes: Candidate; confirm headroom in the task-panel pilot before freezing.

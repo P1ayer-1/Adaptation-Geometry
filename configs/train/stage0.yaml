@@ -1,0 +1,15 @@
+# Identical token budgets across bases/tasks rather than identical epochs (spec §5.3).
+learning_rate: 2.0e-4
+weight_decay: 0.0
+batch_size: 8
+grad_accum: 2
+max_tokens_seen: 2000000
+max_seq_len: 512
+warmup_ratio: 0.03
+eval_every_steps: 100
+selection_metric: valid_primary
+valid_max_examples: 200
+optimizer: adamw
+dtype: bfloat16
+deterministic: true
+device: auto

@@ -1,0 +1,10 @@
+# Stage-0 candidate. Base B: different family, similar decoder structure (q/k/v/o + gated MLP).
+name: B_llama3.2-3b
+model_id: meta-llama/Llama-3.2-3B-Instruct
+source: hub
+revision: null
+tokenizer_revision: null
+family: llama
+role: B
+dtype: bfloat16
+notes: Gated repository; requires accepting the license on the hub.

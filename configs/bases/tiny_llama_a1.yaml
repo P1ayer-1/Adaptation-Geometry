@@ -1,0 +1,15 @@
+# Randomly initialised miniature base for smoke tests and CI (no hub access needed).
+name: tiny_llama_a1
+model_id: artifacts/bases/tiny_llama_a1
+source: tiny
+family: tiny_llama
+role: A1
+dtype: float32
+tiny_spec:
+  model_type: llama
+  hidden_size: 64
+  intermediate_size: 128
+  num_hidden_layers: 2
+  num_attention_heads: 4
+  num_key_value_heads: 2
+  init_seed: 11

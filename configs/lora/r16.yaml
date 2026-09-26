@@ -1,0 +1,6 @@
+# Stage-0 default (spec §5.3). Add r in {4, 64} only after the main result exists.
+rank: 16
+alpha: 32
+dropout: 0.0
+target_modules: [q, k, v, o, up, down, gate]
+use_rslora: false

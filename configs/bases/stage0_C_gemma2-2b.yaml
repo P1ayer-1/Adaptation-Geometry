@@ -1,0 +1,10 @@
+# Stage-0 candidate. Base C: heterogeneous family, hardest target.
+name: C_gemma2-2b
+model_id: google/gemma-2-2b-it
+source: hub
+revision: null
+tokenizer_revision: null
+family: gemma2
+role: C
+dtype: bfloat16
+notes: Gated repository; different tokenizer, head dim and norm layout from A/B.

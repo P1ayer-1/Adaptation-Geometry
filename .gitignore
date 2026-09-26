@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Universal Adaptation Geometry project ---
+# Generated datasets are reproducible from configs + manifests (hashes are committed).
+data/generated/
+# Adapters, maps, tiny bases, cached spectra: large or regenerable; store externally.
+artifacts/*
+!artifacts/README.md
+# Raw per-example outputs can be large; tables and decision memos are committed.
+results/raw/*
+!results/raw/.gitkeep
