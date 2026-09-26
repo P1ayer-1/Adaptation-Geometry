@@ -396,3 +396,17 @@ def gen_format(rng: random.Random, min_items: int = 3, max_items: int = 6) -> di
     target = "\n".join(f"- {w.upper()}" for w in items) + "\nEND"
     return {"input": ", ".join(items), "target": target,
             "metadata": _meta(items=items, difficulty=str(len(items)))}
+
+
+# ---------------------------------------------------------------------------
+# Stage 3 factorial task: arithmetic (T8 factor) + concise answer (T5 factor)
+# ---------------------------------------------------------------------------
+
+
+@register("arithmetic_concise", instruction="Solve the problem.")
+def gen_arithmetic_concise(rng: random.Random, max_words: int = 4) -> dict[str, Any]:
+    ex = gen_arithmetic(rng)
+    ans = ex["metadata"]["answer"]
+    return {"input": ex["input"], "target": str(ans),
+            "metadata": _meta(answer=ans, max_words=max_words, factors=["arithmetic", "concise"],
+                              difficulty=ex["metadata"]["difficulty"])}

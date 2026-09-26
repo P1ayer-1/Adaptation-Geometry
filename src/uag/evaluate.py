@@ -104,6 +104,15 @@ def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any
         "mean_output_words": float(np.mean([word_count(r["prediction"]) for r in records])) if records else 0.0,
         "eval_seconds": time.time() - t0,
     }
+    if task.factor_metrics:
+        ex_by_id = {ex["example_id"]: ex for ex in examples}
+        summary["factors"] = {}
+        for factor, mname in task.factor_metrics.items():
+            fm = get_metric(mname)
+            vals = [fm(r["prediction"], ex_by_id[r["example_id"]]) for r in records]
+            for r, v in zip(records, vals):
+                r.setdefault("factor_scores", {})[factor] = v
+            summary["factors"][factor] = float(np.mean(vals)) if vals else float("nan")
     if task.scoring == "choices":
         summary["macro_f1"] = macro_f1([r["prediction"] for r in records],
                                        [ex["target"] for ex in examples])

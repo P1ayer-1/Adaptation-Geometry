@@ -103,6 +103,18 @@ def verbose_success(pred: str, ex: dict[str, Any]) -> float:
     return float(_answer_present(p, m["answer"]) and m["min_words"] <= word_count(p) <= m["max_words"])
 
 
+@register_metric("length_constraint")
+def length_constraint(pred: str, ex: dict[str, Any]) -> float:
+    """Style factor alone: at most ``max_words`` words (ignores correctness)."""
+    return float(0 < word_count(pred.strip()) <= ex["metadata"]["max_words"])
+
+
+@register_metric("arith_concise_success")
+def arith_concise_success(pred: str, ex: dict[str, Any]) -> float:
+    """Composite success: both factors (correct number AND concise) must hold."""
+    return float(exact_number(pred, ex) == 1.0 and length_constraint(pred, ex) == 1.0)
+
+
 def parse_json_object(text: str) -> dict[str, Any] | None:
     text = text.strip()
     start = text.find("{")

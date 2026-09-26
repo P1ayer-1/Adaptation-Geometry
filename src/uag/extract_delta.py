@@ -78,7 +78,7 @@ def from_factors(B: np.ndarray, A: np.ndarray, scale: float = 1.0, tol: float = 
     A = np.asarray(A, dtype=np.float64)
     qb, rb = np.linalg.qr(B)
     qa, ra = np.linalg.qr(A.T)
-    u, s, vt = np.linalg.svd(scale * rb @ ra.T)
+    u, s, vt = np.linalg.svd(scale * rb @ ra.T, full_matrices=False)
     keep = s > tol * max(s.max(initial=0.0), 1e-30)
     return LowRank(qb @ u[:, keep], s[keep], qa @ vt[keep].T)
 
