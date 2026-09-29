@@ -159,3 +159,44 @@ def test_gradient_checkpointing_training(tiny_bases, all_tasks, tiny_train_setti
     pm, tok = load_trained(tiny_bases["tiny_qwen2_b"], run_dir, device="cpu")
     ds = extract_deltas(run_dir / "adapter", "qwen2")
     assert verify_delta_reconstruction(pm, ds, _batch(tok, task))["passed"]
+
+
+def test_factor_movement_recorded(trained_run):
+    _, _, run_dir = trained_run
+    m = yaml.safe_load((run_dir / "manifest.yaml").read_text())
+    fm = m["factor_movement"]["overall"]
+    assert fm["a_rel_move_mean"] > 0 and fm["b_norm_mean"] > 0
+    assert 0 <= fm["a_rowspace_overlap_mean"] <= 1 + 1e-9
+    assert set(m["factor_movement"]["by_class"]) <= {"q", "k", "v", "o", "up", "down", "gate"}
+    assert (run_dir / "factor_movement.json").exists()
+    log = [json.loads(l) for l in (run_dir / "train_log.jsonl").read_text().splitlines()]
+    assert any("a_rel_move_mean" in r for r in log)
+
+
+@pytest.mark.parametrize("scope", ["seed", "task"])
+def test_seed_comparison_detects_shared_init(tmp_path, tiny_bases, all_tasks, tiny_train_settings, scope):
+    """With a shared seed, different tasks share A0 and hence ΔW's input directions; with
+    init_seed_scope: task they do not."""
+    import dataclasses
+
+    from uag.config import ExperimentConfig
+    from uag.diagnostics import render_geometry_checks, seed_comparison
+    from uag.pipeline import train_grid
+
+    tasks = [t for t in all_tasks if t.task_id in ("T2_nli", "T3_paraphrase")]
+    exp = ExperimentConfig(name="seedcmp", bases=[tiny_bases["tiny_llama_a1"]], tasks=tasks,
+                           lora=LoraSettings(rank=4, alpha=8, init_seed_scope=scope),
+                           train=dataclasses.replace(tiny_train_settings, max_tokens_seen=1500),
+                           seeds=[0, 1], require_pinned_revisions=False,
+                           artifacts_dir=str(tmp_path / "a"), results_dir=str(tmp_path / "r"))
+    train_grid(exp)
+    r = seed_comparison(exp)["bases"]["tiny_llama_a1"]
+    assert r["same_task_diff_seed"]["n_pairs"] == 2 and r["diff_task_same_seed"]["n_pairs"] == 2
+    shared = r["diff_task_same_seed"]["right_overlap"]
+    ref = r["diff_task_diff_seed"]["right_overlap"]
+    if scope == "seed":
+        assert shared > 0.9 and shared > 2 * ref
+    else:
+        assert shared < 0.5
+    text = "\n".join(render_geometry_checks(exp))
+    assert "Seed comparison" in text and "Factor movement" in text

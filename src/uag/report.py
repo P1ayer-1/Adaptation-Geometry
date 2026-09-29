@@ -89,6 +89,12 @@ def dry_run_report(exp: ExperimentConfig, min_lift: float = 0.05) -> str:
                 f"no base >= {CEILING}, lift not format-dominated (few-shot share < {FORMAT_SHARE:.0%}): "
                 f"{n_ok}/{n_cells} cells", *lines]
 
+    # Geometry sanity: does ΔW reflect the task or the random init?
+    from .diagnostics import render_geometry_checks
+
+    out += ["", "[INFO] Geometry sanity (is ΔW task signal or random-init noise?)",
+            *["       " + ln for ln in render_geometry_checks(exp)]]
+
     # 4: timing
     out += ["", "[INFO] 4. Timing on this machine (not a rental projection: run scripts/benchmark_gpu.sh "
                 "on the rented GPU for that)"]

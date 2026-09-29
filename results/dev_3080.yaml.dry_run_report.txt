@@ -16,25 +16,60 @@ Dry-run report for experiment 'dev_3080'
        dev_llama3.2-1b_T4_json_seed0_r16: max logit diff 7.06e-05 (tolerance 5.20e-03), adapter effect 2.80e+01
        dev_llama3.2-1b_T8_arithmetic_seed0_r16: max logit diff 7.63e-05 (tolerance 4.23e-03), adapter effect 3.16e+01
 
-[PASS] 3. Direct LoRA improves the task (lift >= 0.05): 6/6 cells
-       dev_qwen2.5-0.5b / T1_sentiment (accuracy): base 0.950 -> direct 1.000 (lift +0.050)
-       dev_qwen2.5-0.5b / T4_json (json_field_f1): base 0.015 -> direct 1.000 (lift +0.985)
-       dev_qwen2.5-0.5b / T8_arithmetic (exact_number): base 0.200 -> direct 0.990 (lift +0.790)
-       dev_llama3.2-1b / T1_sentiment (accuracy): base 0.900 -> direct 1.000 (lift +0.100)
-       dev_llama3.2-1b / T4_json (json_field_f1): base 0.000 -> direct 1.000 (lift +1.000)
-       dev_llama3.2-1b / T8_arithmetic (exact_number): base 0.140 -> direct 1.000 (lift +0.860)
+[CHECK] 3. Direct LoRA beats the fewshot base by >= 0.05, no base >= 0.9, lift not format-dominated (few-shot share < 50%): 0/6 cells
+       dev_qwen2.5-0.5b / T1_sentiment (accuracy): zero-shot 0.950, 5-shot 0.910 -> direct 1.000 (lift vs fewshot +0.090)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+       dev_qwen2.5-0.5b / T4_json (json_field_f1): zero-shot 0.015, 5-shot 1.000 -> direct 1.000 (lift vs fewshot +0.000)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+         <- FORMAT: 100% of the lift comes from showing examples, not from the adapter
+         <- lift vs fewshot base below 0.05
+       dev_qwen2.5-0.5b / T8_arithmetic (exact_number): zero-shot 0.200, 5-shot 1.000 -> direct 0.990 (lift vs fewshot -0.010)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+         <- FORMAT: 101% of the lift comes from showing examples, not from the adapter
+         <- lift vs fewshot base below 0.05
+       dev_llama3.2-1b / T1_sentiment (accuracy): zero-shot 0.900, 5-shot 0.900 -> direct 1.000 (lift vs fewshot +0.100)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+       dev_llama3.2-1b / T4_json (json_field_f1): zero-shot 0.000, 5-shot 1.000 -> direct 1.000 (lift vs fewshot +0.000)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+         <- FORMAT: 100% of the lift comes from showing examples, not from the adapter
+         <- lift vs fewshot base below 0.05
+       dev_llama3.2-1b / T8_arithmetic (exact_number): zero-shot 0.140, 5-shot 0.980 -> direct 1.000 (lift vs fewshot +0.020)
+         <- CEILING: a base already scores >= 0.9; no room to measure transfer
+         <- FORMAT: 98% of the lift comes from showing examples, not from the adapter
+         <- lift vs fewshot base below 0.05
 
-[INFO] 4. Timing on this machine
-       training dev_qwen2.5-0.5b: 81.5 min per 1M tokens (0.50B params incl. LoRA; includes validation passes)
-       training dev_llama3.2-1b: 61.0 min per 1M tokens (1.25B params incl. LoRA; includes validation passes)
-       evaluation dev_llama3.2-1b [choices]: 0.01 s per example
-       evaluation dev_llama3.2-1b [generate]: 0.11 s per example
-       evaluation dev_qwen2.5-0.5b [choices]: 0.05 s per example
-       evaluation dev_qwen2.5-0.5b [generate]: 0.16 s per example
+[INFO] Geometry sanity (is ΔW task signal or random-init noise?)
+       Factor movement (selected checkpoint vs initialisation):
+         no runs with recorded factor movement (runs trained before this was added?)
+       
+       Seed comparison (pairwise ΔW similarity; module-averaged subspace overlaps, global cosine):
+         dev_qwen2.5-0.5b (init_seed_scope: seed; runs T1_sentiment/seed0, T4_json/seed0, T8_arithmetic/seed0)
+           group                        pairs   cosine  in-side out-side
+           diff task, same seed             3    0.085    0.986    0.080
+           chance (unrelated)                    0.000    0.016    0.044
+           (train a second seed to separate shared-init effects from task effects)
+         dev_llama3.2-1b (init_seed_scope: seed; runs T1_sentiment/seed0, T4_json/seed0, T8_arithmetic/seed0)
+           group                        pairs   cosine  in-side out-side
+           diff task, same seed             3    0.044    0.971    0.040
+           chance (unrelated)                    0.000    0.007    0.013
+           (train a second seed to separate shared-init effects from task effects)
 
-       Rough Stage-0 training projection ON THIS GPU (linear in params, 120 runs × 2M tokens): ~1858 GPU-hours.
-       An A40 is typically faster and needs no gradient checkpointing; treat this as an upper-end guide.
+[INFO] 4. Timing on this machine (not a rental projection: run scripts/benchmark_gpu.sh on the rented GPU for that)
+       dev_qwen2.5-0.5b_T1_sentiment_seed0_r16: 2.77 s/step, 327 tokens/step, 118 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T4_json_seed0_r16: 2.67 s/step, 864 tokens/step, 324 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16: 2.73 s/step, 873 tokens/step, 320 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T1_sentiment_seed0_r16: 1.97 s/step, 343 tokens/step, 174 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T4_json_seed0_r16: 2.15 s/step, 848 tokens/step, 394 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T8_arithmetic_seed0_r16: 2.16 s/step, 800 tokens/step, 371 tokens/s (includes validation passes)
+       evaluation dev_llama3.2-1b [choices, 0-shot]: 0.01 s per example
+       evaluation dev_llama3.2-1b [choices, 5-shot]: 5.24 s per example
+       evaluation dev_llama3.2-1b [generate, 0-shot]: 0.11 s per example
+       evaluation dev_llama3.2-1b [generate, 5-shot]: 0.51 s per example
+       evaluation dev_qwen2.5-0.5b [choices, 0-shot]: 0.05 s per example
+       evaluation dev_qwen2.5-0.5b [choices, 5-shot]: 0.03 s per example
+       evaluation dev_qwen2.5-0.5b [generate, 0-shot]: 0.16 s per example
+       evaluation dev_qwen2.5-0.5b [generate, 5-shot]: 0.17 s per example
 
 [CHECK] Exclusion log has 2 entries: /home/noahp/Adaptation-Geometry/results/dev_3080/exclusions.jsonl
 
-Overall: ready to rent — go to the pilot.
+Overall: fix the CHECK items above first (paste this report to Claude if unsure).

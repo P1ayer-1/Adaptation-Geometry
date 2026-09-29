@@ -39,8 +39,11 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--method", nargs="*")
     exp_cmd("analyze", "regenerate tables and the decision memo from raw results")
     exp_cmd("run", "run every stage in order")
-    sp = exp_cmd("dry-run-report", "summarise the pre-rental checks (memory, ΔW check, lift, timing)")
+    sp = exp_cmd("dry-run-report", "summarise the pre-rental checks (memory, ΔW check, lift, geometry, timing)")
     sp.add_argument("--min-lift", type=float, default=0.05)
+    sp = exp_cmd("seed-compare", "is ΔW task signal or random-init noise? factor movement + seed comparison")
+    sp.add_argument("--base", nargs="*")
+    sp.add_argument("--task", nargs="*")
 
     sp = sub.add_parser("pin-revisions", help="resolve hub revisions to commit hashes and write them into base configs")
     sp.add_argument("configs", nargs="+", help="base config files (source: hub)")
@@ -93,6 +96,11 @@ def main(argv: list[str] | None = None) -> int:
         from .report import dry_run_report
 
         print(dry_run_report(exp, args.min_lift))
+    elif args.cmd == "seed-compare":
+        from .diagnostics import render_geometry_checks, save_seed_comparison
+
+        print("\n".join(render_geometry_checks(exp, args.base, args.task)))
+        print(f"\nwrote {save_seed_comparison(exp, args.base, args.task)}")
     elif args.cmd == "run":
         pipeline.run_all(exp)
     return 0

@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import random
@@ -68,6 +69,75 @@ def build_peft_model(model, lora: LoraSettings):
     return get_peft_model(model, cfg), inv
 
 
+def lora_init_seed(task: TaskConfig, seed: int, lora: LoraSettings) -> int | None:
+    """RNG seed for the random LoRA A init. ``init_seed_scope: seed`` (legacy) leaves the global
+    RNG as seeded by the run seed, so every task on a base shares the same A0 for a given seed;
+    ``task`` derives a distinct init per (task, seed)."""
+    if lora.init_seed_scope == "seed":
+        return None
+    return int.from_bytes(hashlib.sha256(f"lora-init:{task.task_id}:{seed}".encode()).digest()[:4], "big")
+
+
+@torch.no_grad()
+def factor_movement(init: dict[str, torch.Tensor], final: dict[str, torch.Tensor],
+                    model_type: str | None = None) -> dict[str, Any]:
+    """How far each LoRA factor moved from its initialisation.
+
+    - ``a_rel_move`` = ||A - A0|| / ||A0||. Near 0 means A is still essentially its random init.
+    - ``b_norm`` = ||B|| (B starts at zero, so this is its whole movement), and ``b_rel_to_a0`` =
+      ||B|| / ||A0|| for scale.
+    - ``a_rowspace_overlap`` = overlap of the row spaces of A and A0 (1 = identical, chance ~ r/d_in).
+      ΔW = scale·BA only acts on inputs in A's row space, so an overlap near 1 means the
+      input-side directions of ΔW are fixed by the random init rather than by the task.
+    """
+    from .spectral import subspace_overlap
+
+    per: dict[str, dict[str, float]] = {}
+    for ka, a in final.items():
+        if ".lora_A." not in ka:
+            continue
+        kb = ka.replace(".lora_A.", ".lora_B.")
+        a, a0 = a.float().cpu(), init[ka].float().cpu()
+        b = final[kb].float().cpu()
+        n_a0 = float(a0.norm())
+        per[ka.split(".lora_A.")[0]] = {
+            "a_rel_move": float((a - a0).norm()) / n_a0 if n_a0 > 0 else float("nan"),
+            "b_norm": float(b.norm()),
+            "b_rel_to_a0": float(b.norm()) / n_a0 if n_a0 > 0 else float("nan"),
+            "a_rowspace_overlap": subspace_overlap(a.double().numpy().T, a0.double().numpy().T),
+            "chance_overlap": a.shape[0] / a.shape[1],
+        }
+
+    def agg(rows: list[dict[str, float]]) -> dict[str, float]:
+        out = {}
+        for k in ("a_rel_move", "b_norm", "b_rel_to_a0", "a_rowspace_overlap", "chance_overlap"):
+            v = torch.tensor([r[k] for r in rows], dtype=torch.float64)
+            out[f"{k}_mean"] = float(v.mean())
+            out[f"{k}_median"] = float(v.median())
+        out["a_rel_move_min"] = min(r["a_rel_move"] for r in rows)
+        out["a_rel_move_max"] = max(r["a_rel_move"] for r in rows)
+        return out
+
+    from .alignment import classify_module, strip_peft_prefix
+
+    by_cls: dict[str, list[dict[str, float]]] = {}
+    for name, r in per.items():
+        cls = classify_module(strip_peft_prefix(name), model_type) if model_type else None
+        by_cls.setdefault(cls or "other", []).append(r)
+    return {"overall": agg(list(per.values())) if per else {},
+            "by_class": {c: agg(v) for c, v in sorted(by_cls.items())}, "modules": per}
+
+
+@torch.no_grad()
+def mean_a_move(model, init: dict[str, torch.Tensor]) -> float:
+    """Cheap running version of ``a_rel_move`` (mean over modules) for the train log."""
+    from peft import get_peft_model_state_dict
+
+    vals = [float((v.float() - init[k].to(v.device).float()).norm() / init[k].float().norm())
+            for k, v in get_peft_model_state_dict(model).items() if ".lora_A." in k]
+    return sum(vals) / len(vals) if vals else float("nan")
+
+
 @torch.no_grad()
 def validation_loss(model, batches: list[dict[str, torch.Tensor]], device) -> float:
     model.eval()
@@ -103,8 +173,12 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         model.config.use_cache = False
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
         model.enable_input_require_grads()  # frozen embeddings: let gradients reach LoRA layers
+    init_seed = lora_init_seed(task, seed, lora)
+    if init_seed is not None:
+        torch.manual_seed(init_seed)
     model, inventory = build_peft_model(model, lora)
     model.to(device)
+    init_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total_params = sum(p.numel() for p in model.parameters())
 
@@ -194,6 +268,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         if step % train.eval_every_steps == 0 or tokens_seen >= train.max_tokens_seen:
             ev = evaluate_now()
             rec.update(ev)
+            rec["a_rel_move_mean"] = mean_a_move(model, init_state)
             if is_better(ev[train.selection_metric]):
                 best = {"value": ev[train.selection_metric], "step": step, **ev}
                 best_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
@@ -208,6 +283,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     diverged = not math.isfinite(step_loss)
 
     set_peft_model_state_dict(model, best_state)
+    movement = factor_movement(init_state, best_state, inventory.model_type)
+    (run_dir / "factor_movement.json").write_text(json.dumps(movement, indent=1))
     adapter_dir = run_dir / "adapter"
     model.save_pretrained(adapter_dir, safe_serialization=True)
     fp_after = state_fingerprint(model)
@@ -231,6 +308,10 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "lora_dropout": lora.dropout,
         "use_rslora": lora.use_rslora,
         "lora_scaling": lora.scaling,
+        "lora_init_seed_scope": lora.init_seed_scope,
+        "lora_init_seed": init_seed if init_seed is not None else seed,
+        "factor_movement": {"overall": movement["overall"], "by_class": movement["by_class"],
+                            "detail": "factor_movement.json"},
         "target_modules": [c for c in lora.target_modules if c not in inventory.omissions],
         "target_module_names": inventory.names(),
         "module_omissions": inventory.omissions,
