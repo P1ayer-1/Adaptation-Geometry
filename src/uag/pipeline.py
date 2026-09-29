@@ -187,14 +187,24 @@ def _eval_targets(exp: ExperimentConfig, task_id: str) -> list:
     return [exp.task(task_id)] + [exp.task(c) for c in exp.control_tasks if c != task_id]
 
 
-def eval_bases(exp: ExperimentConfig) -> None:
-    for base in exp.bases:
+def fewshot_eval_id(exp: ExperimentConfig, base: str, task: str, tmpl: str) -> str:
+    return f"base_fewshot{exp.fewshot.k}s{exp.fewshot.seed}__{base}__{task}__{tmpl}"
+
+
+def eval_bases(exp: ExperimentConfig, only_bases: list[str] | None = None,
+               only_tasks: list[str] | None = None) -> None:
+    """Zero-shot base (role ``base``) and few-shot base (role ``base_fewshot``) per template."""
+    for base in _filter(exp.bases, only_bases, lambda b: b.name):
         cache: dict = {}
-        for task in exp.tasks:
+        for task in _filter(exp.tasks, only_tasks, lambda t: t.task_id):
             for tmpl in _templates(exp, task):
+                meta = {"task_id": task.task_id, "target_base": base.name, "eval_task": task.task_id}
                 _eval(exp, base, task, f"base__{base.name}__{task.task_id}__{tmpl}", cache, tmpl,
-                      extra_meta={"role": "base", "task_id": task.task_id, "target_base": base.name,
-                                  "eval_task": task.task_id})
+                      extra_meta={"role": "base", **meta})
+                if exp.fewshot.k > 0:
+                    _eval(exp, base, task, fewshot_eval_id(exp, base.name, task.task_id, tmpl), cache, tmpl,
+                          fewshot_k=exp.fewshot.k, fewshot_seed=exp.fewshot.seed,
+                          extra_meta={"role": "base_fewshot", **meta})
 
 
 def eval_direct(exp: ExperimentConfig) -> None:
@@ -225,7 +235,7 @@ def declare_gate(exp: ExperimentConfig) -> dict[str, Any]:
     """Freeze the gate before any held-out test runs; later edits are detected (spec §5.6)."""
     paths = Paths(exp)
     payload = {"gate": to_dict(exp.gate), "splits": [dataclasses.asdict(s) for s in exp.splits],
-               "eval_split": exp.eval_split}
+               "eval_split": exp.eval_split, "fewshot": to_dict(exp.fewshot)}
     digest = sha256_bytes(json.dumps(payload, sort_keys=True).encode())
     if paths.gate_declaration.exists():
         old = json.loads(paths.gate_declaration.read_text())

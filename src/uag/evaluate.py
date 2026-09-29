@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+import random
 import time
 from pathlib import Path
 from typing import Any, Sequence
@@ -20,7 +21,7 @@ import torch
 from .config import BaseConfig, TaskConfig
 from .data import instruction_for, load_split
 from .metrics import bootstrap_ci, get_metric, macro_f1, word_count
-from .prompts import build_prompt, target_text
+from .prompts import build_fewshot_prompt, stop_marker, target_text
 
 
 def _device(model) -> torch.device:
@@ -49,10 +50,13 @@ def score_choices(model, tok, prompts: Sequence[str], choices: Sequence[Sequence
         for j, s in enumerate(seqs):
             ids[j, : len(s)] = torch.tensor(s)
             att[j, : len(s)] = 1
-        logp = torch.log_softmax(model(input_ids=ids.to(dev), attention_mask=att.to(dev)).logits.float(), -1)
+        logits = model(input_ids=ids.to(dev), attention_mask=att.to(dev)).logits
         for j, (i, p, c) in enumerate(chunk):
-            pos = torch.arange(len(p) - 1, len(p) + len(c) - 1)
-            lp = logp[j, pos, torch.tensor(c)].sum().item()
+            # Only the choice positions go to fp32: a full-sequence fp32 log-softmax over a 128k
+            # vocabulary does not fit next to a 1B model on an 8 GB card with few-shot prompts.
+            pos = torch.arange(len(p) - 1, len(p) + len(c) - 1, device=logits.device)
+            logp = torch.log_softmax(logits[j, pos].float(), -1)
+            lp = logp[torch.arange(len(c), device=logits.device), torch.tensor(c, device=logits.device)].sum().item()
             scores[i].append(lp / len(c) if norm == "mean" else lp)
     return scores
 
@@ -77,11 +81,46 @@ def generate(model, tok, prompts: Sequence[str], max_new_tokens: int, batch_size
     return outs
 
 
+def select_shots(task: TaskConfig, k: int, seed: int = 0, data_dir: str | Path = "data") -> list[dict[str, Any]]:
+    """Deterministic few-shot demonstrations drawn from the *train* split (never valid/test).
+
+    The same k shots are used for every evaluation example of a task. For classification tasks
+    the shots cycle through the sorted label set, so every label is shown when k >= #labels.
+    The order is then shuffled with the same seeded RNG.
+    """
+    if k <= 0:
+        return []
+    rows = load_split(task, "train", data_dir)
+    rng = random.Random(f"fewshot:{task.dataset_key}:{seed}")
+    if task.scoring == "choices":
+        by_label: dict[str, list[dict[str, Any]]] = {}
+        for r in rows:
+            by_label.setdefault(r["target"], []).append(r)
+        pools = {lab: rng.sample(v, len(v)) for lab, v in sorted(by_label.items())}
+        labels = sorted(pools)
+        shots = [pools[labels[i % len(labels)]][i // len(labels)] for i in range(k)]
+        rng.shuffle(shots)
+    else:
+        shots = rng.sample(rows, k)
+    return shots
+
+
+def truncate_at(text: str, marker: str) -> str:
+    i = text.find(marker)
+    return text if i < 0 else text[:i]
+
+
 def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any]],
-                      template: str = "v1", batch_size: int = 16) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Score ``examples``; returns (per-example records, summary)."""
+                      template: str = "v1", batch_size: int = 16,
+                      shots: Sequence[dict[str, Any]] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Score ``examples``; returns (per-example records, summary).
+
+    With ``shots``, every prompt starts with those worked examples (few-shot), and each
+    generation is cut where the model starts inventing the next ``Input:`` block.
+    """
     instruction = instruction_for(task)
-    prompts = [build_prompt(instruction, ex["input"], template) for ex in examples]
+    shots = list(shots or [])
+    prompts = [build_fewshot_prompt(instruction, shots, ex["input"], template) for ex in examples]
     metric = get_metric(task.metric)
     t0 = time.time()
     records = []
@@ -94,6 +133,8 @@ def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any
                             "score": metric(pred, ex), "choice_logprobs": sc})
     else:
         preds = generate(model, tok, prompts, task.max_new_tokens, batch_size)
+        if shots:
+            preds = [truncate_at(p, stop_marker(template)) for p in preds]
         for ex, pred in zip(examples, preds):
             records.append({"example_id": ex["example_id"], "prediction": pred, "score": metric(pred, ex)})
     s = [r["score"] for r in records]
@@ -101,6 +142,8 @@ def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any
     summary: dict[str, Any] = {
         "task_id": task.task_id, "metric": task.metric, "direction": task.metric_direction,
         "primary": point, "ci95": [lo, hi], "n": len(records), "template": template,
+        "shots": len(shots), "shot_example_ids": [ex["example_id"] for ex in shots],
+        "stop_marker": stop_marker(template) if shots and task.scoring != "choices" else None,
         "mean_output_words": float(np.mean([word_count(r["prediction"]) for r in records])) if records else 0.0,
         "eval_seconds": time.time() - t0,
     }
@@ -130,8 +173,12 @@ def run_evaluation(base: BaseConfig, task: TaskConfig, out_dir: str | Path, eval
                    split: str = "test", template: str | None = None, data_dir: str | Path = "data",
                    max_examples: int | None = None, batch_size: int = 16, device: str = "auto",
                    dtype: str | None = None, extra_meta: dict[str, Any] | None = None,
-                   model_cache: dict | None = None) -> dict[str, Any]:
-    """Evaluate a base / adapter / predicted update and write ``<eval_id>.jsonl`` + summary."""
+                   model_cache: dict | None = None, fewshot_k: int = 0, fewshot_seed: int = 0) -> dict[str, Any]:
+    """Evaluate a base / adapter / predicted update and write ``<eval_id>.jsonl`` + summary.
+
+    ``fewshot_k > 0`` prepends k deterministic training examples to every prompt
+    (:func:`select_shots`); the selection is recorded in the summary.
+    """
     from .extract_delta import DeltaSet, applied_delta
     from .models import load_base_model
 
@@ -146,6 +193,7 @@ def run_evaluation(base: BaseConfig, task: TaskConfig, out_dir: str | Path, eval
             model_cache[key] = (model, tok, prov)
     template = template or task.prompt_template_version
     examples = load_eval_examples(task, split, data_dir, max_examples)
+    shots = select_shots(task, fewshot_k, fewshot_seed, data_dir)
     ctx: contextlib.AbstractContextManager = contextlib.nullcontext(model)
     kind = "base"
     eval_model = model
@@ -159,12 +207,13 @@ def run_evaluation(base: BaseConfig, task: TaskConfig, out_dir: str | Path, eval
         ctx = applied_delta(model, DeltaSet.load(delta_dir))
         kind = "delta"
     with ctx:
-        records, summary = evaluate_examples(eval_model, tok, task, examples, template, batch_size)
+        records, summary = evaluate_examples(eval_model, tok, task, examples, template, batch_size, shots)
     if adapter_dir:
         eval_model.unload()  # restore the cached base model (adapter layers removed)
     summary.update({"eval_id": eval_id, "base": base.name, "family": base.family, "split": split,
                     "kind": kind, "adapter_dir": str(adapter_dir) if adapter_dir else None,
                     "delta_dir": str(delta_dir) if delta_dir else None, "provenance": prov,
+                    "fewshot_seed": fewshot_seed if fewshot_k else None,
                     **(extra_meta or {})})
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)

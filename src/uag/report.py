@@ -2,8 +2,10 @@
 
 1. Did every run train without OOM / divergence, and how much GPU memory did it use?
 2. Does the ΔW reconstruction check pass?
-3. Does direct LoRA actually improve each task over the raw base?
-4. How long do training and evaluation take (and a rough projection for Stage 0)?
+3. Does direct LoRA improve each task over the *few-shot* base, with headroom left (no base at
+   ceiling) and more than just the output format learned?
+4. How long do training and evaluation take on this machine? (Rental cost comes from
+   ``scripts/benchmark_gpu.sh`` on the rented card, not from extrapolating this machine.)
 """
 
 from __future__ import annotations
@@ -14,6 +16,7 @@ from collections import defaultdict
 import numpy as np
 import yaml
 
+from .analysis import CEILING, FORMAT_SHARE, headroom_rows, load_summaries
 from .config import ExperimentConfig
 from .pipeline import Paths, read_exclusions
 
@@ -57,60 +60,51 @@ def dry_run_report(exp: ExperimentConfig, min_lift: float = 0.05) -> str:
                    f"(tolerance {v.get('tolerance', v.get('atol', float('nan'))):.2e}), "
                    f"adapter effect {v['adapter_effect_max_abs']:.2e}")
 
-    # 3: direct-LoRA lift
-    summaries = [json.loads(p.read_text()) for p in sorted(paths.raw.glob("*.summary.json"))] if paths.raw.exists() else []
-    canon = {t.task_id: t.prompt_template_version for t in exp.tasks}
-    base = {(s["target_base"], s["task_id"]): s for s in summaries
-            if s["role"] == "base" and s.get("template") == canon.get(s["task_id"])}
-    direct = defaultdict(list)
-    for s in summaries:
-        if s["role"] == "direct" and s.get("eval_task") == s["task_id"] and s.get("template") == canon.get(s["task_id"]):
-            direct[(s["target_base"], s["task_id"])].append(s)
+    # 3: direct-LoRA lift over the declared baseline, with ceiling / format flags
+    summaries = load_summaries(paths)
     lines, n_ok, n_cells = [], 0, 0
-    for b in exp.bases:
-        for t in exp.tasks:
-            sb, sd = base.get((b.name, t.task_id)), direct.get((b.name, t.task_id))
-            if not sb or not sd:
-                lines.append(f"       {b.name} / {t.task_id}: not evaluated yet")
-                continue
-            n_cells += 1
-            d = float(np.mean([x["primary"] for x in sd]))
-            lift = d - sb["primary"]
-            n_ok += lift >= min_lift
-            note = "" if lift >= min_lift else ("  <- no headroom (base near ceiling)" if sb["primary"] > 0.9
-                                                  else "  <- adapter barely helps: more tokens / higher LR?")
-            lines.append(f"       {b.name} / {t.task_id} ({t.metric}): base {sb['primary']:.3f} -> "
-                         f"direct {d:.3f} (lift {lift:+.3f}){note}")
+    ref = exp.gate.baseline
+    for r in headroom_rows(exp, summaries):
+        name = f"{r['base']} / {r['task']} ({r['metric']})"
+        if r["s_base"] is None or r["n_seeds"] == 0:
+            lines.append(f"       {name}: not evaluated yet")
+            continue
+        n_cells += 1
+        problems = []
+        if r["ceiling"]:
+            problems.append(f"CEILING: a base already scores >= {CEILING}; no room to measure transfer")
+        if r["format_dominated"]:
+            problems.append(f"FORMAT: {r['format_share']:.0%} of the lift comes from showing examples, "
+                            f"not from the adapter")
+        if r["direct_lift"] < min_lift:
+            problems.append(f"lift vs {ref} base below {min_lift}")
+        n_ok += not problems
+        zs = "–" if r["s_base_zeroshot"] is None else f"{r['s_base_zeroshot']:.3f}"
+        fs = "–" if r["s_base_fewshot"] is None else f"{r['s_base_fewshot']:.3f}"
+        lines.append(f"       {name}: zero-shot {zs}, {exp.fewshot.k}-shot {fs} -> direct {r['s_direct_mean']:.3f} "
+                     f"(lift vs {ref} {r['direct_lift']:+.3f})")
+        lines += [f"         <- {p}" for p in problems]
     ok_lift = n_cells > 0 and n_ok == n_cells
-    out += ["", f"[{'PASS' if ok_lift else 'CHECK'}] 3. Direct LoRA improves the task (lift >= {min_lift}): "
+    out += ["", f"[{'PASS' if ok_lift else 'CHECK'}] 3. Direct LoRA beats the {ref} base by >= {min_lift}, "
+                f"no base >= {CEILING}, lift not format-dominated (few-shot share < {FORMAT_SHARE:.0%}): "
                 f"{n_ok}/{n_cells} cells", *lines]
 
     # 4: timing
-    out += ["", "[INFO] 4. Timing on this machine"]
-    by_base = defaultdict(list)
+    out += ["", "[INFO] 4. Timing on this machine (not a rental projection: run scripts/benchmark_gpu.sh "
+                "on the rented GPU for that)"]
     for m, _ in runs:
-        if m["tokens_seen"]:
-            by_base[m["base_name"]].append((m["wall_seconds"] / m["tokens_seen"] * 1e6, m["total_params"]))
-    for b, vals in by_base.items():
-        sec_per_m = float(np.mean([v[0] for v in vals]))
-        out.append(f"       training {b}: {sec_per_m / 60:.1f} min per 1M tokens "
-                   f"({vals[0][1] / 1e9:.2f}B params incl. LoRA; includes validation passes)")
+        if m["steps"]:
+            tps = m["tokens_seen"] / m["steps"]
+            out.append(f"       {m['run_id']}: {m['wall_seconds'] / m['steps']:.2f} s/step, "
+                       f"{tps:,.0f} tokens/step, {m['tokens_seen'] / m['wall_seconds']:,.0f} tokens/s "
+                       f"(includes validation passes)")
     ev = defaultdict(list)
     for s in summaries:
         if s.get("n"):
-            ev[(s["target_base"], exp.task(s["eval_task"]).scoring)].append(s["eval_seconds"] / s["n"])
-    for (b, scoring), v in sorted(ev.items()):
-        out.append(f"       evaluation {b} [{scoring}]: {np.mean(v):.2f} s per example")
-
-    if by_base and min(v[0][1] for v in by_base.values()) >= 3e8:
-        # Very rough: time scales ~linearly with parameter count on the same GPU.
-        rates = [(v[0][0] / v[0][1]) for v in by_base.values()]  # sec per 1M tokens per param
-        per_param = float(np.mean(rates))
-        stage0_params = [1.5e9, 3.1e9, 3.2e9, 2.6e9]
-        train_h = sum(per_param * p * 2.0 * 10 * 3 for p in stage0_params) / 3600  # 2M tokens × 10 tasks × 3 seeds
-        out += ["", f"       Rough Stage-0 training projection ON THIS GPU (linear in params, 120 runs × 2M tokens): "
-                    f"~{train_h:.0f} GPU-hours.",
-                "       An A40 is typically faster and needs no gradient checkpointing; treat this as an upper-end guide."]
+            ev[(s["target_base"], exp.task(s["eval_task"]).scoring, s.get("shots", 0))].append(
+                s["eval_seconds"] / s["n"])
+    for (b, scoring, shots), v in sorted(ev.items()):
+        out.append(f"       evaluation {b} [{scoring}, {shots}-shot]: {np.mean(v):.2f} s per example")
 
     excl = read_exclusions(paths)
     if excl:

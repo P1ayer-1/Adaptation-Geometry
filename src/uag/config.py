@@ -122,8 +122,13 @@ class LoraSettings:
     dropout: float = 0.0
     target_modules: list[str] = field(default_factory=lambda: list(CANONICAL_MODULES))
     use_rslora: bool = False
+    # Which RNG draws the random LoRA A init: "seed" = the run seed alone (every task on a base
+    # shares A0 for a given seed), "task" = derived from (task, seed) so tasks get independent inits.
+    init_seed_scope: str = "seed"
 
     def validate(self) -> None:
+        if self.init_seed_scope not in {"seed", "task"}:
+            raise ConfigError("LoRA init_seed_scope must be seed|task")
         bad = [m for m in self.target_modules if m not in CANONICAL_MODULES]
         if bad:
             raise ConfigError(
@@ -182,10 +187,22 @@ class HoldoutSplitSpec:
 
 
 @dataclass
+class FewShotSettings:
+    """Few-shot base evaluation: k worked training examples in the prompt (deterministic)."""
+
+    k: int = 5
+    seed: int = 0
+
+
+@dataclass
 class GateSettings:
     """Pre-declared Stage-0 gate (spec §5.6). Fixed before held-out tests are run."""
 
     primary_method: str = "svd_procrustes"  # the learned map the gate is evaluated on (no post-hoc pick)
+    # Reference score S_base for lift, eligibility and RecoveredLift: the few-shot base (so that
+    # an adapter only gets credit for what k demonstrations of the output format cannot give)
+    # or the zero-shot base. The other one is still evaluated and reported.
+    baseline: str = "fewshot"  # fewshot | zeroshot
     min_heterogeneous_pairs: int = 2
     min_median_recovered_lift: float = 0.30
     min_direct_lift: float = 0.05  # cells with smaller direct-LoRA lift are ineligible
@@ -212,6 +229,7 @@ class ExperimentConfig:
     eval_max_examples: int | None = None
     control_tasks: list[str] = field(default_factory=list)
     alt_templates: list[str] = field(default_factory=list)  # robustness prompt formats
+    fewshot: FewShotSettings = field(default_factory=FewShotSettings)
     artifacts_dir: str = "artifacts"
     results_dir: str = "results"
     data_dir: str = "data"
@@ -242,6 +260,10 @@ class ExperimentConfig:
             raise ConfigError(f"unknown control tasks {sorted(unknown_controls)}")
         if self.gate.primary_method not in self.gate.learned_methods:
             raise ConfigError("gate.primary_method must be one of gate.learned_methods")
+        if self.gate.baseline not in {"fewshot", "zeroshot"}:
+            raise ConfigError("gate.baseline must be fewshot|zeroshot")
+        if self.gate.baseline == "fewshot" and self.fewshot.k <= 0:
+            raise ConfigError("gate.baseline: fewshot needs fewshot.k > 0")
 
     def base(self, name: str) -> BaseConfig:
         for b in self.bases:
@@ -338,6 +360,7 @@ def load_experiment(path: str | Path, allow_unpinned: bool = False) -> Experimen
         splits=[HoldoutSplitSpec(**s) for s in data.get("splits", [])],
         maps=_from_dict(MapSettings, data.get("maps", {})),
         gate=_from_dict(GateSettings, data.get("gate", {})),
+        fewshot=_from_dict(FewShotSettings, data.get("fewshot", {})),
         **{k: data[k] for k in ("require_pinned_revisions", "eval_split", "eval_max_examples",
                                 "control_tasks", "alt_templates", "artifacts_dir", "results_dir", "data_dir")
            if k in data},
