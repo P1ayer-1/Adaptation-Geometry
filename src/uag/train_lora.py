@@ -160,6 +160,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             return v < best["value"]
         return v > best["value"] if higher else v < best["value"]
 
+    print(f"[uag {time.strftime('%H:%M:%S')}] training {run_id} (~{est_steps} steps)", flush=True)
     init_eval = evaluate_now()
     log_f.write(json.dumps({"step": 0, "tokens_seen": 0, **init_eval}) + "\n")
     model.train()
@@ -196,7 +197,13 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             if is_better(ev[train.selection_metric]):
                 best = {"value": ev[train.selection_metric], "step": step, **ev}
                 best_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
+            elapsed = time.time() - t0
+            frac = min(tokens_seen / train.max_tokens_seen, 1.0)
+            print(f"[uag {time.strftime('%H:%M:%S')}]   {run_id}: step {step}, {frac:.0%} of token budget, "
+                  f"train loss {step_loss:.3f}, {train.selection_metric} {ev[train.selection_metric]:.4f}, "
+                  f"~{elapsed / frac * (1 - frac) / 60:.1f} min left", flush=True)
         log_f.write(json.dumps(rec) + "\n")
+        log_f.flush()
     log_f.close()
     diverged = not math.isfinite(step_loss)
 
