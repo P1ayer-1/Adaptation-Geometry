@@ -153,6 +153,7 @@ class TrainSettings:
     dtype: str = "bfloat16"
     deterministic: bool = True
     device: str = "auto"
+    gradient_checkpointing: bool = False  # trades ~30% speed for much less activation memory
 
     def validate(self) -> None:
         if self.selection_metric not in {"valid_loss", "valid_primary"}:

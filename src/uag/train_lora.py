@@ -99,6 +99,10 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     device = pick_device(train.device)
     model, tok, prov = load_base_model(base, dtype=train.dtype, device=str(device))
     fp_before = state_fingerprint(model)
+    if train.gradient_checkpointing:
+        model.config.use_cache = False
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+        model.enable_input_require_grads()  # frozen embeddings: let gradients reach LoRA layers
     model, inventory = build_peft_model(model, lora)
     model.to(device)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)

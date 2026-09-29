@@ -143,3 +143,19 @@ def test_module_matching(tiny_bases):
     phi = match_modules(invs["tiny_llama_a1"], invs["tiny_phi_c"])
     assert any(o["class"] == "gate" for o in phi.omissions)
     assert all(s.cls == t.cls for s, t in phi.pairs)
+
+
+def test_gradient_checkpointing_training(tiny_bases, all_tasks, tiny_train_settings, tmp_path):
+    """The 8 GB dry-run settings (gradient checkpointing) must still train and verify."""
+    import dataclasses
+
+    from uag.train_lora import train_lora
+
+    task = next(t for t in all_tasks if t.task_id == "T4_json")
+    train = dataclasses.replace(tiny_train_settings, gradient_checkpointing=True, batch_size=2, grad_accum=2)
+    run_dir = train_lora(tiny_bases["tiny_qwen2_b"], task, LoraSettings(rank=4, alpha=8), train, 0, tmp_path)
+    m = yaml.safe_load((run_dir / "manifest.yaml").read_text())
+    assert not m["diverged"] and m["selection"]["value"] < m["selection"]["initial"]["valid_loss"]
+    pm, tok = load_trained(tiny_bases["tiny_qwen2_b"], run_dir, device="cpu")
+    ds = extract_deltas(run_dir / "adapter", "qwen2")
+    assert verify_delta_reconstruction(pm, ds, _batch(tok, task))["passed"]

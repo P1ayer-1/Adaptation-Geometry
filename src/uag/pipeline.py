@@ -92,6 +92,16 @@ def _verification_batch(tok, task, n: int = 4):
     return b
 
 
+def _free_gpu() -> None:
+    import gc
+
+    import torch
+
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
 def postprocess_run(exp: ExperimentConfig, run_dir: Path, base, task) -> dict[str, Any]:
     """Extract ΔW, verify it against the PEFT forward pass, cache factored spectra."""
     from .train_lora import load_trained
@@ -103,11 +113,12 @@ def postprocess_run(exp: ExperimentConfig, run_dir: Path, base, task) -> dict[st
     inv = manifest["module_inventory"]
     meta = {"run_id": manifest["run_id"], "base_name": base.name, "family": base.family, "task_id": task.task_id,
             "seed": manifest["seed"], "num_layers": inv["num_layers"], "module_omissions": inv["omissions"]}
-    pm, tok = load_trained(base, run_dir, device=exp.train.device)
+    pm, tok = load_trained(base, run_dir, device=exp.train.device, dtype="float32")  # exact check in fp32
     ds = extract_deltas(run_dir / "adapter", manifest["module_inventory"]["model_type"], meta)
     batch = {k: v.to(next(pm.parameters()).device) for k, v in _verification_batch(tok, task).items()}
-    atol = 1e-4 if manifest["dtype"] == "float32" else 5e-2
-    report = verify_delta_reconstruction(pm, ds, batch, atol=atol)
+    report = verify_delta_reconstruction(pm, ds, batch)
+    del pm
+    _free_gpu()
     (run_dir / "delta_verification.json").write_text(json.dumps(report, indent=1))
     save_spectral(ds, spec_dir)
     return report
@@ -123,6 +134,7 @@ def train_grid(exp: ExperimentConfig, only_bases: list[str] | None = None, only_
             for seed in _filter(exp.seeds, only_seeds):
                 t0 = time.time()
                 run_dir = train_lora(base, task, exp.lora, exp.train, seed, paths.runs, exp.data_dir)
+                _free_gpu()
                 manifest = yaml.safe_load((run_dir / "manifest.yaml").read_text())
                 if manifest.get("diverged"):
                     record_exclusion(paths, kind="run", reason="training_divergence", run_id=manifest["run_id"])

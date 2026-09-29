@@ -39,6 +39,8 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--method", nargs="*")
     exp_cmd("analyze", "regenerate tables and the decision memo from raw results")
     exp_cmd("run", "run every stage in order")
+    sp = exp_cmd("dry-run-report", "summarise the pre-rental checks (memory, ΔW check, lift, timing)")
+    sp.add_argument("--min-lift", type=float, default=0.05)
 
     sp = sub.add_parser("pin-revisions", help="resolve hub revisions to commit hashes and write them into base configs")
     sp.add_argument("configs", nargs="+", help="base config files (source: hub)")
@@ -87,6 +89,10 @@ def main(argv: list[str] | None = None) -> int:
         res = analyze(exp)
         print(f"wrote {res['decision_path']} ({res['n_cells']} transfer cells); "
               f"gate passed: {res['gate']['passed'] if res['gate'] else 'n/a'}")
+    elif args.cmd == "dry-run-report":
+        from .report import dry_run_report
+
+        print(dry_run_report(exp, args.min_lift))
     elif args.cmd == "run":
         pipeline.run_all(exp)
     return 0

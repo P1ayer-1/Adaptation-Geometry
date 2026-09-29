@@ -25,7 +25,7 @@ blocks for Stages 1–3.
 ```bash
 pip install -r requirements.lock      # exact validated versions
 pip install -e ".[dev]"
-pytest                                # 33 tests, ~20 s on CPU, no hub access needed
+pytest                                # 34 tests, ~1 min on CPU, no hub access needed
 ```
 
 ## Quickstart: smoke test (CPU, about 4 minutes)
@@ -41,6 +41,21 @@ them, and writes the decision memo. **Its numbers carry no scientific weight.** 
 tiny bases cannot learn the semantic tasks at CPU scale, so every cell is correctly marked
 ineligible and the memo reads NO-GO. The gate and RecoveredLift logic are tested separately on
 synthetic results (`tests/test_analysis.py`).
+
+## Dry run on a home GPU (before renting)
+
+The code has only been exercised on tiny random models. Run it once on real small models first
+(Qwen2.5-0.5B + Llama-3.2-1B, 3 tasks, 1 seed; sized for an 8 GB GPU such as an RTX 3080):
+
+```bash
+huggingface-cli login            # and accept the Llama-3.2 licence on its model page
+bash scripts/dry_run.sh          # ~1-3 h; resumable, rerun after any crash
+```
+
+It ends with `uag dry-run-report`, which answers the four pre-rental questions as PASS/CHECK
+(no OOM, ΔW check passes, direct LoRA improves each task, time per run / per eval example)
+and saves the report to `results/dev_3080.yaml.dry_run_report.txt`. If you run out of memory,
+lower `max_seq_len` or `batch_size` (raise `grad_accum`) in `configs/train/dev_3080.yaml`.
 
 ## Launching Stage 0
 
