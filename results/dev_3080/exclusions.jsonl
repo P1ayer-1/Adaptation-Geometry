@@ -1,0 +1,2 @@
+{"time": "2026-09-29T16:03:13", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_qwen2.5-0.5b__to__dev_llama3.2-1b__dev_holdout_T8__identity", "seed": 0, "note": "shape (896, 4864) != (2048, 8192); naive copy undefined"}
+{"time": "2026-09-29T16:03:31", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_llama3.2-1b__to__dev_qwen2.5-0.5b__dev_holdout_T8__identity", "seed": 0, "note": "shape (2048, 8192) != (896, 4864); naive copy undefined"}

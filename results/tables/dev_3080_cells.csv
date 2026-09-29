@@ -1,0 +1,5 @@
+source,target,heterogeneous,task,split,seed,method,s_base,s_direct,s_transfer,transfer_lift,direct_lift,recovered_lift,capped,eligible,eval_id
+dev_llama3.2-1b,dev_qwen2.5-0.5b,True,T8_arithmetic,dev_holdout_T8,0,random,0.2,0.99,0.1,-0.1,0.79,-0.12658227848101267,False,True,transfer__dev_llama3.2-1b__to__dev_qwen2.5-0.5b__dev_holdout_T8__random__seed0__T8_arithmetic__on_T8_arithmetic__v1
+dev_llama3.2-1b,dev_qwen2.5-0.5b,True,T8_arithmetic,dev_holdout_T8,0,svd_procrustes,0.2,0.99,0.27,0.07,0.79,0.08860759493670886,False,True,transfer__dev_llama3.2-1b__to__dev_qwen2.5-0.5b__dev_holdout_T8__svd_procrustes__seed0__T8_arithmetic__on_T8_arithmetic__v1
+dev_qwen2.5-0.5b,dev_llama3.2-1b,True,T8_arithmetic,dev_holdout_T8,0,random,0.14,1.0,0.15,0.009999999999999981,0.86,0.011627906976744165,False,True,transfer__dev_qwen2.5-0.5b__to__dev_llama3.2-1b__dev_holdout_T8__random__seed0__T8_arithmetic__on_T8_arithmetic__v1
+dev_qwen2.5-0.5b,dev_llama3.2-1b,True,T8_arithmetic,dev_holdout_T8,0,svd_procrustes,0.14,1.0,0.86,0.72,0.86,0.8372093023255813,False,True,transfer__dev_qwen2.5-0.5b__to__dev_llama3.2-1b__dev_holdout_T8__svd_procrustes__seed0__T8_arithmetic__on_T8_arithmetic__v1
