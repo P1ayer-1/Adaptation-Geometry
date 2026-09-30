@@ -319,7 +319,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             rec["evals_without_improvement"] = bad_evals
             frac = min(tokens_seen / cap, 1.0)
             print(f"[uag {time.strftime('%H:%M:%S')}]   {run_id}: step {step}, {frac:.0%} of token cap, "
-                  f"train loss {step_loss:.3f}, {train.selection_metric} {v:.4f} (best {best['value']:.4f} "
+                  f"train loss {step_loss:.3g}, {train.selection_metric} {v:.4f} (best {best['value']:.4f} "
                   f"@ step {best['step']}), <= {elapsed / frac * (1 - frac) / 60:.1f} min left", flush=True)
             if out_of_time:
                 stop, stop_reason = True, "wall_clock"
