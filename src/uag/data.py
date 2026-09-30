@@ -56,11 +56,11 @@ def manifest_path(task: TaskConfig, data_dir: str | Path = "data") -> Path:
 
 
 def instruction_for(task: TaskConfig) -> str:
-    return get_generator(task.generator).instruction
+    return get_generator(task.generator, task.generator_version).instruction
 
 
 def _generate_split(task: TaskConfig, split: str, n: int, exclude: set[str]) -> list[dict[str, Any]]:
-    gen = get_generator(task.generator)
+    gen = get_generator(task.generator, task.generator_version)
     rng = random.Random(task.seed * 1000 + _SPLIT_SEED_OFFSET[split])
     out: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -102,10 +102,10 @@ def generate_dataset(task: TaskConfig, data_dir: str | Path = "data", overwrite:
     If a manifest for this ``task_id``/version already exists, the regenerated hashes must
     match it exactly; otherwise a :class:`DataIntegrityError` tells you to bump the version.
     """
-    gen = get_generator(task.generator)
-    if gen.version != str(task.generator_version):
-        raise DataIntegrityError(f"{task.task_id}: config generator_version {task.generator_version} "
-                                 f"!= code generator version {gen.version}")
+    try:
+        gen = get_generator(task.generator, task.generator_version)
+    except KeyError as e:
+        raise DataIntegrityError(f"{task.task_id}: {e}") from e
     sizes = {"train": task.n_train, "valid": task.n_valid, "test": task.n_test}
     used: set[str] = set()
     splits: dict[str, list[dict[str, Any]]] = {}

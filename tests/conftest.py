@@ -10,6 +10,17 @@ def all_tasks():
     return [load_task(p) for p in sorted(glob.glob("configs/tasks/*.yaml"))]
 
 
+@pytest.fixture(scope="session")
+def v2_tasks():
+    return [load_task(p) for p in sorted(glob.glob("configs/tasks/v2/*.yaml"))]
+
+
+@pytest.fixture(scope="session")
+def panel_tasks(all_tasks, v2_tasks):
+    """Every committed dataset version (v1 panel + v2 panel)."""
+    return all_tasks + v2_tasks
+
+
 @pytest.fixture
 def small_task(all_tasks, tmp_path):
     """A shrunken copy of T1 written to a temporary data dir."""

@@ -62,8 +62,12 @@ def score_choices(model, tok, prompts: Sequence[str], choices: Sequence[Sequence
 
 
 @torch.no_grad()
-def generate(model, tok, prompts: Sequence[str], max_new_tokens: int, batch_size: int = 16) -> list[str]:
-    """Greedy decoding with left padding; returns only the continuation text."""
+def generate(model, tok, prompts: Sequence[str], max_new_tokens: int, batch_size: int = 16,
+             stop: Sequence[str] | None = None) -> list[str]:
+    """Greedy decoding with left padding; returns only the continuation text.
+
+    ``stop`` ends a sequence early once it emits one of those strings (the caller still cuts the
+    text at the marker, so the result is identical to decoding to ``max_new_tokens`` and truncating)."""
     dev = _device(model)
     outs: list[str] = []
     old_side = tok.padding_side
@@ -72,8 +76,9 @@ def generate(model, tok, prompts: Sequence[str], max_new_tokens: int, batch_size
         for b in range(0, len(prompts), batch_size):
             enc = tok(list(prompts[b:b + batch_size]), return_tensors="pt", padding=True,
                       add_special_tokens=True).to(dev)
-            gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False,
-                                 pad_token_id=tok.pad_token_id, eos_token_id=tok.eos_token_id)
+            extra = {"stop_strings": list(stop), "tokenizer": tok} if stop else {}
+            gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False, use_cache=True,
+                                 pad_token_id=tok.pad_token_id, eos_token_id=tok.eos_token_id, **extra)
             new = gen[:, enc["input_ids"].shape[1]:]
             outs.extend(tok.batch_decode(new, skip_special_tokens=True))
     finally:
@@ -110,6 +115,24 @@ def truncate_at(text: str, marker: str) -> str:
     return text if i < 0 else text[:i]
 
 
+def fewshot_stops(shots: Sequence[dict[str, Any]], template: str) -> list[str]:
+    """Where a few-shot generation ends: the template's next-example marker, plus the first line
+    break when every demonstrated target is a single line (the prompt then shows one-line
+    answers, and a base that rambles past it would be judged on format, not skill)."""
+    if not shots:
+        return []
+    stops = [stop_marker(template)]
+    if all("\n" not in ex["target"] for ex in shots):
+        stops.append("\n")
+    return stops
+
+
+def truncate_at_any(text: str, markers: Sequence[str]) -> str:
+    for m in markers:
+        text = truncate_at(text, m)
+    return text
+
+
 def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any]],
                       template: str = "v1", batch_size: int = 16,
                       shots: Sequence[dict[str, Any]] | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -132,18 +155,20 @@ def evaluate_examples(model, tok, task: TaskConfig, examples: list[dict[str, Any
             records.append({"example_id": ex["example_id"], "prediction": pred,
                             "score": metric(pred, ex), "choice_logprobs": sc})
     else:
-        preds = generate(model, tok, prompts, task.max_new_tokens, batch_size)
-        if shots:
-            preds = [truncate_at(p, stop_marker(template)) for p in preds]
+        stops = fewshot_stops(shots, template)
+        preds = generate(model, tok, prompts, task.max_new_tokens, batch_size, stop=stops or None)
+        if stops:
+            preds = [truncate_at_any(p, stops) for p in preds]
         for ex, pred in zip(examples, preds):
             records.append({"example_id": ex["example_id"], "prediction": pred, "score": metric(pred, ex)})
     s = [r["score"] for r in records]
     point, lo, hi = bootstrap_ci(s)
     summary: dict[str, Any] = {
-        "task_id": task.task_id, "metric": task.metric, "direction": task.metric_direction,
+        "task_id": task.task_id, "dataset_key": task.dataset_key, "metric": task.metric,
+        "direction": task.metric_direction,
         "primary": point, "ci95": [lo, hi], "n": len(records), "template": template,
         "shots": len(shots), "shot_example_ids": [ex["example_id"] for ex in shots],
-        "stop_marker": stop_marker(template) if shots and task.scoring != "choices" else None,
+        "stop_markers": fewshot_stops(shots, template) if task.scoring != "choices" else [],
         "mean_output_words": float(np.mean([word_count(r["prediction"]) for r in records])) if records else 0.0,
         "eval_seconds": time.time() - t0,
     }

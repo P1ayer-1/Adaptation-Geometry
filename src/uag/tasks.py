@@ -25,22 +25,26 @@ class Generator:
     version: str
 
 
-GENERATORS: dict[str, Generator] = {}
+# Keyed by (name, version). Old versions stay registered unchanged, so every committed
+# dataset manifest remains reproducible after a generator is redesigned.
+GENERATORS: dict[tuple[str, str], Generator] = {}
 
 
 def register(name: str, instruction: str, version: str = "1"):
     def deco(fn: GeneratorFn) -> GeneratorFn:
-        GENERATORS[name] = Generator(name, fn, instruction, version)
+        if (name, version) in GENERATORS:
+            raise ValueError(f"generator {name!r} v{version} registered twice")
+        GENERATORS[(name, version)] = Generator(name, fn, instruction, version)
         return fn
 
     return deco
 
 
-def get_generator(name: str) -> Generator:
+def get_generator(name: str, version: str | int = "1") -> Generator:
     try:
-        return GENERATORS[name]
+        return GENERATORS[(name, str(version))]
     except KeyError as e:
-        raise KeyError(f"unknown generator {name!r}; known: {sorted(GENERATORS)}") from e
+        raise KeyError(f"unknown generator {name!r} v{version}; known: {sorted(GENERATORS)}") from e
 
 
 # ---------------------------------------------------------------------------
@@ -410,3 +414,7 @@ def gen_arithmetic_concise(rng: random.Random, max_words: int = 4) -> dict[str, 
     return {"input": ex["input"], "target": str(ans),
             "metadata": _meta(answer=ans, max_words=max_words, factors=["arithmetic", "concise"],
                               difficulty=ex["metadata"]["difficulty"])}
+
+
+# Version-2 generators (harder panel) live in tasks_v2.py; importing it registers them.
+from . import tasks_v2  # noqa: E402,F401
