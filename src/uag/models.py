@@ -13,8 +13,22 @@ DTYPES = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch
 
 
 def pick_device(device: str = "auto") -> torch.device:
+    """``auto`` = CUDA if usable. On a machine with NVIDIA GPUs where CUDA is *not* usable (e.g.
+    a PyTorch build newer than the driver) this raises instead of silently training on CPU;
+    set UAG_ALLOW_CPU=1 to override."""
     if device == "auto":
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        import os
+        import shutil
+
+        if shutil.which("nvidia-smi") and os.environ.get("UAG_ALLOW_CPU") != "1":
+            raise RuntimeError(
+                "NVIDIA GPUs are present but PyTorch cannot use CUDA (usually: this PyTorch build needs a "
+                "newer driver). Install a PyTorch wheel matching the driver's CUDA version (see "
+                "`nvidia-smi`, top right), e.g. `pip install torch==2.14.0 --index-url "
+                "https://download.pytorch.org/whl/cu128`, or set UAG_ALLOW_CPU=1 to run on CPU anyway.")
+        return torch.device("cpu")
     return torch.device(device)
 
 

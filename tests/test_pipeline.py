@@ -259,3 +259,18 @@ def test_gpu_benchmark_runs_and_prices(tmp_path):
     assert r["stop_reason"] == "wall_clock" and r["tokens_per_second"] > 0
     assert r["cost_per_run"] == pytest.approx(r["hours_per_run"] * 2.0)
     assert "Stage-0 grid" in render_benchmark(r)
+
+
+def test_no_silent_cpu_fallback_when_gpus_present(monkeypatch):
+    import shutil
+
+    from uag.models import pick_device
+
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    monkeypatch.setattr(shutil, "which", lambda name: "/usr/bin/nvidia-smi")
+    monkeypatch.delenv("UAG_ALLOW_CPU", raising=False)
+    with pytest.raises(RuntimeError, match="cannot use CUDA"):
+        pick_device("auto")
+    monkeypatch.setenv("UAG_ALLOW_CPU", "1")
+    assert pick_device("auto").type == "cpu"
+    assert pick_device("cpu").type == "cpu"
