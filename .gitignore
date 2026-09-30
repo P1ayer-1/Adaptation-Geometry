@@ -226,3 +226,4 @@ artifacts/*
 # Raw per-example outputs can be large; tables and decision memos are committed.
 results/raw/*
 !results/raw/.gitkeep
+results/*.gpu*.log

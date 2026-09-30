@@ -121,7 +121,10 @@ finished dry run.
   of Llama-3.2-3B for up to 45 min (`configs/train/gpu_24_48gb.yaml`: micro-batch 8, no
   gradient checkpointing). It then verifies ΔW, evaluates, and prints the cost per run and a
   Stage-0 projection. Run it on each candidate card (e.g. A40 vs H100) and compare.
-- **Two GPUs.** `train`, `eval`, `fit-maps` and `learning-curves` accept `--base`/`--task`.
+- **Several GPUs in one machine** (e.g. 4× RTX 5090): `bash scripts/multi_gpu.sh <config> <n_gpus>`
+  deals the tasks round-robin to the GPUs (one process per GPU) and runs the same steps as
+  `dry_run.sh`. Keep every run of one experiment on the same GPU type.
+- **Manual split.** `train`, `eval`, `fit-maps` and `learning-curves` accept `--base`/`--task`.
   For `eval --stage transfer` and `fit-maps`, `--base` means the *target* base; fitting still
   uses every training task. For example:
   ```bash
