@@ -1,0 +1,47 @@
+{
+ "gate": {
+  "primary_method": "svd_procrustes",
+  "baseline": "fewshot",
+  "min_heterogeneous_pairs": 2,
+  "min_median_recovered_lift": 0.3,
+  "min_direct_lift": 0.02,
+  "learned_methods": [
+   "svd_procrustes",
+   "svd_linear",
+   "procrustes_full"
+  ],
+  "non_learned_baselines": [
+   "identity",
+   "cross_lora",
+   "random"
+  ],
+  "bootstrap_samples": 500,
+  "ci_level": 0.95,
+  "seed": 0
+ },
+ "splits": [
+  {
+   "split_id": "toy_fitT1_predT3",
+   "holdout": [
+    "T3_paraphrase"
+   ]
+  },
+  {
+   "split_id": "toy_fitT3_predT1",
+   "holdout": [
+    "T1_sentiment"
+   ]
+  }
+ ],
+ "eval_split": "test",
+ "fewshot": {
+  "k": 5,
+  "seed": 0
+ },
+ "sha256": "6e8866e1724b1746c58cc3f0dad1319b9933a4c827129370eec2a73a5c110bf0",
+ "declared_at": "2026-09-29T20:06:43",
+ "code_commit": {
+  "commit": "4cdb53b828eddf7d3250ebc5411873dceaa07263",
+  "dirty": true
+ }
+}

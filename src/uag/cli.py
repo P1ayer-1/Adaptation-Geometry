@@ -34,13 +34,20 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--seed", nargs="*", type=int)
     sp = exp_cmd("eval", "evaluate raw bases, direct adapters or transferred updates")
     sp.add_argument("--stage", choices=["base", "direct", "transfer"], required=True)
+    sp.add_argument("--base", nargs="*", help="only these bases (for transfer: target bases)")
+    sp.add_argument("--task", nargs="*", help="only these tasks (for transfer: held-out tasks)")
     exp_cmd("declare-gate", "freeze the Stage-0 gate + splits before held-out evaluation")
     sp = exp_cmd("fit-maps", "fit pair maps on training tasks and predict held-out updates")
     sp.add_argument("--method", nargs="*")
+    sp.add_argument("--base", nargs="*", help="only these *target* bases")
+    sp.add_argument("--task", nargs="*", help="only predict these held-out tasks (fitting still uses all training tasks)")
     exp_cmd("analyze", "regenerate tables and the decision memo from raw results")
     exp_cmd("run", "run every stage in order")
     sp = exp_cmd("dry-run-report", "summarise the pre-rental checks (memory, ΔW check, lift, geometry, timing)")
     sp.add_argument("--min-lift", type=float, default=0.05)
+    sp = exp_cmd("learning-curves", "tokens-to-plateau per run and a proposed per-task token cap")
+    sp.add_argument("--base", nargs="*")
+    sp.add_argument("--task", nargs="*")
     sp = exp_cmd("seed-compare", "is ΔW task signal or random-init noise? factor movement + seed comparison")
     sp.add_argument("--base", nargs="*")
     sp.add_argument("--task", nargs="*")
@@ -48,12 +55,27 @@ def main(argv: list[str] | None = None) -> int:
     sp = sub.add_parser("pin-revisions", help="resolve hub revisions to commit hashes and write them into base configs")
     sp.add_argument("configs", nargs="+", help="base config files (source: hub)")
 
+    sp = sub.add_parser("benchmark", help="train one Stage-0-sized run under a time limit and price it")
+    sp.add_argument("--price", type=float, required=True, help="GPU price in $/hour")
+    sp.add_argument("--minutes", type=float, default=45, help="training time limit (default 45)")
+    sp.add_argument("--base-config", default="configs/bases/stage0_B_llama3.2-3b.yaml")
+    sp.add_argument("--task-config", default="configs/tasks/v2/T4_json.yaml")
+    sp.add_argument("--train-config", default="configs/train/gpu_24_48gb.yaml")
+    sp.add_argument("--lora-config", default="configs/lora/r16.yaml")
+    sp.add_argument("--eval-examples", type=int, default=100)
+
     sp = sub.add_parser("spectral", help="print the spectral summary of one run")
     sp.add_argument("run_dir")
 
     args = p.parse_args(argv)
     if args.cmd == "pin-revisions":
         return pin_revisions(args.configs)
+    if args.cmd == "benchmark":
+        from .benchmark import render_benchmark, run_benchmark
+
+        print(render_benchmark(run_benchmark(args.base_config, args.task_config, args.train_config,
+                                             args.lora_config, args.minutes, args.price, args.eval_examples)))
+        return 0
     if args.cmd == "spectral":
         from pathlib import Path
 
@@ -69,6 +91,11 @@ def main(argv: list[str] | None = None) -> int:
     except ConfigError as e:
         print(f"config error: {e}", file=sys.stderr)
         return 2
+    for flag, known in (("base", [b.name for b in exp.bases]), ("task", [t.task_id for t in exp.tasks])):
+        unknown = sorted(set(getattr(args, flag, None) or []) - set(known))
+        if unknown:
+            print(f"--{flag}: unknown {unknown}; known: {known}", file=sys.stderr)
+            return 2
     if args.cmd == "validate":
         n_runs = len(exp.bases) * len(exp.tasks) * len(exp.seeds)
         print(json.dumps({"name": exp.name, "bases": [b.name for b in exp.bases],
@@ -81,11 +108,12 @@ def main(argv: list[str] | None = None) -> int:
         pipeline.prepare_data(exp)
         pipeline.train_grid(exp, args.base, args.task, args.seed)
     elif args.cmd == "eval":
-        {"base": pipeline.eval_bases, "direct": pipeline.eval_direct, "transfer": pipeline.eval_transfer}[args.stage](exp)
+        {"base": pipeline.eval_bases, "direct": pipeline.eval_direct,
+         "transfer": pipeline.eval_transfer}[args.stage](exp, args.base, args.task)
     elif args.cmd == "declare-gate":
         print(json.dumps(pipeline.declare_gate(exp), indent=1))
     elif args.cmd == "fit-maps":
-        pipeline.fit_maps(exp, args.method)
+        pipeline.fit_maps(exp, args.method, args.base, args.task)
     elif args.cmd == "analyze":
         from .analysis import analyze
 
@@ -96,6 +124,15 @@ def main(argv: list[str] | None = None) -> int:
         from .report import dry_run_report
 
         print(dry_run_report(exp, args.min_lift))
+    elif args.cmd == "learning-curves":
+        from .budget import learning_curves, render_learning_curves
+
+        res = learning_curves(exp, args.base, args.task)
+        print("\n".join(render_learning_curves(res)))
+        out = pipeline.Paths(exp).exp_results / "learning_curves.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(res, indent=1))
+        print(f"\nwrote {out}")
     elif args.cmd == "seed-compare":
         from .diagnostics import render_geometry_checks, save_seed_comparison
 

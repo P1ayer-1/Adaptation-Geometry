@@ -1,0 +1,20 @@
+# Rented 24-80 GB GPU, dev bases, early stopping (v2 dry run). Identical to dev_3080_es.yaml
+# except micro-batch 8 x accumulation 2 (the same effective batch of 16 sequences) and no
+# gradient checkpointing. Checkpoints are selected on the validation task metric; training
+# stops after 4 validations (4 x 25 steps) without a gain > 0.005, never before step 150.
+learning_rate: 2.0e-4
+batch_size: 8
+grad_accum: 2
+max_tokens_seen: 1500000
+max_seq_len: 512
+warmup_ratio: 0.03
+eval_every_steps: 25
+selection_metric: valid_primary
+valid_max_examples: 64
+early_stopping_patience: 4
+early_stopping_min_delta: 0.005
+min_steps: 150
+dtype: bfloat16
+deterministic: true
+device: auto
+gradient_checkpointing: false

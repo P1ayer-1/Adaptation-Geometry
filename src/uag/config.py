@@ -159,10 +159,27 @@ class TrainSettings:
     deterministic: bool = True
     device: str = "auto"
     gradient_checkpointing: bool = False  # trades ~30% speed for much less activation memory
+    # Early stopping on ``selection_metric``: stop after this many consecutive validation
+    # evaluations without an improvement larger than ``early_stopping_min_delta``, but never
+    # before ``min_steps``. 0 disables it; ``max_tokens_seen`` is then the fixed budget, and
+    # with early stopping it is the cap. The selected checkpoint is always the best one.
+    early_stopping_patience: int = 0
+    early_stopping_min_delta: float = 0.0
+    min_steps: int = 0
+    max_wall_minutes: float | None = None  # hard time limit (GPU benchmark only)
+    # Per-task token caps (set from pilot learning curves, `uag learning-curves`). A task's cap
+    # is the same for every base, so budgets stay identical across bases; tasks not listed use
+    # max_tokens_seen.
+    max_tokens_by_task: dict[str, int] = field(default_factory=dict)
+
+    def token_cap(self, task_id: str) -> int:
+        return int(self.max_tokens_by_task.get(task_id, self.max_tokens_seen))
 
     def validate(self) -> None:
         if self.selection_metric not in {"valid_loss", "valid_primary"}:
             raise ConfigError("selection_metric must be valid_loss|valid_primary")
+        if self.early_stopping_patience < 0 or self.min_steps < 0:
+            raise ConfigError("early_stopping_patience and min_steps must be >= 0")
         if self.optimizer != "adamw":
             raise ConfigError("only adamw is implemented")
 

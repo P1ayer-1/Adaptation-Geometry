@@ -69,6 +69,35 @@ def build_peft_model(model, lora: LoraSettings):
     return get_peft_model(model, cfg), inv
 
 
+class StaleRunError(RuntimeError):
+    pass
+
+
+def check_reusable(run_dir: Path, task: TaskConfig, lora: LoraSettings, train: TrainSettings,
+                   data_dir: str | Path = "data") -> None:
+    """A finished run is only reused if it was trained on the same dataset version and LoRA /
+    training settings; otherwise the experiment needs a new name (nothing is silently mixed)."""
+    import yaml
+
+    m = yaml.safe_load((run_dir / "manifest.yaml").read_text())
+    problems = []
+    if m.get("dataset_sha256") != dataset_hashes(task, data_dir):
+        problems.append(f"dataset {task.dataset_key} differs from the one it was trained on "
+                        f"(v{m.get('dataset_version')})")
+    if m.get("lora_init_seed_scope", "seed") != lora.init_seed_scope:
+        problems.append(f"lora.init_seed_scope {lora.init_seed_scope!r} != {m.get('lora_init_seed_scope', 'seed')!r}")
+    for k in ("lora_alpha", "lora_dropout", "use_rslora"):
+        if m.get(k) != getattr(lora, k.replace("lora_", "") if k != "use_rslora" else k):
+            problems.append(f"{k} changed")
+    old_train = m.get("train_settings", {})
+    changed = [k for k, v in to_dict(train).items() if k in old_train and old_train[k] != v]
+    if changed:
+        problems.append(f"train settings changed: {changed}")
+    if problems:
+        raise StaleRunError(f"{run_dir.name} exists but {'; '.join(problems)}. Use a new experiment name "
+                            f"(or delete the run deliberately); finished runs are never silently mixed.")
+
+
 def lora_init_seed(task: TaskConfig, seed: int, lora: LoraSettings) -> int | None:
     """RNG seed for the random LoRA A init. ``init_seed_scope: seed`` (legacy) leaves the global
     RNG as seeded by the run seed, so every task on a base shares the same A0 for a given seed;
@@ -162,8 +191,10 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     run_id = make_run_id(base, task, seed, lora)
     run_dir = Path(runs_dir) / run_id
     if (run_dir / "manifest.yaml").exists() and not overwrite:
+        check_reusable(run_dir, task, lora, train, data_dir)
         return run_dir
     run_dir.mkdir(parents=True, exist_ok=True)
+    cap = train.token_cap(task.task_id)
 
     determinism = set_determinism(seed, train.deterministic)
     device = pick_device(train.device)
@@ -193,7 +224,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
 
     avg_len = sum(len(e["input_ids"]) for e in enc_train) / len(enc_train)
     tokens_per_step = avg_len * train.batch_size * train.grad_accum
-    est_steps = max(1, math.ceil(train.max_tokens_seen / tokens_per_step))
+    est_steps = max(1, math.ceil(cap / tokens_per_step))
     warmup = max(1, int(train.warmup_ratio * est_steps))
 
     opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=train.learning_rate,
@@ -208,7 +239,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     order_rng = random.Random(seed)
     order: list[int] = []
     tokens_seen, step, epoch = 0, 0, 0
-    best: dict[str, Any] = {"value": None, "step": 0}
+    best: dict[str, Any] = {"value": None, "step": 0, "tokens_seen": 0}
     best_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
     higher = task.metric_direction == "higher"
     log_f = open(run_dir / "train_log.jsonl", "w")
@@ -227,18 +258,22 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             out["valid_primary"] = summ["primary"]
         return out
 
-    def is_better(v: float) -> bool:
-        if best["value"] is None:
-            return True
-        if train.selection_metric == "valid_loss":
-            return v < best["value"]
-        return v > best["value"] if higher else v < best["value"]
+    def gain(v: float, ref: float) -> float:  # > 0 means v is better than ref
+        lower = train.selection_metric == "valid_loss" or not higher
+        return ref - v if lower else v - ref
 
-    print(f"[uag {time.strftime('%H:%M:%S')}] training {run_id} (~{est_steps} steps)", flush=True)
+    def is_better(v: float) -> bool:
+        return best["value"] is None or gain(v, best["value"]) > 0
+
+    print(f"[uag {time.strftime('%H:%M:%S')}] training {run_id} (<= {est_steps} steps"
+          + (f", early stopping after {train.early_stopping_patience} evals without improvement" if
+             train.early_stopping_patience else "") + ")", flush=True)
     init_eval = evaluate_now()
     log_f.write(json.dumps({"step": 0, "tokens_seen": 0, **init_eval}) + "\n")
     model.train()
-    while tokens_seen < train.max_tokens_seen:
+    stop_reason = "token_cap"
+    bad_evals = 0
+    while tokens_seen < cap:
         opt.zero_grad(set_to_none=True)
         step_loss = 0.0
         for _ in range(train.grad_accum):
@@ -264,21 +299,37 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         if not math.isfinite(step_loss):
             rec["diverged"] = True
             log_f.write(json.dumps(rec) + "\n")
+            stop_reason = "diverged"
             break
-        if step % train.eval_every_steps == 0 or tokens_seen >= train.max_tokens_seen:
+        elapsed = time.time() - t0
+        out_of_time = train.max_wall_minutes is not None and elapsed >= 60 * train.max_wall_minutes
+        stop = False
+        if step % train.eval_every_steps == 0 or tokens_seen >= cap or out_of_time:
             ev = evaluate_now()
             rec.update(ev)
             rec["a_rel_move_mean"] = mean_a_move(model, init_state)
-            if is_better(ev[train.selection_metric]):
-                best = {"value": ev[train.selection_metric], "step": step, **ev}
-                best_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
-            elapsed = time.time() - t0
-            frac = min(tokens_seen / train.max_tokens_seen, 1.0)
-            print(f"[uag {time.strftime('%H:%M:%S')}]   {run_id}: step {step}, {frac:.0%} of token budget, "
-                  f"train loss {step_loss:.3f}, {train.selection_metric} {ev[train.selection_metric]:.4f}, "
-                  f"~{elapsed / frac * (1 - frac) / 60:.1f} min left", flush=True)
+            v = ev[train.selection_metric]
+            if best["value"] is None or gain(v, best["value"]) > train.early_stopping_min_delta:
+                bad_evals = 0
+            else:
+                bad_evals += 1
+            if is_better(v):
+                best = {"value": v, "step": step, "tokens_seen": tokens_seen, **ev}
+                best_state = {k: w.detach().clone() for k, w in get_peft_model_state_dict(model).items()}
+            rec["evals_without_improvement"] = bad_evals
+            frac = min(tokens_seen / cap, 1.0)
+            print(f"[uag {time.strftime('%H:%M:%S')}]   {run_id}: step {step}, {frac:.0%} of token cap, "
+                  f"train loss {step_loss:.3f}, {train.selection_metric} {v:.4f} (best {best['value']:.4f} "
+                  f"@ step {best['step']}), <= {elapsed / frac * (1 - frac) / 60:.1f} min left", flush=True)
+            if out_of_time:
+                stop, stop_reason = True, "wall_clock"
+            elif (train.early_stopping_patience and bad_evals >= train.early_stopping_patience
+                  and step >= train.min_steps):
+                stop, stop_reason = True, "early_stopping"
         log_f.write(json.dumps(rec) + "\n")
         log_f.flush()
+        if stop:
+            break
     log_f.close()
     diverged = not math.isfinite(step_loss)
 
@@ -322,10 +373,16 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "weight_decay": train.weight_decay,
         "batch_size": train.batch_size,
         "grad_accum": train.grad_accum,
-        "max_tokens_seen": train.max_tokens_seen,
+        "max_tokens_seen": cap,
+        "token_cap_source": "max_tokens_by_task" if task.task_id in train.max_tokens_by_task else "max_tokens_seen",
         "tokens_seen": tokens_seen,
         "steps": step,
         "epochs_started": epoch,
+        "stopping": {"reason": stop_reason, "step": step, "tokens_seen": tokens_seen,
+                     "best_step": best["step"], "best_tokens_seen": best.get("tokens_seen"),
+                     "patience_evals": train.early_stopping_patience, "min_delta": train.early_stopping_min_delta,
+                     "min_steps": train.min_steps, "max_tokens_seen": cap,
+                     "eval_every_steps": train.eval_every_steps},
         "warmup_steps": warmup,
         "selection": {"metric": train.selection_metric, "split": "valid",
                       "n_valid": len(valid_rows), **best, "initial": init_eval},

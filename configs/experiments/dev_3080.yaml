@@ -9,7 +9,7 @@ tasks:
   - ../tasks/T1_sentiment.yaml   # classification (label scoring)
   - ../tasks/T4_json.yaml        # generation
   - ../tasks/T8_arithmetic.yaml  # generation
-lora: ../lora/r16.yaml
+lora: {rank: 16, alpha: 32, dropout: 0.0, target_modules: [q, k, v, o, up, down, gate], init_seed_scope: seed}  # v1 record: legacy shared init
 train: ../train/dev_3080.yaml
 seeds: [0]
 splits:

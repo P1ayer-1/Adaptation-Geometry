@@ -46,10 +46,13 @@ def dry_run_report(exp: ExperimentConfig, min_lift: float = 0.05) -> str:
         out.append(f"       missing (crashed / OOM / not run yet): {name}")
     for m, _ in runs:
         flag = "  DIVERGED" if m.get("diverged") else ""
+        sel, st = m["selection"], m.get("stopping") or {}
+        start = sel["initial"].get(sel["metric"], float("nan"))
+        stop = (f", stopped at step {st['step']} ({st['reason']}), best at step {st['best_step']}"
+                if st else "")
         out.append(f"       {m['run_id']}: peak VRAM {_gb(m.get('peak_vram_bytes'))}, "
                    f"{m['wall_seconds'] / 60:.1f} min, {m['tokens_seen']:,} tokens, "
-                   f"best {m['selection']['metric']}={m['selection']['value']:.4f} "
-                   f"(start {m['selection']['initial'].get('valid_loss', float('nan')):.4f}){flag}")
+                   f"best {sel['metric']}={sel['value']:.4f} (start {start:.4f}){stop}{flag}")
 
     verified = [(m, v) for m, v in runs if v is not None]
     ok_delta = bool(verified) and all(v["passed"] for _, v in verified) and len(verified) == len(runs)
@@ -88,6 +91,12 @@ def dry_run_report(exp: ExperimentConfig, min_lift: float = 0.05) -> str:
     out += ["", f"[{'PASS' if ok_lift else 'CHECK'}] 3. Direct LoRA beats the {ref} base by >= {min_lift}, "
                 f"no base >= {CEILING}, lift not format-dominated (few-shot share < {FORMAT_SHARE:.0%}): "
                 f"{n_ok}/{n_cells} cells", *lines]
+
+    # Budget: learning curves -> proposed token caps
+    from .budget import learning_curves, render_learning_curves
+
+    out += ["", "[INFO] Token budget from learning curves",
+            *["       " + ln for ln in render_learning_curves(learning_curves(exp))]]
 
     # Geometry sanity: does ΔW reflect the task or the random init?
     from .diagnostics import render_geometry_checks

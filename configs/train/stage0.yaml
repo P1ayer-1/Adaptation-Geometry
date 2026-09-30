@@ -1,14 +1,21 @@
-# Identical token budgets across bases/tasks rather than identical epochs (spec §5.3).
+# Stage-0 training (spec §5.3): identical budgets across bases. Early stopping on the validation
+# task metric, capped per task. The caps below are placeholders until the pilot runs
+# `uag learning-curves`; replace them with its proposals (2 x the largest tokens-to-95% over
+# bases/seeds) BEFORE declaring the gate. Every base gets the same cap for a task.
 learning_rate: 2.0e-4
 weight_decay: 0.0
 batch_size: 8
 grad_accum: 2
 max_tokens_seen: 2000000
+max_tokens_by_task: {}
 max_seq_len: 512
 warmup_ratio: 0.03
-eval_every_steps: 100
+eval_every_steps: 50
 selection_metric: valid_primary
 valid_max_examples: 200
+early_stopping_patience: 4
+early_stopping_min_delta: 0.005
+min_steps: 150
 optimizer: adamw
 dtype: bfloat16
 deterministic: true

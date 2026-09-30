@@ -1,6 +1,6 @@
 # Decision memo — experiment `smoke`
 
-_Generated automatically by `uag analyze` (src/uag/analysis.py) on 2026-09-26 18:49:37 at commit `5a70a3e64769`. Do not edit by hand; rerun the analysis instead._
+_Generated automatically by `uag analyze` (src/uag/analysis.py) on 2026-09-29 20:06:50 at commit `4cdb53b828ed`. Do not edit by hand; rerun the analysis instead._
 
 > **Pipeline validation only.** This experiment uses randomly initialised tiny bases; its numbers carry no scientific weight.
 
@@ -14,13 +14,13 @@ _Generated automatically by `uag analyze` (src/uag/analysis.py) on 2026-09-26 18
 
 ## Predeclared gate
 
-Declared 2026-09-26T18:48:13 (sha256 `6491a675990a`), before held-out evaluation.
+Declared 2026-09-29T20:06:43 (sha256 `6e8866e1724b`), before held-out evaluation.
 
 1. At least **2** heterogeneous ordered base pairs show positive, seed-repeatable held-out transfer on a majority of eligible tasks;
 2. median RecoveredLift of `svd_procrustes` ≥ **0.3**;
 3. `svd_procrustes` beats the strongest non-learned baseline (identity, cross_lora, random) with a paired-bootstrap 95% CI excluding zero (resampling identical source×target×task cells).
 
-Cells whose mean direct-LoRA lift is below 0.02 are ineligible (ratio unstable).
+Lift is measured against the **fewshot** base (5 worked training examples in the prompt, shot seed 0). Cells whose mean direct-LoRA lift is below 0.02 are ineligible (ratio unstable).
 
 ## Verdict
 
@@ -48,22 +48,24 @@ Cells whose mean direct-LoRA lift is below 0.02 are ineligible (ratio unstable).
 
 ## Headroom: raw base vs direct LoRA (every base × task cell)
 
-| Base | Task | Metric | Base | Direct (mean ± sd over seeds) | Lift | Eligible |
-|---|---|---|---|---|---|---|
-| tiny_llama_a1 | T1_sentiment | accuracy | 0.490 | 0.528 ± 0.018 (n=2) | 0.038 | True |
-| tiny_llama_a1 | T3_paraphrase | accuracy | 0.495 | 0.502 ± 0.004 (n=2) | 0.007 | False |
-| tiny_qwen2_b | T1_sentiment | accuracy | 0.510 | 0.490 ± 0.000 (n=2) | -0.020 | False |
-| tiny_qwen2_b | T3_paraphrase | accuracy | 0.495 | 0.502 ± 0.004 (n=2) | 0.007 | False |
+Lift = direct − fewshot base. Flags: **ceiling** = a base scores ≥ 0.9 (no room to measure transfer); **format** = the few-shot prompt alone recovers ≥ 50% of the zero-shot-referenced lift (the adapter mostly teaches output format).
+
+| Base | Task | Metric | Zero-shot | Few-shot | Direct (mean ± sd over seeds) | Lift | Eligible | Flags |
+|---|---|---|---|---|---|---|---|---|
+| tiny_llama_a1 | T1_sentiment | accuracy | 0.490 | 0.490 | 0.528 ± 0.018 (n=2) | 0.038 | True | – |
+| tiny_llama_a1 | T3_paraphrase | accuracy | 0.495 | 0.505 | 0.502 ± 0.004 (n=2) | -0.003 | False | – |
+| tiny_qwen2_b | T1_sentiment | accuracy | 0.510 | 0.520 | 0.490 ± 0.000 (n=2) | -0.030 | False | – |
+| tiny_qwen2_b | T3_paraphrase | accuracy | 0.495 | 0.495 | 0.502 ± 0.004 (n=2) | 0.007 | False | – |
 
 ## Held-out transfer cells (seed-averaged)
 
-RecoveredLift = (S_transfer − S_base) / (S_direct − S_base); '–' marks ineligible cells.
+RecoveredLift = (S_transfer − S_base) / (S_direct − S_base) with S_base the fewshot base; '–' marks ineligible cells.
 
 | Source → Target | Split | Task | Method | S_transfer | RecoveredLift (mean ± sd) | Δ rel. err | Seeds |
 |---|---|---|---|---|---|---|---|
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | cross_lora | 0.495 | – ± – | 1.002 | 2 |
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | identity | 0.495 | – ± – | 1.519 | 2 |
-| tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | procrustes_full | 0.508 | – ± – | 1.478 | 2 |
+| tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | procrustes_full | 0.515 | – ± – | 1.480 | 2 |
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | random | 0.495 | – ± – | 1.468 | 2 |
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | svd_linear | 0.495 | – ± – | 1.019 | 2 |
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT1_predT3 | T3_paraphrase | svd_procrustes | 0.495 | – ± – | 1.027 | 2 |
@@ -75,7 +77,7 @@ RecoveredLift = (S_transfer − S_base) / (S_direct − S_base); '–' marks ine
 | tiny_llama_a1 → tiny_qwen2_b | toy_fitT3_predT1 | T1_sentiment | svd_procrustes | 0.508 | – ± – | 1.019 | 2 |
 | tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | cross_lora | 0.497 | – ± – | 1.002 | 2 |
 | tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | identity | 0.502 | – ± – | 1.379 | 2 |
-| tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | procrustes_full | 0.490 | – ± – | 1.381 | 2 |
+| tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | procrustes_full | 0.510 | – ± – | 1.380 | 2 |
 | tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | random | 0.508 | – ± – | 1.396 | 2 |
 | tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | svd_linear | 0.508 | – ± – | 1.021 | 2 |
 | tiny_qwen2_b → tiny_llama_a1 | toy_fitT1_predT3 | T3_paraphrase | svd_procrustes | 0.500 | – ± – | 1.027 | 2 |

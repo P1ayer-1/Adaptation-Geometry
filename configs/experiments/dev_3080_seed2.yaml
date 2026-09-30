@@ -1,0 +1,19 @@
+# Item-3 check on the v1 dry run: add a second seed for T4 and T8 on both dev bases, reusing the
+# finished seed-0 runs of `dev_3080` (same experiment name, same settings), then compare seeds:
+#   uag train -e configs/experiments/dev_3080_seed2.yaml && uag seed-compare -e configs/experiments/dev_3080_seed2.yaml
+# ~30 min on an RTX 3080. Answers: do two seeds of the same task agree more than unrelated runs?
+name: dev_3080
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/T4_json.yaml
+  - ../tasks/T8_arithmetic.yaml
+lora: {rank: 16, alpha: 32, dropout: 0.0, target_modules: [q, k, v, o, up, down, gate], init_seed_scope: seed}
+train: ../train/dev_3080.yaml
+seeds: [0, 1]
+splits: []
+gate: {min_heterogeneous_pairs: 1}
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 100

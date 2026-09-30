@@ -6,17 +6,18 @@ bases:
   - ../bases/stage0_A2_qwen2.5-3b.yaml
   - ../bases/stage0_B_llama3.2-3b.yaml
   - ../bases/stage0_C_gemma2-2b.yaml
+# Task panel v2 (configs/tasks/v2): v1 was at ceiling or format-dominated for 0.5-1B bases.
 tasks:
-  - ../tasks/T1_sentiment.yaml
-  - ../tasks/T2_nli.yaml
-  - ../tasks/T3_paraphrase.yaml
-  - ../tasks/T4_json.yaml
-  - ../tasks/T5_concise.yaml
-  - ../tasks/T6_verbose.yaml
-  - ../tasks/T7_python.yaml
-  - ../tasks/T8_arithmetic.yaml
-  - ../tasks/T9_clinical.yaml
-  - ../tasks/T10_format.yaml
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+  - ../tasks/v2/T3_paraphrase.yaml
+  - ../tasks/v2/T4_json.yaml
+  - ../tasks/v2/T5_concise.yaml
+  - ../tasks/v2/T6_verbose.yaml
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T8_arithmetic.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
 lora: ../lora/r16.yaml
 train: ../train/stage0.yaml
 seeds: [0]
