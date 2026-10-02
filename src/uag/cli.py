@@ -15,6 +15,24 @@ def _quiet() -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point. A CUDA failure (e.g. a driver reset on a laptop GPU) exits immediately with
+    status 3: after such an error the process otherwise tends to hang in CUDA teardown, which
+    blocks any retry. Finished runs are saved, so rerunning the command resumes the work."""
+    try:
+        return _main(argv)
+    except Exception as e:  # noqa: BLE001
+        if "CUDA error" in str(e) or type(e).__name__ == "AcceleratorError":
+            import traceback
+
+            traceback.print_exc()
+            print("uag: CUDA failure; exiting without CUDA teardown. Rerun the command to resume.",
+                  file=sys.stderr, flush=True)
+            sys.stdout.flush()
+            os._exit(3)
+        raise
+
+
+def _main(argv: list[str] | None = None) -> int:
     _quiet()
     p = argparse.ArgumentParser(prog="uag", description="Universal Adaptation Geometry pipeline")
     sub = p.add_subparsers(dest="cmd", required=True)

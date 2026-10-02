@@ -320,3 +320,22 @@ def test_min_epochs_delays_early_stopping(tmp_path, tiny_bases, all_tasks, tiny_
                      data_dir=tmp_path / "data")
     st = yaml.safe_load((run / "manifest.yaml").read_text())["stopping"]
     assert st["min_steps"] == 60 and st["reason"] == "early_stopping" and st["step"] >= 60  # 2 x 120 / 4
+
+
+def test_cli_exits_fast_on_cuda_failure(monkeypatch):
+    import os
+
+    from uag import cli
+
+    def boom(argv=None):
+        raise RuntimeError("CUDA error: unknown error")
+
+    codes = []
+    monkeypatch.setattr(cli, "_main", boom)
+    monkeypatch.setattr(os, "_exit", lambda c: codes.append(c))  # the stub returns, so the error re-raises
+    with pytest.raises(RuntimeError):
+        cli.main([])
+    assert codes == [3]
+    monkeypatch.setattr(cli, "_main", lambda argv=None: (_ for _ in ()).throw(ValueError("other")))
+    with pytest.raises(ValueError):
+        cli.main([])

@@ -6,6 +6,18 @@
 #   3. dev_3080_patience: the T1/T2 runs that never took off, retrained with patient stopping.
 # Resumable. Logs: results/frozen_a_test.log
 set -euo pipefail
+# Transient CUDA failures (driver resets on a laptop GPU) make uag exit with status 3; retry such
+# steps. Finished runs/evaluations are reused, so a retry only redoes the interrupted one.
+uag() {
+  local i rc
+  for i in 1 2 3 4 5; do
+    rc=0; command uag "$@" || rc=$?
+    [ "$rc" -eq 0 ] && return 0
+    [ "$rc" -ne 3 ] && return "$rc"
+    echo "uag $1: CUDA failure, retry $i/5 in 30 s" >&2; sleep 30
+  done
+  return 3
+}
 copy_evals() {  # copy_evals <from experiment> <to experiment> <glob>...: reuse finished evaluations
   local from="results/raw/$1" to="results/raw/$2"; shift 2
   mkdir -p "$to"
