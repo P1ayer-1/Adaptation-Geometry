@@ -1,0 +1,36 @@
+# Reference for dev_3080_frozenA: the trainable-A adapters of the v2 dry run (dev_a100_v2,
+# per-task init) restricted to the same 6 tasks, the same split and the same baselines. Its
+# runs and base/direct evaluations are reused from dev_a100_v2 (see scripts/frozen_a_test.sh);
+# only maps and transfer evaluations are new.
+name: dev_a100_v2_cmp
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T3_paraphrase.yaml   # map training tasks: T3, T7, T9, T10 (learned reliably in the dry run)
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
+  - ../tasks/v2/T4_json.yaml         # held out
+  - ../tasks/v2/T8_arithmetic.yaml   # held out
+lora: ../lora/r16.yaml
+train: ../train/dev_gpu_es.yaml
+seeds: [0, 1]
+fewshot: {k: 5, seed: 0}
+splits:
+  - {split_id: holdout_T4_T8, holdout: [T4_json, T8_arithmetic]}
+maps:
+  methods: [svd_procrustes, svd_linear, random, random_coords, target_mean]
+  k: 16
+gate:
+  primary_method: svd_procrustes
+  learned_methods: [svd_procrustes, svd_linear]
+  non_learned_baselines: [random, random_coords, target_mean]
+  baseline: fewshot
+  min_heterogeneous_pairs: 1
+  bootstrap_samples: 1000
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []
