@@ -14,15 +14,20 @@ import json, sys
 tasks = json.load(sys.stdin)['tasks']; n = int(sys.argv[1])
 for i in range(n): print(' '.join(tasks[i::n]))" "$N")
 
+# Background jobs of a script ignore Ctrl-C, so forward it: stop every GPU process, then exit.
+PIDS=()
+trap 'echo "interrupted: stopping GPU processes"; kill "${PIDS[@]}" 2>/dev/null; exit 130' INT TERM
+
 parallel_step() {  # parallel_step <uag args...>: run once per GPU on its task chunk, wait, fail if any failed
-  local pids=() i
+  local i
   for i in "${!CHUNKS[@]}"; do
     [ -z "${CHUNKS[$i]}" ] && continue
     # shellcheck disable=SC2086
     CUDA_VISIBLE_DEVICES=$i uag "$@" --task ${CHUNKS[$i]} >> "results/${NAME}.gpu$i.log" 2>&1 &
-    pids+=($!)
+    PIDS+=($!)
   done
-  for p in "${pids[@]}"; do wait "$p" || { echo "a GPU process failed; see results/${NAME}.gpu*.log"; exit 1; }; done
+  for p in "${PIDS[@]}"; do wait "$p" || { echo "a GPU process failed; see results/${NAME}.gpu*.log"; exit 1; }; done
+  PIDS=()
 }
 
 echo "tasks per GPU:"; for i in "${!CHUNKS[@]}"; do echo "  GPU $i: ${CHUNKS[$i]}"; done
