@@ -1,0 +1,4 @@
+{"time": "2026-10-02T20:54:34", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_qwen2.5-0.5b__to__dev_llama3.2-1b__dev_holdout_T4_T8__identity", "seed": 0, "note": "shape (896, 4864) != (2048, 8192); naive copy undefined"}
+{"time": "2026-10-02T20:55:16", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_qwen2.5-0.5b__to__dev_llama3.2-1b__dev_holdout_T4_T8__identity", "seed": 1, "note": "shape (896, 4864) != (2048, 8192); naive copy undefined"}
+{"time": "2026-10-02T20:56:14", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_llama3.2-1b__to__dev_qwen2.5-0.5b__dev_holdout_T4_T8__identity", "seed": 0, "note": "shape (2048, 8192) != (896, 4864); naive copy undefined"}
+{"time": "2026-10-02T20:57:11", "kind": "map", "reason": "method_not_applicable", "map_id": "dev_llama3.2-1b__to__dev_qwen2.5-0.5b__dev_holdout_T4_T8__identity", "seed": 1, "note": "shape (2048, 8192) != (896, 4864); naive copy undefined"}
