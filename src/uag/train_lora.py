@@ -84,6 +84,8 @@ def check_reusable(run_dir: Path, task: TaskConfig, lora: LoraSettings, train: T
     if m.get("dataset_sha256") != dataset_hashes(task, data_dir):
         problems.append(f"dataset {task.dataset_key} differs from the one it was trained on "
                         f"(v{m.get('dataset_version')})")
+    if m.get("lora_train_A", True) != lora.train_A:
+        problems.append(f"lora.train_A {lora.train_A} != {m.get('lora_train_A', True)}")
     if m.get("lora_init_seed_scope", "seed") != lora.init_seed_scope:
         problems.append(f"lora.init_seed_scope {lora.init_seed_scope!r} != {m.get('lora_init_seed_scope', 'seed')!r}")
     for k in ("lora_alpha", "lora_dropout", "use_rslora"):
@@ -98,13 +100,14 @@ def check_reusable(run_dir: Path, task: TaskConfig, lora: LoraSettings, train: T
                             f"(or delete the run deliberately); finished runs are never silently mixed.")
 
 
-def lora_init_seed(task: TaskConfig, seed: int, lora: LoraSettings) -> int | None:
+def lora_init_seed(task: TaskConfig, seed: int, lora: LoraSettings, base: BaseConfig | None = None) -> int | None:
     """RNG seed for the random LoRA A init. ``init_seed_scope: seed`` (legacy) leaves the global
     RNG as seeded by the run seed, so every task on a base shares the same A0 for a given seed;
-    ``task`` derives a distinct init per (task, seed)."""
+    ``task`` derives a distinct init per (task, seed); ``base`` one init per base."""
     if lora.init_seed_scope == "seed":
         return None
-    return int.from_bytes(hashlib.sha256(f"lora-init:{task.task_id}:{seed}".encode()).digest()[:4], "big")
+    key = f"lora-init:base:{base.name}" if lora.init_seed_scope == "base" else f"lora-init:{task.task_id}:{seed}"
+    return int.from_bytes(hashlib.sha256(key.encode()).digest()[:4], "big")
 
 
 @torch.no_grad()
@@ -204,10 +207,16 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         model.config.use_cache = False
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
         model.enable_input_require_grads()  # frozen embeddings: let gradients reach LoRA layers
-    init_seed = lora_init_seed(task, seed, lora)
+    init_seed = lora_init_seed(task, seed, lora, base)
     if init_seed is not None:
         torch.manual_seed(init_seed)
     model, inventory = build_peft_model(model, lora)
+    if init_seed is not None:
+        torch.manual_seed(seed)  # the run seed governs everything after the A init (e.g. dropout)
+    if not lora.train_A:
+        for n, p in model.named_parameters():
+            if ".lora_A." in n:
+                p.requires_grad_(False)
     model.to(device)
     init_state = {k: v.detach().clone() for k, v in get_peft_model_state_dict(model).items()}
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -226,6 +235,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     tokens_per_step = avg_len * train.batch_size * train.grad_accum
     est_steps = max(1, math.ceil(cap / tokens_per_step))
     warmup = max(1, int(train.warmup_ratio * est_steps))
+    min_steps = max(train.min_steps,
+                    math.ceil(train.min_epochs * len(enc_train) / (train.batch_size * train.grad_accum)))
 
     opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=train.learning_rate,
                             weight_decay=train.weight_decay)
@@ -324,7 +335,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
             if out_of_time:
                 stop, stop_reason = True, "wall_clock"
             elif (train.early_stopping_patience and bad_evals >= train.early_stopping_patience
-                  and step >= train.min_steps):
+                  and step >= min_steps):
                 stop, stop_reason = True, "early_stopping"
         log_f.write(json.dumps(rec) + "\n")
         log_f.flush()
@@ -360,6 +371,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "use_rslora": lora.use_rslora,
         "lora_scaling": lora.scaling,
         "lora_init_seed_scope": lora.init_seed_scope,
+        "lora_train_A": lora.train_A,
         "lora_init_seed": init_seed if init_seed is not None else seed,
         "factor_movement": {"overall": movement["overall"], "by_class": movement["by_class"],
                             "detail": "factor_movement.json"},
@@ -381,7 +393,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "stopping": {"reason": stop_reason, "step": step, "tokens_seen": tokens_seen,
                      "best_step": best["step"], "best_tokens_seen": best.get("tokens_seen"),
                      "patience_evals": train.early_stopping_patience, "min_delta": train.early_stopping_min_delta,
-                     "min_steps": train.min_steps, "max_tokens_seen": cap,
+                     "min_steps": min_steps, "min_epochs": train.min_epochs, "max_tokens_seen": cap,
                      "eval_every_steps": train.eval_every_steps},
         "warmup_steps": warmup,
         "selection": {"metric": train.selection_metric, "split": "valid",

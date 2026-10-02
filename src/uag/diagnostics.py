@@ -120,7 +120,10 @@ def render_geometry_checks(exp: ExperimentConfig, only_bases: list[str] | None =
                  f"||B||/||A0|| = {_f(r['b_rel_to_a0_mean'])}, "
                  f"row-space overlap with A0 = {_f(r['a_rowspace_overlap_mean'])} "
                  f"(chance {_f(r['chance_overlap_mean'], 4)})")
-    if rows:
+    if rows and not exp.lora.train_A:
+        L.append("  -> A is frozen by design (lora.train_A: false; one fixed A per base): only B trains, so "
+                 "compare tasks and seeds on B / the output side and on ΔW with the shared input basis.")
+    elif rows:
         worst = max(r["a_rowspace_overlap_mean"] for r in rows)
         if worst > 0.9:
             L.append("  -> A's input directions are still >90% those of its random init in at least one run: "

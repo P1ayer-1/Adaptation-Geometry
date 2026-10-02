@@ -274,3 +274,49 @@ def test_no_silent_cpu_fallback_when_gpus_present(monkeypatch):
     monkeypatch.setenv("UAG_ALLOW_CPU", "1")
     assert pick_device("auto").type == "cpu"
     assert pick_device("cpu").type == "cpu"
+
+
+def test_frozen_shared_A_per_base(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    """train_A: false + init_seed_scope: base -> every task and seed of a base shares one fixed A."""
+    import dataclasses
+
+    from safetensors.torch import load_file
+
+    from uag.config import ConfigError
+    from uag.train_lora import train_lora
+
+    with pytest.raises(ConfigError):
+        LoraSettings(train_A=False, init_seed_scope="task").validate()
+    lora = LoraSettings(rank=4, alpha=8, init_seed_scope="base", train_A=False)
+    lora.validate()
+    train = dataclasses.replace(tiny_train_settings, max_tokens_seen=1500)
+    tasks = [t for t in all_tasks if t.task_id in ("T2_nli", "T3_paraphrase")]
+    runs = [train_lora(tiny_bases["tiny_llama_a1"], t, lora, train, s, tmp_path) for t in tasks for s in (0, 1)]
+    weights = [load_file(str(r / "adapter" / "adapter_model.safetensors")) for r in runs]
+    a_keys = [k for k in weights[0] if ".lora_A." in k]
+    for w in weights[1:]:
+        assert all(torch.equal(w[k], weights[0][k]) for k in a_keys)  # same A everywhere
+    b_keys = [k for k in weights[0] if ".lora_B." in k]
+    assert any(not torch.equal(weights[0][k], weights[2][k]) for k in b_keys)  # B is task-specific
+    m = yaml.safe_load((runs[0] / "manifest.yaml").read_text())
+    assert m["lora_train_A"] is False and m["factor_movement"]["overall"]["a_rel_move_max"] == 0.0
+    other = train_lora(tiny_bases["tiny_qwen2_b"], tasks[0], lora, train, 0, tmp_path)
+    assert yaml.safe_load((other / "manifest.yaml").read_text())["lora_init_seed"] != m["lora_init_seed"]
+
+
+def test_min_epochs_delays_early_stopping(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    import dataclasses
+
+    from uag.train_lora import train_lora
+
+    task = next(t for t in all_tasks if t.task_id == "T2_nli")
+    task = dataclasses.replace(task, n_train=120, n_valid=20, n_test=20)
+    from uag.data import generate_dataset
+
+    generate_dataset(task, tmp_path / "data")
+    train = dataclasses.replace(tiny_train_settings, max_tokens_seen=10**6, early_stopping_patience=1,
+                                early_stopping_min_delta=10.0, eval_every_steps=5, min_epochs=2.0)
+    run = train_lora(tiny_bases["tiny_llama_a1"], task, LoraSettings(rank=4, alpha=8), train, 0, tmp_path / "r",
+                     data_dir=tmp_path / "data")
+    st = yaml.safe_load((run / "manifest.yaml").read_text())["stopping"]
+    assert st["min_steps"] == 60 and st["reason"] == "early_stopping" and st["step"] >= 60  # 2 x 120 / 4

@@ -16,6 +16,12 @@ Methods (all low capacity, so they cannot memorise task identities):
 ``cross_lora``       data-free Cross-LoRA-*style* projection through base-weight top-k
                      singular subspaces (an approximation of the published method).
 ``random``           norm-matched random low-rank update (negative control).
+``random_coords``    norm-matched random update inside the target's own coordinate system
+                     (top-k left/right directions of its training updates): tests whether the
+                     learned P, Q add anything beyond knowing where target updates live.
+``target_mean``      mean of the target's training-task updates, ignoring the source (and the
+                     held-out task) entirely: tests whether the map transfers anything
+                     task-specific beyond a generic "fine-tuned on something" direction.
 """
 
 from __future__ import annotations
@@ -35,7 +41,7 @@ from .config import MapSettings
 from .extract_delta import DeltaSet, LowRank, from_factors
 
 LEARNED_METHODS = ("procrustes_full", "svd_procrustes", "svd_linear")
-BASELINE_METHODS = ("identity", "cross_lora", "random")
+BASELINE_METHODS = ("identity", "cross_lora", "random", "random_coords", "target_mean")
 ALL_METHODS = LEARNED_METHODS + BASELINE_METHODS
 
 
@@ -235,6 +241,16 @@ def fit_module(method: str, src: list[LowRank], tgt: list[LowRank], s_info: Modu
         return mm
     if method == "random":
         return mm
+    if method == "random_coords":
+        mm.params = {"Ut": _coordinate_basis(tgt, settings.k, "U"), "Vt": _coordinate_basis(tgt, settings.k, "V")}
+        return mm
+    if method == "target_mean":
+        mean = tgt[0]
+        for x in tgt[1:]:
+            mean = mean + x
+        mean = mean.scaled(1.0 / len(tgt))
+        mm.params = {"U": mean.U, "S": mean.S, "V": mean.V}
+        return mm
     if method == "cross_lora":
         if base_svd is None:
             mm.applicable, mm.note = False, "base-weight SVDs not provided"
@@ -279,6 +295,14 @@ def predict_module(mm: ModuleMap, x: LowRank, t_shape: tuple[int, int], rng: np.
         S = np.abs(rng.normal(size=r))
         target_norm = nt * x.fro() / ns
         return LowRank(U, S * target_norm / np.linalg.norm(S), V)
+    if mm.method == "random_coords":
+        p = mm.params
+        core = rng.normal(size=(p["Ut"].shape[1], p["Vt"].shape[1]))
+        pred = from_factors(p["Ut"] @ core, p["Vt"].T)
+        return pred.scaled(nt * x.fro() / ns / max(pred.fro(), 1e-30))
+    if mm.method == "target_mean":
+        p = mm.params
+        return LowRank(p["U"], p["S"], p["V"])
     if mm.method == "cross_lora":
         p = mm.params
         core = x.project(p["Us"], p["Vs"])  # source base-weight singular coordinates

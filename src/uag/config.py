@@ -123,12 +123,19 @@ class LoraSettings:
     target_modules: list[str] = field(default_factory=lambda: list(CANONICAL_MODULES))
     use_rslora: bool = False
     # Which RNG draws the random LoRA A init: "seed" = the run seed alone (every task on a base
-    # shares A0 for a given seed), "task" = derived from (task, seed) so tasks get independent inits.
+    # shares A0 for a given seed), "task" = derived from (task, seed) so tasks get independent
+    # inits, "base" = derived from the base name only (one A per base, for every task and seed).
     init_seed_scope: str = "seed"
+    # False = LoRA-FA style: A stays frozen at its init and only B trains. With
+    # init_seed_scope: base, every adapter of a base then shares one fixed input basis A_m, and
+    # a task is fully described by its B (the v2 dry run showed trained A moves only 4-22% anyway).
+    train_A: bool = True
 
     def validate(self) -> None:
-        if self.init_seed_scope not in {"seed", "task"}:
-            raise ConfigError("LoRA init_seed_scope must be seed|task")
+        if self.init_seed_scope not in {"seed", "task", "base"}:
+            raise ConfigError("LoRA init_seed_scope must be seed|task|base")
+        if not self.train_A and self.init_seed_scope != "base":
+            raise ConfigError("train_A: false needs init_seed_scope: base (one fixed A per base)")
         bad = [m for m in self.target_modules if m not in CANONICAL_MODULES]
         if bad:
             raise ConfigError(
@@ -167,6 +174,9 @@ class TrainSettings:
     early_stopping_min_delta: float = 0.0
     min_steps: int = 0
     max_wall_minutes: float | None = None  # hard time limit (GPU benchmark only)
+    # Early stopping is not allowed before this many passes over the training split (on top of
+    # min_steps): tasks such as T1/T2 sit at chance for a while before they take off.
+    min_epochs: float = 0.0
     # Per-task token caps (set from pilot learning curves, `uag learning-curves`). A task's cap
     # is the same for every base, so budgets stay identical across bases; tasks not listed use
     # max_tokens_seen.
