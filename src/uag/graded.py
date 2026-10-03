@@ -76,6 +76,7 @@ def graded_transfer(exp: ExperimentConfig, n_examples: int = 100, only_bases: li
                 nll_pred = gold_nll(model, tok, task, examples)
             gain = nll_base - nll_direct
             rows.append({"target": base.name, "source": meta["source_base"], "task": task.task_id, "seed": seed,
+                         "split": meta.get("split_id"),
                          "method": meta["method"], "nll_base": nll_base, "nll_direct": nll_direct,
                          "nll_pred": nll_pred,
                          "recovered_nll": (nll_base - nll_pred) / gain if gain > 0 else None})
@@ -92,13 +93,13 @@ def graded_transfer(exp: ExperimentConfig, n_examples: int = 100, only_bases: li
 def render_graded(res: dict[str, Any]) -> list[str]:
     acc: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
     for r in res["rows"]:
-        acc[(r["source"], r["target"], r["task"], r["method"])].append(r)
+        acc[(r.get("split") or "", r["source"], r["target"], r["task"], r["method"])].append(r)
     L = [f"Graded transfer on {res['n_examples']} {res['split']} examples: mean gold-answer NLL per token "
          f"(base -> direct) and RecoveredNLL = (base - predicted) / (base - direct), seed-averaged",
-         f"  {'source -> target':<38}{'task':<15}{'method':<16}{'base':>7}{'direct':>8}{'pred':>8}{'RecNLL':>8}"]
-    for (s, t, task, m), rs in sorted(acc.items()):
+         f"  {'split':<16}{'source -> target':<38}{'task':<15}{'method':<16}{'base':>7}{'direct':>8}{'pred':>8}{'RecNLL':>8}"]
+    for (sp, s, t, task, m), rs in sorted(acc.items()):
         rec = [r["recovered_nll"] for r in rs if r["recovered_nll"] is not None]
-        L.append(f"  {s + ' -> ' + t:<38}{task:<15}{m:<16}{np.mean([r['nll_base'] for r in rs]):>7.3f}"
+        L.append(f"  {sp:<16}{s + ' -> ' + t:<38}{task:<15}{m:<16}{np.mean([r['nll_base'] for r in rs]):>7.3f}"
                  f"{np.mean([r['nll_direct'] for r in rs]):>8.3f}{np.mean([r['nll_pred'] for r in rs]):>8.3f}"
                  f"{(np.mean(rec) if rec else float('nan')):>8.3f}")
     return L

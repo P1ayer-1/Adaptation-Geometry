@@ -129,3 +129,44 @@ def test_fewshot_shots_are_deterministic_from_train(all_tasks, tmp_path):
     assert build_fewshot_prompt("I", [], "q") == build_prompt("I", "q")
     p = build_fewshot_prompt("I", a, "q")
     assert p.count("Input:") == 6 and p.endswith("Input: q\nOutput:")
+
+
+def test_graded_criterion_requires_beating_target_mean(tmp_path, all_tasks):
+    """Criterion 4: the learned map must beat the strongest baseline on RecoveredNLL."""
+    exp = make_exp(tmp_path, all_tasks, graded_beats_baselines=True,
+                   non_learned_baselines=["identity", "cross_lora", "random", "target_mean"])
+    declare_gate(exp)
+    populate(exp, learned_score=0.75, baseline_score=0.35)
+    paths = Paths(exp)
+
+    def graded(learned, mean):
+        rows = []
+        for s in ["A", "B", "C"]:
+            for t in ["A", "B", "C"]:
+                if s == t:
+                    continue
+                for task in ["T8_arithmetic", "T1_sentiment"]:
+                    for seed in exp.seeds:
+                        for m, v in [("svd_procrustes", learned), ("target_mean", mean), ("random", 0.0)]:
+                            rows.append({"source": s, "target": t, "task": task, "seed": seed, "split": "x",
+                                         "method": m, "recovered_nll": v + 0.01 * seed})
+        (paths.exp_results / "graded_transfer.json").write_text(json.dumps({"rows": rows}))
+
+    graded(0.4, 0.2)
+    g = analyze(exp)["gate"]
+    assert g["criteria"]["graded_beats_baselines"]["passed"]
+    assert g["criteria"]["graded_beats_baselines"]["strongest_baseline"] == "target_mean" and g["passed"]
+    graded(0.1, 0.2)
+    g = analyze(exp)["gate"]
+    assert not g["criteria"]["graded_beats_baselines"]["passed"] and not g["passed"]
+    (paths.exp_results / "graded_transfer.json").unlink()
+    assert not analyze(exp)["gate"]["criteria"]["graded_beats_baselines"]["passed"]
+
+
+def test_late_gate_field_keeps_old_declarations(tmp_path, all_tasks):
+    exp = make_exp(tmp_path, all_tasks)
+    d1 = declare_gate(exp)
+    assert "graded_beats_baselines" not in d1["gate"]  # omitted at its default: old hashes unchanged
+    exp2 = make_exp(tmp_path, all_tasks, graded_beats_baselines=True)
+    with pytest.raises(RuntimeError, match="changed after declaration"):
+        declare_gate(exp2)

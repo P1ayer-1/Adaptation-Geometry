@@ -36,5 +36,6 @@ parallel_step eval -e "$CFG" --stage base
 parallel_step eval -e "$CFG" --stage direct
 CUDA_VISIBLE_DEVICES=0 uag fit-maps -e "$CFG"   # fits on all training tasks; one process
 parallel_step eval -e "$CFG" --stage transfer
+uag graded-transfer -e "$CFG"
 uag analyze -e "$CFG"
 uag dry-run-report -e "$CFG" | tee "results/${NAME}.dry_run_report.txt"

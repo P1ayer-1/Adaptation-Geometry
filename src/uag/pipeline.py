@@ -237,10 +237,16 @@ def eval_direct(exp: ExperimentConfig, only_bases: list[str] | None = None,
 # ---------------------------------------------------------------------------
 
 
+# Gate fields added after experiments were declared: omitted from the declared payload while at
+# their default, so earlier declarations keep their hash (setting them changes the hash).
+_LATE_GATE_FIELDS = {"graded_beats_baselines": False}
+
+
 def declare_gate(exp: ExperimentConfig) -> dict[str, Any]:
     """Freeze the gate before any held-out test runs; later edits are detected (spec §5.6)."""
     paths = Paths(exp)
-    payload = {"gate": to_dict(exp.gate), "splits": [dataclasses.asdict(s) for s in exp.splits],
+    gate = {k: v for k, v in to_dict(exp.gate).items() if not (k in _LATE_GATE_FIELDS and v == _LATE_GATE_FIELDS[k])}
+    payload = {"gate": gate, "splits": [dataclasses.asdict(s) for s in exp.splits],
                "eval_split": exp.eval_split, "fewshot": to_dict(exp.fewshot)}
     digest = sha256_bytes(json.dumps(payload, sort_keys=True).encode())
     if paths.gate_declaration.exists():

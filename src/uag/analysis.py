@@ -140,7 +140,36 @@ def per_example_scores(paths: Paths, eval_id: str) -> list[float]:
     return [json.loads(l)["score"] for l in f.read_text().splitlines()] if f.exists() else []
 
 
-def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]]) -> dict[str, Any]:
+def graded_criterion(exp: ExperimentConfig, graded_rows: list[dict[str, Any]] | None) -> dict[str, Any]:
+    """Primary method vs the strongest non-learned baseline on RecoveredNLL, paired over identical
+    source×target×task cells (seeds and splits averaged)."""
+    g = exp.gate
+    if not graded_rows:
+        return {"value": None, "passed": False, "note": "graded transfer not computed (run `uag graded-transfer`)"}
+
+    def cell_means(m: str) -> dict[tuple, float]:
+        acc = defaultdict(list)
+        for r in graded_rows:
+            if r["method"] == m and r.get("recovered_nll") is not None:
+                acc[(r["source"], r["target"], r["task"])].append(r["recovered_nll"])
+        return {k: float(np.mean(v)) for k, v in acc.items()}
+
+    learned = cell_means(g.primary_method)
+    base = {b: cell_means(b) for b in g.non_learned_baselines}
+    base = {b: v for b, v in base.items() if set(v) & set(learned)}
+    if not learned or not base:
+        return {"value": None, "passed": False, "note": "no comparable graded cells"}
+    means = {b: float(np.mean([v[k] for k in set(v) & set(learned)])) for b, v in base.items()}
+    strongest = max(means, key=means.get)
+    common = sorted(set(base[strongest]) & set(learned))
+    diff = paired_bootstrap_diff([learned[k] for k in common], [base[strongest][k] for k in common],
+                                 n_boot=g.bootstrap_samples, level=g.ci_level, seed=g.seed)
+    return {"value": diff, "passed": diff["low"] > 0, "strongest_baseline": strongest,
+            "mean_recovered_nll": {g.primary_method: float(np.mean([learned[k] for k in common])), **means}}
+
+
+def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]],
+                  graded_rows: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     g = exp.gate
     method = g.primary_method
     elig = [c for c in cells if c["eligible"]]
@@ -204,6 +233,8 @@ def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]]) -> dict[st
     else:
         out["strongest_baseline"] = None
         out["criteria"]["beats_strongest_baseline"] = {"value": None, "passed": False}
+    if g.graded_beats_baselines:
+        out["criteria"]["graded_beats_baselines"] = graded_criterion(exp, graded_rows)
     out["passed"] = all(c["passed"] for c in out["criteria"].values())
     return out
 
@@ -237,7 +268,9 @@ def analyze(exp: ExperimentConfig) -> dict[str, Any]:
     _write_csv(paths.tables / f"{exp.name}_direct.csv", direct_rows)
     _write_csv(paths.tables / f"{exp.name}_cells.csv", [{k: v for k, v in c.items()} for c in cells])
 
-    gate = evaluate_gate(exp, cells) if cells else None
+    graded_file = paths.exp_results / "graded_transfer.json"
+    graded_rows = json.loads(graded_file.read_text())["rows"] if graded_file.exists() else None
+    gate = evaluate_gate(exp, cells, graded_rows) if cells else None
     recon = _reconstruction_rows(paths)
     md = render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries)
     paths.decision.parent.mkdir(parents=True, exist_ok=True)
@@ -273,7 +306,9 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
               f"2. median RecoveredLift of `{g['primary_method']}` ≥ **{g['min_median_recovered_lift']}**;",
               f"3. `{g['primary_method']}` beats the strongest non-learned baseline "
               f"({', '.join(g['non_learned_baselines'])}) with a paired-bootstrap {int(g['ci_level'] * 100)}% CI "
-              f"excluding zero (resampling identical source×target×task cells).", "",
+              f"excluding zero (resampling identical source×target×task cells)"
+              + (";\n4. on gold-answer likelihood (RecoveredNLL, `uag graded-transfer`) it also beats the strongest "
+                 "non-learned baseline with a CI excluding zero." if g.get("graded_beats_baselines") else "."), "",
               f"Lift is measured against the **{g.get('baseline', 'zeroshot')}** base"
               + (f" ({decl['fewshot']['k']} worked training examples in the prompt, shot seed "
                  f"{decl['fewshot']['seed']})" if g.get("baseline") == "fewshot" else "")
@@ -292,6 +327,12 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
         val = (f"Δ={_fmt(v['diff'])} [{_fmt(v['low'])}, {_fmt(v['high'])}] vs `{gate['strongest_baseline']}` (n={v['n']})"
                if v else "–")
         L.append(f"| Beats strongest baseline | {val} | CI > 0 | {c['beats_strongest_baseline']['passed']} |")
+        if "graded_beats_baselines" in c:
+            gc = c["graded_beats_baselines"]
+            gv = gc["value"]
+            gval = (f"Δ RecoveredNLL={_fmt(gv['diff'])} [{_fmt(gv['low'])}, {_fmt(gv['high'])}] vs "
+                    f"`{gc['strongest_baseline']}` (n={gv['n']})" if gv else gc.get("note", "–"))
+            L.append(f"| Graded (gold-answer NLL) beats strongest baseline | {gval} | CI > 0 | {gc['passed']} |")
         L += ["", "### Ordered pairs (heterogeneous only)", "", "| Source → Target | Eligible tasks | Positive | Passes |",
               "|---|---|---|---|"]
         for r in gate["pairs"]:

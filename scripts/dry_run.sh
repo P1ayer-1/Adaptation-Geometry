@@ -9,5 +9,6 @@ uag eval -e "$CFG" --stage base
 uag eval -e "$CFG" --stage direct
 uag fit-maps -e "$CFG"
 uag eval -e "$CFG" --stage transfer
+uag graded-transfer -e "$CFG"
 uag analyze -e "$CFG"
 uag dry-run-report -e "$CFG" | tee "results/${CFG##*/}.dry_run_report.txt"

@@ -4,4 +4,5 @@
 set -euo pipefail
 CFG="${1:-configs/experiments/stage0.yaml}"
 uag eval -e "$CFG" --stage transfer
+uag graded-transfer -e "$CFG"
 uag analyze -e "$CFG"

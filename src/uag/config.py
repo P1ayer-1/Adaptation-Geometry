@@ -235,6 +235,11 @@ class GateSettings:
     min_direct_lift: float = 0.05  # cells with smaller direct-LoRA lift are ineligible
     learned_methods: list[str] = field(default_factory=lambda: ["svd_procrustes", "svd_linear"])
     non_learned_baselines: list[str] = field(default_factory=lambda: ["identity", "cross_lora", "random"])
+    # Criterion 4 (optional): on the graded measure (`uag graded-transfer`, gold-answer NLL), the
+    # primary method's RecoveredNLL beats the strongest non-learned baseline with a paired
+    # bootstrap CI excluding zero. Catches transfer that all-or-nothing task metrics miss, and
+    # (with target_mean as a baseline) whether anything source-specific transfers at all.
+    graded_beats_baselines: bool = False
     bootstrap_samples: int = 2000
     ci_level: float = 0.95
     seed: int = 0
