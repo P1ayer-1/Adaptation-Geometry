@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # One rental session: (1) the smart-eyes test on all GPUs, then (2) the shared-adapter test
 # (code width 64 and 128 in parallel on GPUs 0 and 1). Resumable; rerun after any crash.
-#   bash scripts/rental_eyes_then_shared.sh [n_gpus]
+#   bash scripts/rental_eyes_then_shared.sh [n_gpus] [eyes_jobs_per_gpu]
 # Results: results/eyes_summary.txt, results/shared_adapter_d64/shared_adapter.txt, ..._d128/...
 set -euo pipefail
 N="${1:-$(nvidia-smi -L | wc -l)}"
-bash scripts/eyes_test.sh "$N"
+bash scripts/eyes_test.sh "$N" "${2:-1}"
 run_shared() {  # run_shared <gpu> <config>
   for attempt in 1 2 3; do
     CUDA_VISIBLE_DEVICES=$1 uag shared-adapter -e "$2" && return 0
