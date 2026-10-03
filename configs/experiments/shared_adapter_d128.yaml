@@ -35,3 +35,4 @@ shared:
   eval_every: 200
   graded_examples: 100
   seed: 0
+  grad_clip: 1.0                 # restarted with clipping after diverging at step ~750 without it

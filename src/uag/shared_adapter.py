@@ -54,6 +54,7 @@ class SharedSettings:
     eval_every: int = 100
     graded_examples: int = 100
     seed: int = 0
+    grad_clip: float | None = None  # max gradient norm (phase 1 and 2); width 128 diverged without it
 
 
 def load_shared_settings(path: str | Path) -> SharedSettings:
@@ -223,6 +224,8 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
                     loss = _loss(system, b, batch) / (tr.grad_accum * len(system.models))
                 loss.backward()
                 total += float(loss.detach())
+        if s.grad_clip:
+            torch.nn.utils.clip_grad_norm_(conn + core_params, s.grad_clip)
         opt.step()
         sched.step()
         rec = {"step": step, "task": t, "train_loss": total}
@@ -315,6 +318,8 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
             batch = [enc[rng.randrange(len(enc))] for _ in range(tr.batch_size)]
             with system.active(base, cores):
                 (_loss(system, base, batch) / tr.grad_accum).backward()
+        if s.grad_clip:
+            torch.nn.utils.clip_grad_norm_(params, s.grad_clip)
         opt.step()
         if step % tr.eval_every_steps == 0:
             v = score()
