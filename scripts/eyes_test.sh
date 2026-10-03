@@ -8,7 +8,8 @@ set -euo pipefail
 G="${1:-$(nvidia-smi -L | wc -l)}"
 K="${2:-1}"
 N=$((G * K))
-EXPS=(eyes_random16 eyes_whitened16 eyes_pca16 eyes_random64 eyes_trainable16)
+# EYES_EXPS="eyes_random16 eyes_whitened16" restricts the variants (default: all five).
+read -r -a EXPS <<< "${EYES_EXPS:-eyes_random16 eyes_whitened16 eyes_pca16 eyes_random64 eyes_trainable16}"
 BASES=(dev_qwen2.5-0.5b dev_llama3.2-1b)
 uag make-data -e configs/experiments/eyes/eyes_random16.yaml
 python3 -c "from uag.eyes import calibration_texts; print(len(calibration_texts('wikitext')), 'calibration texts')"
