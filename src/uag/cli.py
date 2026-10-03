@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return _main(argv)
     except Exception as e:  # noqa: BLE001
-        if "CUDA error" in str(e) or type(e).__name__ == "AcceleratorError":
+        if "CUDA error" in str(e) or "CUDA driver error" in str(e) or type(e).__name__ == "AcceleratorError":
             import traceback
 
             traceback.print_exc()
