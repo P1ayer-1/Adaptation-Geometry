@@ -339,3 +339,20 @@ def test_cli_exits_fast_on_cuda_failure(monkeypatch):
     monkeypatch.setattr(cli, "_main", lambda argv=None: (_ for _ in ()).throw(ValueError("other")))
     with pytest.raises(ValueError):
         cli.main([])
+
+
+def test_gold_nll_and_recovered_nll(trained_run):
+    """Applying the direct adapter's own ΔW lowers the gold NLL exactly as the adapter does."""
+    from uag.extract_delta import applied_delta
+    from uag.graded import gold_nll
+
+    base, task, run_dir = trained_run
+    pm, tok = load_trained(base, run_dir, device="cpu", dtype="float32")
+    rows = load_split(task, "test")[:8]
+    nll_adapter = gold_nll(pm, tok, task, rows)
+    with pm.disable_adapter():
+        nll_base = gold_nll(pm, tok, task, rows)
+        with applied_delta(pm, extract_deltas(run_dir / "adapter", "llama")):
+            nll_delta = gold_nll(pm, tok, task, rows)
+    assert nll_delta == pytest.approx(nll_adapter, abs=1e-3)
+    assert nll_adapter < nll_base

@@ -66,6 +66,9 @@ def _main(argv: list[str] | None = None) -> int:
     sp = exp_cmd("learning-curves", "tokens-to-plateau per run and a proposed per-task token cap")
     sp.add_argument("--base", nargs="*")
     sp.add_argument("--task", nargs="*")
+    sp = exp_cmd("graded-transfer", "gold-answer likelihood recovered by predicted updates (diagnostic)")
+    sp.add_argument("--base", nargs="*", help="only these target bases")
+    sp.add_argument("--n-examples", type=int, default=100)
     sp = exp_cmd("seed-compare", "is ΔW task signal or random-init noise? factor movement + seed comparison")
     sp.add_argument("--base", nargs="*")
     sp.add_argument("--task", nargs="*")
@@ -151,6 +154,12 @@ def _main(argv: list[str] | None = None) -> int:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(res, indent=1))
         print(f"\nwrote {out}")
+    elif args.cmd == "graded-transfer":
+        from .graded import graded_transfer, render_graded
+
+        res = graded_transfer(exp, args.n_examples, args.base)
+        print("\n".join(render_graded(res)))
+        print(f"\nwrote {res['saved_to']}")
     elif args.cmd == "seed-compare":
         from .diagnostics import render_geometry_checks, save_seed_comparison
 

@@ -227,3 +227,4 @@ artifacts/*
 results/raw/*
 !results/raw/.gitkeep
 results/*.gpu*.log
+results/*.log
