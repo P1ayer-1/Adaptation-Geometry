@@ -130,8 +130,19 @@ class LoraSettings:
     # init_seed_scope: base, every adapter of a base then shares one fixed input basis A_m, and
     # a task is fully described by its B (the v2 dry run showed trained A moves only 4-22% anyway).
     train_A: bool = True
+    # How the fixed A is chosen (uag.eyes): random (PEFT default), whitened (random after
+    # equalising input-direction variances) or pca (top input directions), from generic
+    # calibration text (wikitext, or builtin for offline/tests). Data-informed eyes need one A
+    # per base (init_seed_scope: base).
+    a_init: str = "random"
+    a_calibration: str = "wikitext"
+    a_calibration_tokens: int = 32768
 
     def validate(self) -> None:
+        if self.a_init not in {"random", "whitened", "pca"}:
+            raise ConfigError("LoRA a_init must be random|whitened|pca")
+        if self.a_init != "random" and self.init_seed_scope != "base":
+            raise ConfigError("a_init whitened/pca needs init_seed_scope: base (one A per base)")
         if self.init_seed_scope not in {"seed", "task", "base"}:
             raise ConfigError("LoRA init_seed_scope must be seed|task|base")
         if not self.train_A and self.init_seed_scope != "base":

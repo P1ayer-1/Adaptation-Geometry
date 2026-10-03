@@ -1,0 +1,19 @@
+# Smart-eyes test: like dev_gpu_patient.yaml, but stopping needs THREE full passes over the data
+# (frozen eyes may take off later than trainable A; "slower" must not look like "cannot").
+learning_rate: 2.0e-4
+batch_size: 8
+grad_accum: 2
+max_tokens_seen: 1500000
+max_seq_len: 512
+warmup_ratio: 0.03
+eval_every_steps: 25
+selection_metric: valid_primary
+valid_max_examples: 64
+early_stopping_patience: 8
+early_stopping_min_delta: 0.005
+min_steps: 150
+dtype: bfloat16
+deterministic: true
+device: auto
+gradient_checkpointing: false
+min_epochs: 3.0

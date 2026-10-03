@@ -84,6 +84,8 @@ def check_reusable(run_dir: Path, task: TaskConfig, lora: LoraSettings, train: T
     if m.get("dataset_sha256") != dataset_hashes(task, data_dir):
         problems.append(f"dataset {task.dataset_key} differs from the one it was trained on "
                         f"(v{m.get('dataset_version')})")
+    if m.get("lora_a_init", "random") != lora.a_init:
+        problems.append(f"lora.a_init {lora.a_init} != {m.get('lora_a_init', 'random')}")
     if m.get("lora_train_A", True) != lora.train_A:
         problems.append(f"lora.train_A {lora.train_A} != {m.get('lora_train_A', True)}")
     if m.get("lora_init_seed_scope", "seed") != lora.init_seed_scope:
@@ -211,6 +213,13 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     if init_seed is not None:
         torch.manual_seed(init_seed)
     model, inventory = build_peft_model(model, lora)
+    eyes_info = None
+    if lora.a_init != "random":
+        from .eyes import apply_eyes
+
+        model.to(device)
+        eyes_info = apply_eyes(model, tok, inventory, base.name, lora.a_init, lora.a_calibration,
+                               lora.a_calibration_tokens, init_seed, Path(runs_dir).parent / "eyes")
     if init_seed is not None:
         torch.manual_seed(seed)  # the run seed governs everything after the A init (e.g. dropout)
     if not lora.train_A:
@@ -372,6 +381,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "lora_scaling": lora.scaling,
         "lora_init_seed_scope": lora.init_seed_scope,
         "lora_train_A": lora.train_A,
+        "lora_a_init": lora.a_init,
+        "lora_eyes": eyes_info,
         "lora_init_seed": init_seed if init_seed is not None else seed,
         "factor_movement": {"overall": movement["overall"], "by_class": movement["by_class"],
                             "detail": "factor_movement.json"},

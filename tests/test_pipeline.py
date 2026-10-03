@@ -356,3 +356,101 @@ def test_gold_nll_and_recovered_nll(trained_run):
             nll_delta = gold_nll(pm, tok, task, rows)
     assert nll_delta == pytest.approx(nll_adapter, abs=1e-3)
     assert nll_adapter < nll_base
+
+
+def test_eye_matrix_kinds():
+    from uag.eyes import eye_matrix
+
+    g = torch.Generator().manual_seed(0)
+    d, r = 12, 3
+    q = torch.linalg.qr(torch.randn(d, d, generator=g))[0]
+    evals = torch.tensor([100.0] * 2 + [0.01] * (d - 2))
+    sigma = q @ torch.diag(evals) @ q.T
+    a0 = torch.randn(r, d, generator=g)
+    energy = lambda a: float(torch.trace(a.double() @ sigma.double() @ a.double().T))  # noqa: E731
+    pca = eye_matrix(sigma, a0, "pca", g)
+    top = q[:, :2]
+    assert torch.allclose((pca[:2] / pca[:2].norm(dim=1, keepdim=True)).abs() @ top.abs(), torch.eye(2), atol=1e-3) or \
+        float(((pca[:2] @ top) ** 2).sum() / (pca[:2] ** 2).sum()) > 0.99
+    wh = eye_matrix(sigma, a0, "whitened", g)
+    assert energy(pca) == pytest.approx(energy(a0), rel=1e-4) and energy(wh) == pytest.approx(energy(a0), rel=1e-4)
+    # whitening: the faint directions carry far more of A's weight than under random A
+    faint = q[:, 2:]
+    share = lambda a: float(((a @ faint) ** 2).sum() / (a ** 2).sum())  # noqa: E731
+    assert share(wh) > 0.9
+
+
+def test_smart_eyes_training(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    import dataclasses
+
+    from safetensors.torch import load_file
+
+    from uag.train_lora import train_lora
+
+    lora = LoraSettings(rank=4, alpha=8, init_seed_scope="base", train_A=False, a_init="whitened",
+                        a_calibration="builtin", a_calibration_tokens=2000)
+    train = dataclasses.replace(tiny_train_settings, max_tokens_seen=1500)
+    tasks = [t for t in all_tasks if t.task_id in ("T2_nli", "T3_paraphrase")]
+    runs = [train_lora(tiny_bases["tiny_llama_a1"], t, lora, train, 0, tmp_path / "runs") for t in tasks]
+    w = [load_file(str(r / "adapter" / "adapter_model.safetensors")) for r in runs]
+    a_keys = [k for k in w[0] if ".lora_A." in k]
+    assert all(torch.equal(w[0][k], w[1][k]) for k in a_keys)  # one set of eyes per base
+    m = yaml.safe_load((runs[0] / "manifest.yaml").read_text())
+    assert m["lora_a_init"] == "whitened" and m["lora_eyes"]["sha256"]
+    assert len(list((tmp_path / "eyes").glob("*.safetensors"))) == 1  # computed once, then cached
+    rnd = train_lora(tiny_bases["tiny_llama_a1"], tasks[0],
+                     LoraSettings(rank=4, alpha=8, init_seed_scope="base", train_A=False), train, 0, tmp_path / "rnd")
+    w_rnd = load_file(str(rnd / "adapter" / "adapter_model.safetensors"))
+    assert not torch.equal(w_rnd[a_keys[0]], w[0][a_keys[0]])
+    pm, tok = load_trained(tiny_bases["tiny_llama_a1"], runs[0], device="cpu")
+    ds = extract_deltas(runs[0] / "adapter", "llama")
+    assert verify_delta_reconstruction(pm, ds, _batch(tok, tasks[0]))["passed"]
+
+
+def test_shared_adapter_end_to_end(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    import dataclasses
+
+    from uag.config import ExperimentConfig, HoldoutSplitSpec
+    from uag.extract_delta import applied_delta
+    from uag.shared_adapter import (SharedSettings, SharedSystem, evaluate_transfer, render, train_connectors,
+                                    train_core)
+    from uag.transfer import HoldoutLeakError
+
+    tasks = [dataclasses.replace(t, n_train=200, n_valid=8, n_test=8) for t in all_tasks
+             if t.task_id in ("T2_nli", "T3_paraphrase", "T9_clinical")]
+    from uag.data import generate_dataset
+
+    for t in tasks:
+        generate_dataset(t, tmp_path / "data")
+    train = dataclasses.replace(tiny_train_settings, batch_size=2, valid_max_examples=4, max_tokens_seen=600,
+                                eval_every_steps=2)
+    exp = ExperimentConfig(name="shared", bases=[tiny_bases["tiny_llama_a1"], tiny_bases["tiny_qwen2_b"]],
+                           tasks=tasks, lora=LoraSettings(), train=train, seeds=[0],
+                           splits=[HoldoutSplitSpec("h", ["T9_clinical"])], require_pinned_revisions=False,
+                           eval_max_examples=4, artifacts_dir=str(tmp_path / "a"), results_dir=str(tmp_path / "r"),
+                           data_dir=str(tmp_path / "data"))
+    s = SharedSettings(d_shared=4, connector_steps=4, eval_every=2, graded_examples=4)
+    system = SharedSystem(exp, s, device="cpu")
+    out = tmp_path / "shared"
+    out.mkdir()
+    with pytest.raises(HoldoutLeakError):
+        train_connectors(system, ["T2_nli", "T9_clinical"], ["T9_clinical"], out)
+    meta = train_connectors(system, ["T2_nli", "T3_paraphrase"], ["T9_clinical"], out)
+    assert meta["best_step"] in (2, 4) and (out / "connectors.safetensors").exists()
+    assert any(float(q.abs().sum()) > 0 for q in system.Q.values())  # connectors trained
+    for b in system.models:
+        train_core(system, "T9_clinical", b, out / "heldout" / f"T9_clinical__on_{b}.safetensors")
+    # hooks == adding the exact ΔW = scale·Q C P to the weights
+    cores = system.new_cores("random", like=system.new_cores("identity"), gen=torch.Generator().manual_seed(0))
+    b = "tiny_llama_a1"
+    batch = _batch(system.toks[b], tasks[0])
+    with torch.no_grad():
+        with system.active(b, cores) as model:
+            hooked = model(**batch).logits
+        with applied_delta(system.models[b], system.delta_set(b, cores)):
+            merged = system.models[b](**batch).logits
+    assert torch.allclose(hooked, merged, atol=1e-4)
+    res = evaluate_transfer(system, ["T9_clinical"], out)
+    conds = {r["condition"] for r in res["rows"]}
+    assert "transferred from tiny_qwen2_b" in conds and "mean training core" in conds
+    assert "RecNLL" in render(res)

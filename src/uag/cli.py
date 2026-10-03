@@ -69,6 +69,8 @@ def _main(argv: list[str] | None = None) -> int:
     sp = exp_cmd("graded-transfer", "gold-answer likelihood recovered by predicted updates (diagnostic)")
     sp.add_argument("--base", nargs="*", help="only these target bases")
     sp.add_argument("--n-examples", type=int, default=100)
+    sp = exp_cmd("shared-adapter", "shared adapter + per-model connectors: held-out-task transfer test")
+    sp.add_argument("--phase", choices=["all", "connectors", "heldout", "evaluate"], default="all")
     sp = exp_cmd("seed-compare", "is ΔW task signal or random-init noise? factor movement + seed comparison")
     sp.add_argument("--base", nargs="*")
     sp.add_argument("--task", nargs="*")
@@ -160,6 +162,10 @@ def _main(argv: list[str] | None = None) -> int:
         res = graded_transfer(exp, args.n_examples, args.base)
         print("\n".join(render_graded(res)))
         print(f"\nwrote {res['saved_to']}")
+    elif args.cmd == "shared-adapter":
+        from .shared_adapter import load_shared_settings, run
+
+        print(run(exp, load_shared_settings(args.experiment), args.phase))
     elif args.cmd == "seed-compare":
         from .diagnostics import render_geometry_checks, save_seed_comparison
 
