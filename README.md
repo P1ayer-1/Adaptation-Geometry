@@ -115,6 +115,19 @@ same random A₀. Two changes follow:
 `configs/experiments/dev_3080_seed2.yaml` adds a second v1 seed for T4/T8 on top of the
 finished dry run.
 
+## Dev-scale findings so far (Qwen2.5-0.5B + Llama-3.2-1B; not Stage-0 evidence)
+
+| Question | Result | Where |
+|---|---|---|
+| Does the v1 panel measure skill? | No: 5-shot bases already scored 0.90-1.00 | `results/dev_3080*` |
+| Does trained LoRA A move? | Barely: 4-22%; input side of ΔW stays at its random init | `results/dev_a100_v2*` |
+| Does held-out transfer work with trainable A? | No: a held-out task's input side lies in the training span at chance; maps predict ~0 | same |
+| Does a frozen A per base still learn? | Yes: within 0.03 of trainable A on every cell | `results/dev_3080_frozenA*` |
+| Are frozen-A adapters reproducible across seeds? | Yes: same-task cosine 0.92-0.93 (trainable: 0.08) | same |
+| Does held-out transfer work with frozen A? | Not on task metrics. Gold-answer likelihood: maps recover 1-6%, random ~0, the target's own mean adapter up to 21-28% | `uag graded-transfer`, `results/*/graded_transfer.json` |
+| Why so little? | A held-out task writes mostly to its own output directions: 6-16% (k=16) / 12-30% (k=64) inside the training tasks' span, vs 94-96% for a second seed of the same task | |
+| Do T1/T2 learn with patient stopping? | Yes: all four failed dry-run runs reach 0.92-1.00 after ~6k examples at chance | `results/dev_3080_patience` |
+
 ## Renting a GPU
 
 - **Price a card first.** `bash scripts/benchmark_gpu.sh <$/h>` trains one Stage-0-sized run
