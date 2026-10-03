@@ -1,0 +1,65 @@
+{
+ "decision_path": "/home/noahp/Adaptation-Geometry/results/dev_a100_v2_cmp_decision.md",
+ "n_cells": 40,
+ "gate": {
+  "primary_method": "svd_procrustes",
+  "criteria": {
+   "heterogeneous_pairs": {
+    "value": "0",
+    "threshold": 1,
+    "passed": "False"
+   },
+   "median_recovered_lift": {
+    "value": -0.07395477086480448,
+    "threshold": 0.3,
+    "passed": false
+   },
+   "beats_strongest_baseline": {
+    "value": {
+     "diff": 0.0,
+     "low": 0.0,
+     "high": 0.0,
+     "p_le_zero": 1.0,
+     "excludes_zero": false,
+     "n": 4
+    },
+    "passed": false
+   }
+  },
+  "pairs": [
+   {
+    "source": "dev_llama3.2-1b",
+    "target": "dev_qwen2.5-0.5b",
+    "n_eligible_tasks": 2,
+    "n_positive": "0",
+    "passes": "False"
+   },
+   {
+    "source": "dev_qwen2.5-0.5b",
+    "target": "dev_llama3.2-1b",
+    "n_eligible_tasks": 2,
+    "n_positive": "0",
+    "passes": "False"
+   }
+  ],
+  "baselines": [
+   {
+    "baseline": "random",
+    "n": 4,
+    "mean_score": 0.028125
+   },
+   {
+    "baseline": "random_coords",
+    "n": 4,
+    "mean_score": 0.018750000000000003
+   },
+   {
+    "baseline": "target_mean",
+    "n": 4,
+    "mean_score": 0.00125
+   }
+  ],
+  "strongest_baseline": "random",
+  "passed": false
+ }
+}

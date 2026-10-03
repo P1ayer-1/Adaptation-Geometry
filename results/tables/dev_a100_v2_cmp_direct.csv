@@ -1,0 +1,13 @@
+base,family,task,metric,s_base_zeroshot,s_base_fewshot,baseline,s_base,s_direct_mean,s_direct_std,n_seeds,direct_lift,direct_lift_vs_zeroshot,format_share,ceiling,format_dominated,eligible
+dev_qwen2.5-0.5b,qwen2,T3_paraphrase,accuracy,0.65,0.64,fewshot,0.64,0.99,0.0,2,0.35,0.33999999999999997,-0.02941176470588238,False,False,True
+dev_qwen2.5-0.5b,qwen2,T7_python,unit_test_pass,0.03,0.09,fewshot,0.09,0.995,0.0,2,0.905,0.965,0.06217616580310881,False,False,True
+dev_qwen2.5-0.5b,qwen2,T9_clinical,exact_match,0.0,0.05,fewshot,0.05,1.0,0.0,2,0.95,1.0,0.05,False,False,True
+dev_qwen2.5-0.5b,qwen2,T10_format,format_v2,0.0,0.0,fewshot,0.0,0.985,0.014142135623730963,2,0.985,0.985,0.0,False,False,True
+dev_qwen2.5-0.5b,qwen2,T4_json,json_exact,0.0,0.065,fewshot,0.065,1.0,0.0,2,0.935,1.0,0.065,False,False,True
+dev_qwen2.5-0.5b,qwen2,T8_arithmetic,exact_number,0.0,0.06,fewshot,0.06,0.9025000000000001,0.0035355339059327407,2,0.8425,0.9025000000000001,0.06648199445983378,False,False,True
+dev_llama3.2-1b,llama,T3_paraphrase,accuracy,0.445,0.585,fewshot,0.585,0.9624999999999999,0.03181980515339467,2,0.37749999999999995,0.5174999999999998,0.27053140096618356,False,False,True
+dev_llama3.2-1b,llama,T7_python,unit_test_pass,0.04,0.555,fewshot,0.555,1.0,0.0,2,0.44499999999999995,0.96,0.5364583333333334,False,True,True
+dev_llama3.2-1b,llama,T9_clinical,exact_match,0.0,0.135,fewshot,0.135,1.0,0.0,2,0.865,1.0,0.135,False,False,True
+dev_llama3.2-1b,llama,T10_format,format_v2,0.0,0.005,fewshot,0.005,0.985,0.014142135623730963,2,0.98,0.985,0.005076142131979696,False,False,True
+dev_llama3.2-1b,llama,T4_json,json_exact,0.0,0.385,fewshot,0.385,1.0,0.0,2,0.615,1.0,0.385,False,False,True
+dev_llama3.2-1b,llama,T8_arithmetic,exact_number,0.11,0.17,fewshot,0.17,0.92,0.007071067811865481,2,0.75,0.81,0.07407407407407408,False,False,True

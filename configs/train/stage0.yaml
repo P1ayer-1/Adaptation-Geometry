@@ -1,7 +1,9 @@
 # Stage-0 training (spec §5.3): identical budgets across bases. Early stopping on the validation
-# task metric, capped per task. The caps below are placeholders until the pilot runs
-# `uag learning-curves`; replace them with its proposals (2 x the largest tokens-to-95% over
-# bases/seeds) BEFORE declaring the gate. Every base gets the same cap for a task.
+# task metric, capped per task. Stopping needs one full pass over the training data and 8
+# validations without improvement (dev runs: T1/T2 sit at chance for ~6k examples, then take
+# off). The caps below are placeholders until the pilot runs `uag learning-curves`; replace
+# them with its proposals (2 x the largest tokens-to-95% over bases/seeds) BEFORE declaring the
+# gate. Every base gets the same cap for a task.
 learning_rate: 2.0e-4
 weight_decay: 0.0
 batch_size: 8
@@ -13,9 +15,10 @@ warmup_ratio: 0.03
 eval_every_steps: 50
 selection_metric: valid_primary
 valid_max_examples: 200
-early_stopping_patience: 4
+early_stopping_patience: 8
 early_stopping_min_delta: 0.005
 min_steps: 150
+min_epochs: 1.0
 optimizer: adamw
 dtype: bfloat16
 deterministic: true
