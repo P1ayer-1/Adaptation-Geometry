@@ -55,6 +55,10 @@ class SharedSettings:
     graded_examples: int = 100
     seed: int = 0
     grad_clip: float | None = None  # max gradient norm (phase 1 and 2); width 128 diverged without it
+    # "identity": cores start at I and Q at 0 (the connectors then learn a default update that
+    # every core inherits; on the dev runs it pushed held-out tasks far below the untouched base).
+    # "zero": cores start at 0 and Q is random, so an untrained / unseen core means no update.
+    core_init: str = "identity"
 
 
 def load_shared_settings(path: str | Path) -> SharedSettings:
@@ -82,6 +86,9 @@ class SharedSystem:
             model, tok, _ = load_base_model(b, dtype=exp.train.dtype, device=str(self.device))
             for p in model.parameters():
                 p.requires_grad_(False)
+            if exp.train.gradient_checkpointing:  # small GPUs: two bases + activations in one process
+                model.config.use_cache = False
+                model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
             model.eval()
             self.models[b.name], self.toks[b.name] = model, tok
             self.mods[b.name] = discover_modules(model, exp.lora.target_modules)
@@ -93,7 +100,10 @@ class SharedSystem:
             for m in inv.modules:
                 key = f"{b}|{m.name}"
                 self.P[key] = (torch.randn(d, m.in_features, generator=g) / math.sqrt(m.in_features)).to(self.device)
-                self.Q[key] = torch.zeros(m.out_features, d, device=self.device)
+                if settings.core_init == "zero":  # C = 0 gives ΔW = 0; a random Q lets C receive gradient
+                    self.Q[key] = (torch.randn(m.out_features, d, generator=g) / math.sqrt(d)).to(self.device)
+                else:
+                    self.Q[key] = torch.zeros(m.out_features, d, device=self.device)
         self.classes = sorted({m.cls for inv in self.mods.values() for m in inv.modules})
         self.state: dict[str, Any] = {"cores": None, "base": None, "on": False}
         self.handles = []
@@ -125,6 +135,8 @@ class SharedSystem:
         keys = [f"{s}|{c}" for s in range(self.n_slots) for c in self.classes]
         if init == "identity":
             return {k: torch.eye(d, device=self.device) for k in keys}
+        if init == "zero":
+            return {k: torch.zeros(d, d, device=self.device) for k in keys}
         if init == "random":  # norm-matched to ``like`` core by core
             out = {}
             for k in keys:
@@ -171,11 +183,16 @@ def _encode(system: SharedSystem, base: str, task, split: str, limit: int | None
                            system.exp.train.max_seq_len) for ex in rows]
 
 
-def _loss(system: SharedSystem, base: str, batch: list[dict[str, list[int]]]) -> torch.Tensor:
+def _loss(system: SharedSystem, base: str, batch: list[dict[str, list[int]]], train: bool = False) -> torch.Tensor:
     from .train_lora import collate
 
     b = {k: v.to(system.device) for k, v in collate(batch, system.toks[base].pad_token_id).items()}
-    return system.models[base](**b).loss
+    model = system.models[base]
+    model.train(train and system.exp.train.gradient_checkpointing)  # no dropout in these bases
+    try:
+        return model(**b).loss
+    finally:
+        model.eval()
 
 
 @torch.no_grad()
@@ -198,7 +215,7 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
     tasks = [exp.task(t) for t in train_tasks]
     enc = {(b, t.task_id): _encode(system, b, t, "train") for b in system.models for t in tasks}
     val = {(b, t.task_id): _encode(system, b, t, "valid", tr.valid_max_examples) for b in system.models for t in tasks}
-    cores = {t.task_id: system.new_cores("identity") for t in tasks}
+    cores = {t.task_id: system.new_cores(s.core_init) for t in tasks}
     conn = list(system.P.values()) + list(system.Q.values())
     for p in conn:
         p.requires_grad_(True)
@@ -220,9 +237,9 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
         for b in system.models:  # the same task core in every base: forces a shared code
             for _ in range(tr.grad_accum):
                 batch = [enc[(b, t)][rng.randrange(len(enc[(b, t)]))] for _ in range(tr.batch_size)]
-                with system.active(b, cores[t]):
-                    loss = _loss(system, b, batch) / (tr.grad_accum * len(system.models))
-                loss.backward()
+                with system.active(b, cores[t]):  # backward inside: checkpointing recomputes the hooks
+                    loss = _loss(system, b, batch, train=True) / (tr.grad_accum * len(system.models))
+                    loss.backward()
                 total += float(loss.detach())
         if s.grad_clip:
             torch.nn.utils.clip_grad_norm_(conn + core_params, s.grad_clip)
@@ -297,7 +314,7 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
     rng = random.Random(s.seed + 1)
     enc = _encode(system, base, task, "train")
     valid_rows = load_split(task, "valid", exp.data_dir)[: tr.valid_max_examples]
-    cores = system.new_cores("identity")
+    cores = system.new_cores(s.core_init)
     params = list(cores.values())
     for c in params:
         c.requires_grad_(True)
@@ -317,7 +334,7 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
         for _ in range(tr.grad_accum):
             batch = [enc[rng.randrange(len(enc))] for _ in range(tr.batch_size)]
             with system.active(base, cores):
-                (_loss(system, base, batch) / tr.grad_accum).backward()
+                (_loss(system, base, batch, train=True) / tr.grad_accum).backward()
         if s.grad_clip:
             torch.nn.utils.clip_grad_norm_(params, s.grad_clip)
         opt.step()
@@ -372,7 +389,8 @@ def evaluate_transfer(system: SharedSystem, holdout: list[str], out_dir: Path) -
             with torch.no_grad():
                 base_score = evaluate_examples(system.models[tgt], tok, task, test)[1]["primary"]
                 base_nll = gold_nll(system.models[tgt], tok, task, graded)
-            candidates = {"ceiling (core trained on target)": own[tgt], "identity core": system.new_cores("identity"),
+            init_name = "identity core" if s.core_init == "identity" else "zero core (= untouched base)"
+            candidates = {"ceiling (core trained on target)": own[tgt], init_name: system.new_cores(s.core_init),
                           "mean training core": mean_core}
             for src in system.models:
                 if src != tgt:

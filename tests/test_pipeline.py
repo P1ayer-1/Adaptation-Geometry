@@ -454,3 +454,42 @@ def test_shared_adapter_end_to_end(tmp_path, tiny_bases, all_tasks, tiny_train_s
     conds = {r["condition"] for r in res["rows"]}
     assert "transferred from tiny_qwen2_b" in conds and "mean training core" in conds
     assert "RecNLL" in render(res)
+
+
+def test_shared_adapter_zero_default_cores(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    """core_init: zero -> an untrained core is exactly the untouched base; training still works
+    (also with gradient checkpointing)."""
+    import dataclasses
+
+    from uag.config import ExperimentConfig, HoldoutSplitSpec
+    from uag.data import generate_dataset
+    from uag.shared_adapter import SharedSettings, SharedSystem, train_connectors, train_core
+
+    tasks = [dataclasses.replace(t, n_train=200, n_valid=8, n_test=8) for t in all_tasks
+             if t.task_id in ("T2_nli", "T3_paraphrase", "T9_clinical")]
+    for t in tasks:
+        generate_dataset(t, tmp_path / "data")
+    train = dataclasses.replace(tiny_train_settings, batch_size=2, valid_max_examples=4, max_tokens_seen=600,
+                                eval_every_steps=2, gradient_checkpointing=True)
+    exp = ExperimentConfig(name="shared0", bases=[tiny_bases["tiny_llama_a1"], tiny_bases["tiny_qwen2_b"]],
+                           tasks=tasks, lora=LoraSettings(), train=train, seeds=[0],
+                           splits=[HoldoutSplitSpec("h", ["T9_clinical"])], require_pinned_revisions=False,
+                           eval_max_examples=4, artifacts_dir=str(tmp_path / "a"), results_dir=str(tmp_path / "r"),
+                           data_dir=str(tmp_path / "data"))
+    system = SharedSystem(exp, SharedSettings(d_shared=4, connector_steps=4, eval_every=2, core_init="zero"),
+                          device="cpu")
+    b = "tiny_llama_a1"
+    batch = _batch(system.toks[b], tasks[0])
+    with torch.no_grad():
+        plain = system.models[b](**batch).logits
+        with system.active(b, system.new_cores("zero")) as model:
+            assert torch.equal(model(**batch).logits, plain)  # zero core = untouched base
+    out = tmp_path / "shared"
+    out.mkdir()
+    train_connectors(system, ["T2_nli", "T3_paraphrase"], ["T9_clinical"], out)
+    from safetensors.torch import load_file
+
+    cores = load_file(str(out / "train_cores.safetensors"))
+    assert any(float(v.abs().sum()) > 0 for v in cores.values())  # cores moved away from zero
+    meta = train_core(system, "T9_clinical", b, out / "heldout" / "T9.safetensors")
+    assert meta["steps"] >= 1

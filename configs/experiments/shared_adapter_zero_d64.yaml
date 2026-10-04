@@ -1,0 +1,41 @@
+# Zero-default shared adapter (local RTX 3080): as shared_adapter_d64.yaml, but cores start at 0
+# (an unseen task gets no update by default) with gradient clipping, 8 GB memory settings and
+# 2000 phase-1 steps (the A100 width-64 run was at mean valid loss 0.09 by step 2000).
+# Phase 1 learns connectors for both dev bases + cores for the 8 training tasks; T4/T8 are held
+# out: their core is learned on ONE base and plugged into the other with no target training.
+#   uag shared-adapter -e configs/experiments/shared_adapter_zero_d64.yaml
+name: shared_adapter_zero_d64
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+  - ../tasks/v2/T3_paraphrase.yaml
+  - ../tasks/v2/T5_concise.yaml
+  - ../tasks/v2/T6_verbose.yaml
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
+  - ../tasks/v2/T4_json.yaml
+  - ../tasks/v2/T8_arithmetic.yaml
+lora: ../lora/r16.yaml          # only target_modules is used: q, k, v, o, up, down, gate
+train: ../train/dev_3080_patient.yaml   # micro-batch 4 x 4, gradient checkpointing
+seeds: [0]
+splits:
+  - {split_id: holdout_T4_T8, holdout: [T4_json, T8_arithmetic]}
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+shared:
+  d_shared: 64
+  scale: 2.0
+  connector_steps: 2000
+  lr_connectors: 2.0e-4
+  lr_cores: 2.0e-4
+  lr_core_heldout: 1.0e-3
+  eval_every: 200
+  graded_examples: 100
+  seed: 0
+  grad_clip: 1.0
+  core_init: zero
