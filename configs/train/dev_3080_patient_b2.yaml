@@ -1,0 +1,19 @@
+# dev_3080_patient.yaml with micro-batch 2 x accumulation 8 (same effective batch of 16): the
+# shared adapter holds both dev bases plus connectors and their optimizer state on one 8 GB GPU.
+learning_rate: 2.0e-4
+batch_size: 2
+grad_accum: 8
+max_tokens_seen: 1500000
+max_seq_len: 512
+warmup_ratio: 0.03
+eval_every_steps: 25
+selection_metric: valid_primary
+valid_max_examples: 64
+early_stopping_patience: 8
+early_stopping_min_delta: 0.005
+min_steps: 150
+dtype: bfloat16
+deterministic: true
+device: auto
+gradient_checkpointing: true
+min_epochs: 1.0
