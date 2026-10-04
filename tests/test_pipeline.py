@@ -493,3 +493,44 @@ def test_shared_adapter_zero_default_cores(tmp_path, tiny_bases, all_tasks, tiny
     assert any(float(v.abs().sum()) > 0 for v in cores.values())  # cores moved away from zero
     meta = train_core(system, "T9_clinical", b, out / "heldout" / "T9.safetensors")
     assert meta["steps"] >= 1
+
+
+def test_shared_adapter_phase1_resumes_after_crash(tmp_path, tiny_bases, all_tasks, tiny_train_settings, monkeypatch,
+                                                   capsys):
+    import dataclasses
+
+    import uag.shared_adapter as sa
+    from uag.config import ExperimentConfig, HoldoutSplitSpec
+    from uag.data import generate_dataset
+
+    tasks = [dataclasses.replace(t, n_train=100, n_valid=4, n_test=4) for t in all_tasks
+             if t.task_id in ("T2_nli", "T3_paraphrase", "T9_clinical")]
+    for t in tasks:
+        generate_dataset(t, tmp_path / "data")
+    train = dataclasses.replace(tiny_train_settings, batch_size=2, valid_max_examples=4)
+    exp = ExperimentConfig(name="resume", bases=[tiny_bases["tiny_llama_a1"], tiny_bases["tiny_qwen2_b"]],
+                           tasks=tasks, lora=LoraSettings(), train=train, seeds=[0],
+                           splits=[HoldoutSplitSpec("h", ["T9_clinical"])], require_pinned_revisions=False,
+                           artifacts_dir=str(tmp_path / "a"), results_dir=str(tmp_path / "r"), data_dir=str(tmp_path / "data"))
+    s = sa.SharedSettings(d_shared=4, connector_steps=6, eval_every=2, core_init="zero")
+    out = tmp_path / "shared"
+    out.mkdir()
+    real_loss, calls = sa._loss, {"n": 0}
+
+    def crashing(system, base, batch, train=False):
+        if train:
+            calls["n"] += 1
+            if calls["n"] == 9:  # step 5 (2 bases per step): after the step-4 checkpoint
+                raise RuntimeError("CUDA error: simulated")
+        return real_loss(system, base, batch, train)
+
+    monkeypatch.setattr(sa, "_loss", crashing)
+    with pytest.raises(RuntimeError, match="simulated"):
+        sa.train_connectors(sa.SharedSystem(exp, s, device="cpu"), ["T2_nli", "T3_paraphrase"], ["T9_clinical"], out)
+    assert (out / "phase1_checkpoint.pt").exists()
+    monkeypatch.setattr(sa, "_loss", real_loss)
+    meta = sa.train_connectors(sa.SharedSystem(exp, s, device="cpu"), ["T2_nli", "T3_paraphrase"], ["T9_clinical"], out)
+    assert "resuming from step 4" in capsys.readouterr().out
+    assert meta["best_step"] in (2, 4, 6) and not (out / "phase1_checkpoint.pt").exists()
+    steps = [json.loads(l)["step"] for l in (out / "connector_log.jsonl").read_text().splitlines()]
+    assert steps[-1] == 6 and 5 in steps

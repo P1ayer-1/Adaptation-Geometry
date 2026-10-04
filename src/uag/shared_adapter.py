@@ -224,14 +224,30 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
     for c in core_params:
         c.requires_grad_(True)
     opt = torch.optim.AdamW([{"params": conn, "lr": s.lr_connectors}, {"params": core_params, "lr": s.lr_cores}],
-                            weight_decay=0.0)
+                            weight_decay=0.0, foreach=False)  # foreach=False: no big temporary buffers
     warm = max(1, int(0.03 * s.connector_steps))
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda i: (i + 1) / warm if i < warm else max(0.05, 1 - (i - warm) / max(1, s.connector_steps - warm)))
     best, history = None, []
-    log_f = open(out_dir / "connector_log.jsonl", "w")
+    ckpt = out_dir / "phase1_checkpoint.pt"
+    start = 1
+    if ckpt.exists():  # resume after a crash (flaky local GPUs): same state, same data order
+        st = torch.load(ckpt, map_location="cpu", weights_only=False)
+        with torch.no_grad():
+            for k in system.P:
+                system.P[k].copy_(st["P"][k])
+                system.Q[k].copy_(st["Q"][k])
+            for t, cs in cores.items():
+                for k, c in cs.items():
+                    c.copy_(st["cores"][t][k])
+        opt.load_state_dict(st["opt"])
+        sched.load_state_dict(st["sched"])
+        rng.setstate(st["rng"])
+        best, start = st["best"], st["step"] + 1
+        log(f"connectors: resuming from step {st['step']}")
+    log_f = open(out_dir / "connector_log.jsonl", "a" if start > 1 else "w")
     t0 = time.time()
-    for step in range(1, s.connector_steps + 1):
+    for step in range(start, s.connector_steps + 1):
         t = tasks[(step - 1) % len(tasks)].task_id
         opt.zero_grad(set_to_none=True)
         total = 0.0
@@ -253,10 +269,16 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
             mean = sum(vl.values()) / len(vl)
             rec.update(valid=vl, valid_mean=mean)
             if best is None or mean < best["valid_mean"]:
-                best = {"step": step, "valid_mean": mean, "valid": vl,
-                        "P": {k: v.detach().clone() for k, v in system.P.items()},
-                        "Q": {k: v.detach().clone() for k, v in system.Q.items()},
-                        "cores": {tt: {k: c.detach().clone() for k, c in cs.items()} for tt, cs in cores.items()}}
+                best = {"step": step, "valid_mean": mean, "valid": vl,  # kept in CPU memory
+                        "P": {k: v.detach().cpu().clone() for k, v in system.P.items()},
+                        "Q": {k: v.detach().cpu().clone() for k, v in system.Q.items()},
+                        "cores": {tt: {k: c.detach().cpu().clone() for k, c in cs.items()} for tt, cs in cores.items()}}
+            tmp = ckpt.with_suffix(".tmp")
+            torch.save({"step": step, "P": {k: v.detach().cpu() for k, v in system.P.items()},
+                        "Q": {k: v.detach().cpu() for k, v in system.Q.items()},
+                        "cores": {tt: {k: c.detach().cpu() for k, c in cs.items()} for tt, cs in cores.items()},
+                        "opt": opt.state_dict(), "sched": sched.state_dict(), "rng": rng.getstate(), "best": best}, tmp)
+            tmp.replace(ckpt)
             log(f"connectors step {step}/{s.connector_steps}: train {total:.3f}, mean valid loss {mean:.4f} "
                 f"(best {best['valid_mean']:.4f} @ {best['step']}), {(time.time() - t0) / 60:.1f} min")
         log_f.write(json.dumps(rec) + "\n")
@@ -265,11 +287,12 @@ def train_connectors(system: SharedSystem, train_tasks: list[str], holdout: list
     log_f.close()
     with torch.no_grad():
         for k in system.P:
-            system.P[k].copy_(best["P"][k])
-            system.Q[k].copy_(best["Q"][k])
+            system.P[k].copy_(best["P"][k].to(system.device))
+            system.Q[k].copy_(best["Q"][k].to(system.device))
     for p in conn:
         p.requires_grad_(False)
     save_state(system, best["cores"], out_dir)
+    ckpt.unlink(missing_ok=True)
     meta = {"train_tasks": train_tasks, "holdout": holdout, "best_step": best["step"],
             "best_valid_mean": best["valid_mean"], "best_valid": best["valid"], "settings": asdict(s),
             "n_slots": system.n_slots, "bases": list(system.models), "minutes": (time.time() - t0) / 60}
@@ -319,7 +342,7 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
     params = list(cores.values())
     for c in params:
         c.requires_grad_(True)
-    opt = torch.optim.AdamW(params, lr=s.lr_core_heldout, weight_decay=0.0)
+    opt = torch.optim.AdamW(params, lr=s.lr_core_heldout, weight_decay=0.0, foreach=False)
     tokens_per_step = sum(len(e["input_ids"]) for e in enc[:200]) / min(len(enc), 200) * tr.batch_size * tr.grad_accum
     max_steps = max(1, int(tr.token_cap(task_id) / tokens_per_step))
     min_steps = max(tr.min_steps, math.ceil(tr.min_epochs * len(enc) / (tr.batch_size * tr.grad_accum)))

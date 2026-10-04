@@ -20,7 +20,7 @@ tasks:
   - ../tasks/v2/T4_json.yaml
   - ../tasks/v2/T8_arithmetic.yaml
 lora: ../lora/r16.yaml          # only target_modules is used: q, k, v, o, up, down, gate
-train: ../train/dev_3080_patient_b2.yaml   # micro-batch 2 x 8, gradient checkpointing
+train: ../train/dev_3080_patient_b1.yaml   # micro-batch 1 x 16, gradient checkpointing
 seeds: [0]
 splits:
   - {split_id: holdout_T4_T8, holdout: [T4_json, T8_arithmetic]}
