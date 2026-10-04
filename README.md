@@ -127,6 +127,9 @@ finished dry run.
 | Does held-out transfer work with frozen A? | Not on task metrics. Gold-answer likelihood: maps recover 1-6%, random ~0, the target's own mean adapter up to 21-28% | `uag graded-transfer`, `results/*/graded_transfer.json` |
 | Why so little? | A held-out task writes mostly to its own output directions: 6-16% (k=16) / 12-30% (k=64) inside the training tasks' span, vs 94-96% for a second seed of the same task | |
 | Do T1/T2 learn with patient stopping? | Yes: all four failed dry-run runs reach 0.92-1.00 after ~6k examples at chance | `results/dev_3080_patience` |
+| Can frozen A learn faint-feature tasks (T1)? | Yes, given >1 pass: random / whitened / PCA eyes all reach 0.90-1.00 on T1-T3; take-off at ~0.8-1.1 passes, as with trainable A. Smart eyes give no consistent gain | `results/eyes_summary.txt` |
+| Does a shared adapter (per-model connectors + shared task core) transfer held-out tasks? | Expressive (a new core through frozen connectors reaches 0.79-1.00 on held-out T4/T8) but not portable: a core learned on one model closes only 0.6-5% of the gap in the other (relative to the connectors' default); width 128 no better | `results/shared_adapter_d64`, `results/shared_adapter_d128` |
+| Does merging updates into bf16 weights distort evaluation? | No: same scores and NLL as fp32 merges | (check run on the 2xA100) |
 
 ## Renting a GPU
 
