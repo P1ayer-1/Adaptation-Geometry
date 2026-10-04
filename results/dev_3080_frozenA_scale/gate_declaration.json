@@ -1,0 +1,73 @@
+{
+ "gate": {
+  "primary_method": "svd_procrustes",
+  "baseline": "fewshot",
+  "min_heterogeneous_pairs": 1,
+  "min_median_recovered_lift": 0.3,
+  "min_direct_lift": 0.05,
+  "learned_methods": [
+   "svd_procrustes"
+  ],
+  "non_learned_baselines": [
+   "random",
+   "target_mean"
+  ],
+  "graded_beats_baselines": true,
+  "bootstrap_samples": 1000,
+  "ci_level": 0.95,
+  "seed": 0
+ },
+ "splits": [
+  {
+   "split_id": "n2_T3_T7",
+   "holdout": [
+    "T4_json",
+    "T8_arithmetic",
+    "T9_clinical",
+    "T10_format",
+    "T1_hidden_rule",
+    "T2_nli",
+    "T5_concise",
+    "T6_verbose"
+   ]
+  },
+  {
+   "split_id": "n4_plus_T9_T10",
+   "holdout": [
+    "T4_json",
+    "T8_arithmetic",
+    "T1_hidden_rule",
+    "T2_nli",
+    "T5_concise",
+    "T6_verbose"
+   ]
+  },
+  {
+   "split_id": "n6_plus_T1_T2",
+   "holdout": [
+    "T4_json",
+    "T8_arithmetic",
+    "T5_concise",
+    "T6_verbose"
+   ]
+  },
+  {
+   "split_id": "n8_plus_T5_T6",
+   "holdout": [
+    "T4_json",
+    "T8_arithmetic"
+   ]
+  }
+ ],
+ "eval_split": "test",
+ "fewshot": {
+  "k": 5,
+  "seed": 0
+ },
+ "sha256": "db6ff0e5db2c107f3582f60a998684cb0f87d6c25011117ebb6b03bc126ba821",
+ "declared_at": "2026-10-03T21:23:38",
+ "code_commit": {
+  "commit": "dd2959fd6c16b49440f70863dbc3424253bc20a2",
+  "dirty": false
+ }
+}
