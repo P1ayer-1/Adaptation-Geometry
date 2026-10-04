@@ -117,6 +117,8 @@ finished dry run.
 
 ## Dev-scale findings so far (Qwen2.5-0.5B + Llama-3.2-1B; not Stage-0 evidence)
 
+Full write-up: [`docs/dev_scale_report.md`](docs/dev_scale_report.md).
+
 | Question | Result | Where |
 |---|---|---|
 | Does the v1 panel measure skill? | No: 5-shot bases already scored 0.90-1.00 | `results/dev_3080*` |
