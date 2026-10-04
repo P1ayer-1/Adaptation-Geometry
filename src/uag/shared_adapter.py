@@ -53,6 +53,7 @@ class SharedSettings:
     lr_core_heldout: float = 1e-3
     eval_every: int = 100
     graded_examples: int = 100
+    eval_batch_size: int = 16  # generation batch for validation / evaluation (lower on small GPUs)
     seed: int = 0
     grad_clip: float | None = None  # max gradient norm (phase 1 and 2); width 128 diverged without it
     # "identity": cores start at I and Q at 0 (the connectors then learn a default update that
@@ -325,7 +326,7 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
 
     def score() -> float:
         with torch.no_grad(), system.active(base, cores) as model:
-            return evaluate_examples(model, system.toks[base], task, valid_rows)[1]["primary"]
+            return evaluate_examples(model, system.toks[base], task, valid_rows, batch_size=s.eval_batch_size)[1]["primary"]
 
     best = {"value": score(), "step": 0, "cores": {k: c.detach().clone() for k, c in cores.items()}}
     bad, step = 0, 0
@@ -387,7 +388,7 @@ def evaluate_transfer(system: SharedSystem, holdout: list[str], out_dir: Path) -
         for tgt in system.models:
             tok = system.toks[tgt]
             with torch.no_grad():
-                base_score = evaluate_examples(system.models[tgt], tok, task, test)[1]["primary"]
+                base_score = evaluate_examples(system.models[tgt], tok, task, test, batch_size=s.eval_batch_size)[1]["primary"]
                 base_nll = gold_nll(system.models[tgt], tok, task, graded)
             init_name = "identity core" if s.core_init == "identity" else "zero core (= untouched base)"
             candidates = {"ceiling (core trained on target)": own[tgt], init_name: system.new_cores(s.core_init),
@@ -399,7 +400,7 @@ def evaluate_transfer(system: SharedSystem, holdout: list[str], out_dir: Path) -
             ceiling_nll = None
             for name, cores in candidates.items():
                 with torch.no_grad(), system.active(tgt, cores) as model:
-                    score = evaluate_examples(model, tok, task, test)[1]["primary"]
+                    score = evaluate_examples(model, tok, task, test, batch_size=s.eval_batch_size)[1]["primary"]
                     nll = gold_nll(model, tok, task, graded)
                 if name.startswith("ceiling"):
                     ceiling_nll = nll

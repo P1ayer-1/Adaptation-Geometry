@@ -39,3 +39,4 @@ shared:
   seed: 0
   grad_clip: 1.0
   core_init: zero
+  eval_batch_size: 4
