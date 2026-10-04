@@ -233,7 +233,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
 
     instruction = instruction_for(task)
     template = task.prompt_template_version
-    train_rows = load_split(task, "train", data_dir)
+    train_rows = load_split(task, "train", data_dir)[: train.max_train_examples or None]
     valid_rows = load_split(task, "valid", data_dir)[: train.valid_max_examples]
     enc_train = [encode_example(tok, instruction, ex, template, train.max_seq_len) for ex in train_rows]
     enc_valid = [encode_example(tok, instruction, ex, template, train.max_seq_len) for ex in valid_rows]
@@ -243,6 +243,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     avg_len = sum(len(e["input_ids"]) for e in enc_train) / len(enc_train)
     tokens_per_step = avg_len * train.batch_size * train.grad_accum
     est_steps = max(1, math.ceil(cap / tokens_per_step))
+    if train.max_steps is not None:  # schedule (warmup + decay) spans the fixed step budget
+        est_steps = min(est_steps, train.max_steps)
     warmup = max(1, int(train.warmup_ratio * est_steps))
     min_steps = max(train.min_steps,
                     math.ceil(train.min_epochs * len(enc_train) / (train.batch_size * train.grad_accum)))
@@ -293,7 +295,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
     model.train()
     stop_reason = "token_cap"
     bad_evals = 0
-    while tokens_seen < cap:
+    while tokens_seen < cap and (train.max_steps is None or step < train.max_steps):
         opt.zero_grad(set_to_none=True)
         step_loss = 0.0
         for _ in range(train.grad_accum):
@@ -324,7 +326,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         elapsed = time.time() - t0
         out_of_time = train.max_wall_minutes is not None and elapsed >= 60 * train.max_wall_minutes
         stop = False
-        if step % train.eval_every_steps == 0 or tokens_seen >= cap or out_of_time:
+        at_max = train.max_steps is not None and step >= train.max_steps
+        if step % train.eval_every_steps == 0 or tokens_seen >= cap or out_of_time or at_max:
             ev = evaluate_now()
             rec.update(ev)
             rec["a_rel_move_mean"] = mean_a_move(model, init_state)
@@ -343,6 +346,8 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
                   f"@ step {best['step']}), <= {elapsed / frac * (1 - frac) / 60:.1f} min left", flush=True)
             if out_of_time:
                 stop, stop_reason = True, "wall_clock"
+            elif at_max:
+                stop, stop_reason = True, "max_steps"
             elif (train.early_stopping_patience and bad_evals >= train.early_stopping_patience
                   and step >= min_steps):
                 stop, stop_reason = True, "early_stopping"
@@ -399,6 +404,7 @@ def train_lora(base: BaseConfig, task: TaskConfig, lora: LoraSettings, train: Tr
         "max_tokens_seen": cap,
         "token_cap_source": "max_tokens_by_task" if task.task_id in train.max_tokens_by_task else "max_tokens_seen",
         "tokens_seen": tokens_seen,
+        "n_train_examples": len(train_rows),
         "steps": step,
         "epochs_started": epoch,
         "stopping": {"reason": stop_reason, "step": step, "tokens_seen": tokens_seen,

@@ -54,6 +54,10 @@ class SharedSettings:
     eval_every: int = 100
     graded_examples: int = 100
     eval_batch_size: int = 16  # generation batch for validation / evaluation (lower on small GPUs)
+    # Head-start test: a held-out task's core trained on the TARGET from only N examples, starting
+    # from zero / the core transferred from the other base / the mean training core.
+    headstart_n: tuple[int, ...] = (32, 128, 512)
+    headstart_epochs: float = 10.0
     seed: int = 0
     grad_clip: float | None = None  # max gradient norm (phase 1 and 2); width 128 diverged without it
     # "identity": cores start at I and Q at 0 (the connectors then learn a default update that
@@ -174,7 +178,7 @@ class SharedSystem:
 # ---------------------------------------------------------------------------
 
 
-def _encode(system: SharedSystem, base: str, task, split: str, limit: int | None = None):
+def _encode(system: SharedSystem, base: str, task, split: str, limit: int | None = None):  # first `limit` rows
     from .train_lora import encode_example
 
     rows = load_split(task, split, system.exp.data_dir)
@@ -330,28 +334,36 @@ def load_state(system: SharedSystem, out_dir: Path) -> dict[str, dict[str, torch
 # ---------------------------------------------------------------------------
 
 
-def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) -> dict[str, Any]:
+def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path | None,
+               init: dict[str, torch.Tensor] | None = None, n_train: int | None = None,
+               max_steps: int | None = None, eval_every: int | None = None) -> dict[str, Any]:
+    """Learn a task core on one base (connectors frozen). Defaults: the full training split with
+    patient early stopping. The head-start test passes a starting core, the first ``n_train``
+    examples and a fixed step budget (best validation checkpoint kept, no early stopping)."""
     from .evaluate import evaluate_examples
 
     exp, s, tr = system.exp, system.s, system.exp.train
     task = exp.task(task_id)
     rng = random.Random(s.seed + 1)
-    enc = _encode(system, base, task, "train")
+    enc = _encode(system, base, task, "train", n_train)
     valid_rows = load_split(task, "valid", exp.data_dir)[: tr.valid_max_examples]
-    cores = system.new_cores(s.core_init)
+    cores = ({k: v.detach().clone() for k, v in init.items()} if init is not None else system.new_cores(s.core_init))
     params = list(cores.values())
     for c in params:
         c.requires_grad_(True)
     opt = torch.optim.AdamW(params, lr=s.lr_core_heldout, weight_decay=0.0, foreach=False)
     tokens_per_step = sum(len(e["input_ids"]) for e in enc[:200]) / min(len(enc), 200) * tr.batch_size * tr.grad_accum
-    max_steps = max(1, int(tr.token_cap(task_id) / tokens_per_step))
+    fixed = max_steps is not None
+    max_steps = max_steps if fixed else max(1, int(tr.token_cap(task_id) / tokens_per_step))
     min_steps = max(tr.min_steps, math.ceil(tr.min_epochs * len(enc) / (tr.batch_size * tr.grad_accum)))
+    every = eval_every or tr.eval_every_steps
 
     def score() -> float:
         with torch.no_grad(), system.active(base, cores) as model:
             return evaluate_examples(model, system.toks[base], task, valid_rows, batch_size=s.eval_batch_size)[1]["primary"]
 
     best = {"value": score(), "step": 0, "cores": {k: c.detach().clone() for k, c in cores.items()}}
+    curve = [(0, best["value"])]
     bad, step = 0, 0
     for step in range(1, max_steps + 1):
         opt.zero_grad(set_to_none=True)
@@ -362,8 +374,9 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
         if s.grad_clip:
             torch.nn.utils.clip_grad_norm_(params, s.grad_clip)
         opt.step()
-        if step % tr.eval_every_steps == 0:
+        if step % every == 0 or step == max_steps:
             v = score()
+            curve.append((step, v))
             if v > best["value"] + tr.early_stopping_min_delta:
                 bad = 0
             else:
@@ -371,15 +384,19 @@ def train_core(system: SharedSystem, task_id: str, base: str, out_path: Path) ->
             if v > best["value"]:
                 best = {"value": v, "step": step, "cores": {k: c.detach().clone() for k, c in cores.items()}}
             log(f"core {task_id} on {base}: step {step}, valid {v:.4f} (best {best['value']:.4f} @ {best['step']})")
-            if tr.early_stopping_patience and bad >= tr.early_stopping_patience and step >= min_steps:
+            if (not fixed and tr.early_stopping_patience and bad >= tr.early_stopping_patience
+                    and step >= min_steps):
                 break
-    from safetensors.torch import save_file
-
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    save_file({k: c.contiguous().cpu() for k, c in best["cores"].items()}, str(out_path))
     meta = {"task": task_id, "trained_on": base, "best_valid": best["value"], "best_step": best["step"],
-            "steps": step, "min_steps": min_steps}
-    out_path.with_suffix(".json").write_text(json.dumps(meta, indent=1))
+            "steps": step, "min_steps": min_steps, "n_train": len(enc), "curve": curve,
+            "start_valid": curve[0][1]}
+    if out_path is not None:
+        from safetensors.torch import save_file
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        save_file({k: c.contiguous().cpu() for k, c in best["cores"].items()}, str(out_path))
+        out_path.with_suffix(".json").write_text(json.dumps(meta, indent=1))
+    meta["cores"] = best["cores"]
     return meta
 
 
@@ -439,6 +456,67 @@ def evaluate_transfer(system: SharedSystem, holdout: list[str], out_dir: Path) -
     return res
 
 
+def headstart_steps(system: SharedSystem, n: int) -> int:
+    tr = system.exp.train
+    return int(min(400, max(20, math.ceil(system.s.headstart_epochs * n / (tr.batch_size * tr.grad_accum)))))
+
+
+def headstart(system: SharedSystem, holdout: list[str], out_dir: Path, only_tasks=None, only_targets=None) -> list[dict]:
+    """For each held-out task and target base: learn the task core on the TARGET from only N
+    examples, starting from zero, from the core learned (with full data) on the other base, and
+    from the mean training core; record validation curves and test score / gold NLL."""
+    from .evaluate import evaluate_examples
+    from .graded import gold_nll
+
+    exp, s = system.exp, system.s
+    train_cores = load_state(system, out_dir)
+    mean_core = {k: sum(cs[k] for cs in train_cores.values()) / len(train_cores) for k in next(iter(train_cores.values()))}
+    rows = []
+    for task_id in holdout:
+        if only_tasks and task_id not in only_tasks:
+            continue
+        task = exp.task(task_id)
+        test = load_split(task, exp.eval_split, exp.data_dir)[: exp.eval_max_examples]
+        for tgt in system.models:
+            if only_targets and tgt not in only_targets:
+                continue
+            res_file = out_dir / "headstart" / f"{task_id}__on_{tgt}.json"
+            if res_file.exists():
+                rows += json.loads(res_file.read_text())
+                continue
+            inits = {"zero (from scratch)": system.new_cores("zero"), "mean training core": mean_core}
+            for src in system.models:
+                if src != tgt:
+                    inits[f"transferred from {src}"] = load_cores(system, out_dir / "heldout" / f"{task_id}__on_{src}.safetensors")
+            these = []
+            for n in s.headstart_n:
+                steps = headstart_steps(system, n)
+                for name, init in inits.items():
+                    meta = train_core(system, task_id, tgt, None, init=init, n_train=n, max_steps=steps,
+                                      eval_every=max(5, steps // 10))
+                    with torch.no_grad(), system.active(tgt, meta["cores"]) as model:
+                        score = evaluate_examples(model, system.toks[tgt], task, test, batch_size=s.eval_batch_size)[1]["primary"]
+                        nll = gold_nll(model, system.toks[tgt], task, test[: s.graded_examples])
+                    r = {"task": task_id, "target": tgt, "n": n, "steps": steps, "init": name, "test_score": score,
+                         "test_nll": nll, "start_valid": meta["start_valid"], "best_valid": meta["best_valid"],
+                         "best_step": meta["best_step"], "curve": meta["curve"]}
+                    these.append(r)
+                    log(f"headstart {task_id} on {tgt}, N={n} [{name}]: test {task.metric}={score:.3f}, "
+                        f"NLL {nll:.3f} (valid start {meta['start_valid']:.3f} -> best {meta['best_valid']:.3f} @ {meta['best_step']})")
+            res_file.parent.mkdir(parents=True, exist_ok=True)
+            res_file.write_text(json.dumps(these, indent=1))
+            rows += these
+    return rows
+
+
+def render_headstart(rows: list[dict]) -> str:
+    L = [f"{'task':<15}{'target':<18}{'N':>5}{'steps':>6}  {'start':<34}{'test':>7}{'NLL':>8}{'valid@0':>9}{'best@step':>11}"]
+    for r in sorted(rows, key=lambda r: (r["task"], r["target"], r["n"], r["init"])):
+        L.append(f"{r['task']:<15}{r['target']:<18}{r['n']:>5}{r['steps']:>6}  {r['init']:<34}{r['test_score']:>7.3f}"
+                 f"{r['test_nll']:>8.3f}{r['start_valid']:>9.3f}{r['best_valid']:>6.3f}@{r['best_step']:<4}")
+    return "\n".join(L)
+
+
 def render(res: dict[str, Any]) -> str:
     L = [f"{'task':<15}{'target':<18}{'condition':<40}{'score':>7}{'NLL':>8}{'RecNLL':>8}"]
     for r in res["rows"]:
@@ -449,7 +527,7 @@ def render(res: dict[str, Any]) -> str:
     return "\n".join(L)
 
 
-def run(exp: ExperimentConfig, settings: SharedSettings, phase: str = "all") -> str:
+def run(exp: ExperimentConfig, settings: SharedSettings, phase: str = "all", only_tasks=None, only_targets=None) -> str:
     if not exp.splits or len(exp.splits) != 1:
         raise ValueError("the shared-adapter experiment needs exactly one split (its held-out tasks)")
     holdout = list(exp.splits[0].holdout)
@@ -459,8 +537,17 @@ def run(exp: ExperimentConfig, settings: SharedSettings, phase: str = "all") -> 
     system = SharedSystem(exp, settings)
     if phase in ("all", "connectors") and not (out_dir / "connectors_meta.json").exists():
         train_connectors(system, train_tasks, holdout, out_dir)
-    if phase in ("all", "heldout", "evaluate"):
+    if phase in ("all", "heldout", "evaluate", "headstart"):
         load_state(system, out_dir)
+    if phase == "headstart":
+        rows = headstart(system, holdout, out_dir, only_tasks, only_targets)
+        res_dir = exp.path("results") / exp.name
+        res_dir.mkdir(parents=True, exist_ok=True)
+        text = render_headstart(rows)
+        if not only_tasks and not only_targets:
+            (res_dir / "headstart.txt").write_text(text + "\n")
+            (res_dir / "headstart.json").write_text(json.dumps(rows, indent=1))
+        return text
     if phase in ("all", "heldout"):
         for t in holdout:
             for b in system.models:

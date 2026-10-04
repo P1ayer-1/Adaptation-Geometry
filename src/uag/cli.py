@@ -70,7 +70,9 @@ def _main(argv: list[str] | None = None) -> int:
     sp.add_argument("--base", nargs="*", help="only these target bases")
     sp.add_argument("--n-examples", type=int, default=100)
     sp = exp_cmd("shared-adapter", "shared adapter + per-model connectors: held-out-task transfer test")
-    sp.add_argument("--phase", choices=["all", "connectors", "heldout", "evaluate"], default="all")
+    sp.add_argument("--phase", choices=["all", "connectors", "heldout", "evaluate", "headstart"], default="all")
+    sp.add_argument("--task", nargs="*", help="headstart: only these held-out tasks")
+    sp.add_argument("--base", nargs="*", help="headstart: only these target bases")
     sp = exp_cmd("seed-compare", "is ΔW task signal or random-init noise? factor movement + seed comparison")
     sp.add_argument("--base", nargs="*")
     sp.add_argument("--task", nargs="*")
@@ -165,7 +167,7 @@ def _main(argv: list[str] | None = None) -> int:
     elif args.cmd == "shared-adapter":
         from .shared_adapter import load_shared_settings, run
 
-        print(run(exp, load_shared_settings(args.experiment), args.phase))
+        print(run(exp, load_shared_settings(args.experiment), args.phase, args.task, args.base))
     elif args.cmd == "seed-compare":
         from .diagnostics import render_geometry_checks, save_seed_comparison
 

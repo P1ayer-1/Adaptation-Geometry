@@ -192,6 +192,10 @@ class TrainSettings:
     # is the same for every base, so budgets stay identical across bases; tasks not listed use
     # max_tokens_seen.
     max_tokens_by_task: dict[str, int] = field(default_factory=dict)
+    # Few-example experiments: train on only the first N training examples, for a fixed number
+    # of optimizer steps (the best validation checkpoint is still selected).
+    max_train_examples: int | None = None
+    max_steps: int | None = None
 
     def token_cap(self, task_id: str) -> int:
         return int(self.max_tokens_by_task.get(task_id, self.max_tokens_seen))

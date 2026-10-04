@@ -454,6 +454,15 @@ def test_shared_adapter_end_to_end(tmp_path, tiny_bases, all_tasks, tiny_train_s
     conds = {r["condition"] for r in res["rows"]}
     assert "transferred from tiny_qwen2_b" in conds and "mean training core" in conds
     assert "RecNLL" in render(res)
+    # head start: N examples on the target, three starting points, fixed step budget
+    from uag.shared_adapter import headstart, render_headstart
+
+    system.s.headstart_n, system.s.headstart_epochs = (4,), 1.0
+    rows = headstart(system, ["T9_clinical"], out)
+    assert len(rows) == 2 * 3 and {r["n"] for r in rows} == {4} and all(r["steps"] == 20 for r in rows)
+    assert {r["init"] for r in rows} >= {"zero (from scratch)", "mean training core", "transferred from tiny_qwen2_b"}
+    assert all(r["curve"][0][0] == 0 for r in rows) and "valid@0" in render_headstart(rows)
+    assert len(headstart(system, ["T9_clinical"], out)) == 6  # cached per task x target
 
 
 def test_shared_adapter_zero_default_cores(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
@@ -534,3 +543,17 @@ def test_shared_adapter_phase1_resumes_after_crash(tmp_path, tiny_bases, all_tas
     assert meta["best_step"] in (2, 4, 6) and not (out / "phase1_checkpoint.pt").exists()
     steps = [json.loads(l)["step"] for l in (out / "connector_log.jsonl").read_text().splitlines()]
     assert steps[-1] == 6 and 5 in steps
+
+
+def test_few_example_lora_budget(tmp_path, tiny_bases, all_tasks, tiny_train_settings):
+    import dataclasses
+
+    from uag.train_lora import train_lora
+
+    task = next(t for t in all_tasks if t.task_id == "T2_nli")
+    train = dataclasses.replace(tiny_train_settings, max_train_examples=16, max_steps=12, eval_every_steps=4,
+                                max_tokens_seen=10**6)
+    run = train_lora(tiny_bases["tiny_llama_a1"], task, LoraSettings(rank=4, alpha=8), train, 0, tmp_path)
+    m = yaml.safe_load((run / "manifest.yaml").read_text())
+    assert m["n_train_examples"] == 16 and m["steps"] == 12 and m["stopping"]["reason"] == "max_steps"
+    assert m["warmup_steps"] <= 12
