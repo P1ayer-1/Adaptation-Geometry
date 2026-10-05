@@ -1,6 +1,6 @@
 # Handoff: Universal Adaptation Geometry
 
-*Written 2026-10-04 at the end of a long working session. Read this first, then
+*Written 2026-10-04 at the end of a long working session (head-start results added the same evening). Read this first, then
 [`dev_scale_report.md`](dev_scale_report.md) for the results with tables.*
 
 ## Where things stand (one paragraph)
@@ -62,7 +62,9 @@ minimum (`configs/train/stage0.yaml`). Caps in that file are placeholders.
    Smart eyes give no consistent gain.
 7. Shared adapter: expressive (a new core through frozen connectors reaches 0.79-1.00) but not
    portable (0.4-5% of the gap closed in the other model). Identity-initialised cores carry a
-   harmful default; zero-initialised cores fix that (see the head-start section).
+   harmful default; zero-initialised cores remove it, but the transferred core still hurts.
+9. Head start: a transferred core does not reliably help the target learn from 32-512 examples,
+   and plain LoRA beats the shared-core route on T8 (see below).
 8. bf16 merging does not distort evaluation.
 
 ## Head-start test (last experiment of the session)
@@ -74,7 +76,34 @@ training core, and ordinary LoRA from scratch? Run with `scripts/headstart_test.
 LORA_GPU=1 JOB_GPUS="1 1 1 1"`). Results: `results/shared_adapter_zero_d64_gpu/`,
 `results/headstart_summary.txt`.
 
-RESULTS_PLACEHOLDER
+**Zero-default transfer (no target training).** A zero core is now exactly the untouched model,
+so the identity-default flaw is gone. The transferred core still does not help: it makes the gold
+answer *less* likely than doing nothing (RecoveredNLL −0.04 and −0.35 on T4, −4.0 and −4.8 on T8),
+about as harmful as a norm-matched random core. The mean training core helps slightly on 3 of 4
+cells (up to 0.21). Ceilings: T4 0.995 on both models; T8 only 0.47 / 0.68, lower than with
+identity cores (0.89 / 0.87).
+
+**Head start (test score after training on the target from N examples):**
+
+| Task, target | N | Zero start | Mean core | Transferred core | Plain LoRA |
+|---|---|---|---|---|---|
+| T4, Llama | 32 | 0.565 | 0.600 | **0.705** | 0.385 |
+| T4, Llama | 128 / 512 | 1.00 / 1.00 | 0.99 / 1.00 | 1.00 / 1.00 | 1.00 / 1.00 |
+| T4, Qwen | 32 | **0.625** | 0.250 | 0.185 | 0.195 |
+| T4, Qwen | 128 / 512 | 0.99 / 0.99 | 0.98 / 1.00 | 1.00 / 1.00 | 0.93 / 1.00 |
+| T8, Llama | 32 / 128 / 512 | 0.22 / 0.46 / 0.53 | 0.38 / 0.50 / 0.51 | 0.00 / 0.21 / 0.41 | **0.73 / 0.80 / 0.91** |
+| T8, Qwen | 32 / 128 / 512 | 0.11 / 0.23 / 0.34 | 0.09 / 0.23 / 0.43 | 0.01 / 0.11 / 0.26 | **0.67 / 0.85 / 0.93** |
+
+Verdict:
+- **No reliable head start.** The transferred core helped in 1 of 12 settings (Llama T4 at
+  N = 32), hurt in 7 (every T8 setting and Qwen T4 at N = 32) and tied in the rest. The one win
+  does not hold in the other direction.
+- **Plain LoRA from scratch beats the whole shared-core route on T8 by a wide margin** (0.67-0.93
+  against at most 0.53) and matches it on T4. Learning only a core through frozen connectors is a
+  weaker way to learn a new task than ordinary LoRA, so the connector basis limits learning as well
+  as failing to transfer.
+- For the RSI plan: carrying skills to a new student as adapters does not pay off at this scale;
+  carry them as data, environments and verifiers.
 
 ## Open threads, ranked
 

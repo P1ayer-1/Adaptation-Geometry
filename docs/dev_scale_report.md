@@ -25,6 +25,9 @@ tasks, the answer for that strong form is **no**:
   transfer went from 2.3% to 3.2% as training tasks grew from 2 to 8.
 - **The strongest non-learned baseline is not a random update.** It is the target model's
   own average adapter, which ignores the source model and recovers 13-28%.
+- **Transferred adapters are not a useful head start either.** Given 32-512 target examples, a
+  core transferred from the other model helped in 1 of 12 settings and hurt in 7; ordinary LoRA
+  from scratch beat the whole shared-core route on arithmetic.
 
 Along the way, the work produced several methodological findings that matter for any study of
 adapter geometry. They are listed in the [last section](#methodological-lessons).
@@ -188,10 +191,39 @@ target model's own average adapter captures without any information from the sou
 | Smart eyes | `scripts/eyes_test.sh` | `results/eyes_summary.txt` |
 | Shared adapter | `configs/experiments/shared_adapter_d{64,128}.yaml` | `results/shared_adapter_d{64,128}` |
 
-## Pending: zero-default shared adapter and the head-start test
+## Zero-default shared adapter and the head-start test
 
-`scripts/headstart_test.sh` runs the shared adapter with zero-initialised cores, so that an unseen
-task gets no update by default. It then asks a weaker, practical question: given only 32, 128 or
-512 examples of a held-out task on the target, does starting from the core learned on the other
-model help the target learn faster than starting from zero or from the average training core?
-Ordinary LoRA trained from scratch on the same examples is the reference.
+`scripts/headstart_test.sh` (2x A100) reran the shared adapter with zero-initialised cores, so that
+an unseen task gets no update by default, and asked a weaker, practical question: given only 32,
+128 or 512 examples of a held-out task on the target, does starting from the core learned on the
+other model help? Ordinary LoRA from scratch on the same examples is the reference. Results:
+`results/shared_adapter_zero_d64_gpu/`, `results/headstart_summary.txt`.
+
+**Zero-default transfer (no target training).** A zero core is now exactly the untouched model,
+so the identity-default flaw is gone. The transferred core still does not help: it makes the gold
+answer *less* likely than doing nothing (RecoveredNLL −0.04 and −0.35 on T4, −4.0 and −4.8 on T8),
+about as harmful as a norm-matched random core. The mean training core helps slightly on 3 of 4
+cells (up to 0.21). Ceilings: T4 0.995 on both models; T8 only 0.47 / 0.68, lower than with
+identity cores (0.89 / 0.87).
+
+**Head start (test score after training on the target from N examples):**
+
+| Task, target | N | Zero start | Mean core | Transferred core | Plain LoRA |
+|---|---|---|---|---|---|
+| T4, Llama | 32 | 0.565 | 0.600 | **0.705** | 0.385 |
+| T4, Llama | 128 / 512 | 1.00 / 1.00 | 0.99 / 1.00 | 1.00 / 1.00 | 1.00 / 1.00 |
+| T4, Qwen | 32 | **0.625** | 0.250 | 0.185 | 0.195 |
+| T4, Qwen | 128 / 512 | 0.99 / 0.99 | 0.98 / 1.00 | 1.00 / 1.00 | 0.93 / 1.00 |
+| T8, Llama | 32 / 128 / 512 | 0.22 / 0.46 / 0.53 | 0.38 / 0.50 / 0.51 | 0.00 / 0.21 / 0.41 | **0.73 / 0.80 / 0.91** |
+| T8, Qwen | 32 / 128 / 512 | 0.11 / 0.23 / 0.34 | 0.09 / 0.23 / 0.43 | 0.01 / 0.11 / 0.26 | **0.67 / 0.85 / 0.93** |
+
+Verdict:
+- **No reliable head start.** The transferred core helped in 1 of 12 settings (Llama T4 at
+  N = 32), hurt in 7 (every T8 setting and Qwen T4 at N = 32) and tied in the rest. The one win
+  does not hold in the other direction.
+- **Plain LoRA from scratch beats the whole shared-core route on T8 by a wide margin** (0.67-0.93
+  against at most 0.53) and matches it on T4. Learning only a core through frozen connectors is a
+  weaker way to learn a new task than ordinary LoRA, so the connector basis limits learning as well
+  as failing to transfer.
+- For the RSI plan: carrying skills to a new student as adapters does not pay off at this scale;
+  carry them as data, environments and verifiers.

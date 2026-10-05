@@ -132,6 +132,8 @@ Full write-up: [`docs/dev_scale_report.md`](docs/dev_scale_report.md).
 | Can frozen A learn faint-feature tasks (T1)? | Yes, given >1 pass: random / whitened / PCA eyes all reach 0.90-1.00 on T1-T3; take-off at ~0.8-1.1 passes, as with trainable A. Smart eyes give no consistent gain | `results/eyes_summary.txt` |
 | Does a shared adapter (per-model connectors + shared task core) transfer held-out tasks? | Expressive (a new core through frozen connectors reaches 0.79-1.00 on held-out T4/T8) but not portable: a core learned on one model closes only 0.6-5% of the gap in the other (relative to the connectors' default); width 128 no better | `results/shared_adapter_d64`, `results/shared_adapter_d128` |
 | Does merging updates into bf16 weights distort evaluation? | No: same scores and NLL as fp32 merges | (check run on the 2xA100) |
+| Does fixing the shared adapter's default (zero-initialised cores) rescue transfer? | No: the transferred core still makes gold answers less likely than the untouched model | `results/shared_adapter_zero_d64_gpu` |
+| Is a transferred core at least a head start with 32-512 target examples? | No: helped in 1 of 12 settings, hurt in 7; plain LoRA from scratch beats the shared-core route on T8 | `results/headstart_summary.txt` |
 
 ## Renting a GPU
 

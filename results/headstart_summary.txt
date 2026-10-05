@@ -1,0 +1,52 @@
+== Zero-default shared adapter: held-out transfer (no target training)
+task           target            condition                                 score     NLL  RecNLL
+T4_json        dev_qwen2.5-0.5b  ceiling (core trained on target)          0.995   0.001   1.000
+T4_json        dev_qwen2.5-0.5b  zero core (= untouched base)              0.000   1.600   0.000
+T4_json        dev_qwen2.5-0.5b  mean training core                        0.000   1.272   0.205
+T4_json        dev_qwen2.5-0.5b  transferred from dev_llama3.2-1b          0.000   1.664  -0.040
+T4_json        dev_qwen2.5-0.5b  random (norm of dev_llama3.2-1b core)     0.000   1.733  -0.083
+T4_json        dev_llama3.2-1b   ceiling (core trained on target)          0.995   0.001   1.000
+T4_json        dev_llama3.2-1b   zero core (= untouched base)              0.000   1.447   0.000
+T4_json        dev_llama3.2-1b   mean training core                        0.000   1.453  -0.004
+T4_json        dev_llama3.2-1b   transferred from dev_qwen2.5-0.5b         0.000   1.958  -0.353
+T4_json        dev_llama3.2-1b   random (norm of dev_qwen2.5-0.5b core)    0.000   1.649  -0.139
+T8_arithmetic  dev_qwen2.5-0.5b  ceiling (core trained on target)          0.465   0.034   1.000
+T8_arithmetic  dev_qwen2.5-0.5b  zero core (= untouched base)              0.000   0.733   0.000
+T8_arithmetic  dev_qwen2.5-0.5b  mean training core                        0.000   0.695   0.054
+T8_arithmetic  dev_qwen2.5-0.5b  transferred from dev_llama3.2-1b          0.000   3.512  -3.978
+T8_arithmetic  dev_qwen2.5-0.5b  random (norm of dev_llama3.2-1b core)     0.000   2.236  -2.152
+T8_arithmetic  dev_llama3.2-1b   ceiling (core trained on target)          0.680   0.041   1.000
+T8_arithmetic  dev_llama3.2-1b   zero core (= untouched base)              0.110   1.072   0.000
+T8_arithmetic  dev_llama3.2-1b   mean training core                        0.005   0.984   0.086
+T8_arithmetic  dev_llama3.2-1b   transferred from dev_qwen2.5-0.5b         0.000   5.996  -4.777
+T8_arithmetic  dev_llama3.2-1b   random (norm of dev_qwen2.5-0.5b core)    0.000   5.870  -4.655
+RecNLL = (base NLL - NLL) / (base NLL - ceiling NLL); base = the untouched target model.
+
+== Head start: test score after training on the TARGET from N examples
+task           target                N      zero    mean  transfer    LoRA   (valid at step 0: zero/mean/transfer)
+T4_json        dev_llama3.2-1b      32     0.565   0.600     0.705   0.385   (0.00/0.00/0.00)
+T4_json        dev_llama3.2-1b     128     1.000   0.990     0.995   1.000   (0.00/0.00/0.00)
+T4_json        dev_llama3.2-1b     512     0.995   1.000     1.000   1.000   (0.00/0.00/0.00)
+T4_json        dev_qwen2.5-0.5b     32     0.625   0.250     0.185   0.195   (0.00/0.00/0.00)
+T4_json        dev_qwen2.5-0.5b    128     0.990   0.975     0.995   0.925   (0.00/0.00/0.00)
+T4_json        dev_qwen2.5-0.5b    512     0.985   1.000     1.000   0.995   (0.00/0.00/0.00)
+T8_arithmetic  dev_llama3.2-1b      32     0.220   0.375     0.000   0.725   (0.06/0.00/0.00)
+T8_arithmetic  dev_llama3.2-1b     128     0.455   0.495     0.210   0.800   (0.06/0.00/0.00)
+T8_arithmetic  dev_llama3.2-1b     512     0.530   0.510     0.405   0.905   (0.06/0.00/0.00)
+T8_arithmetic  dev_qwen2.5-0.5b     32     0.110   0.085     0.005   0.665   (0.00/0.00/0.00)
+T8_arithmetic  dev_qwen2.5-0.5b    128     0.230   0.230     0.110   0.850   (0.00/0.00/0.00)
+T8_arithmetic  dev_qwen2.5-0.5b    512     0.340   0.425     0.260   0.930   (0.00/0.00/0.00)
+
+== Head start: gold-answer NLL on test (lower is better)
+T4_json        dev_llama3.2-1b      32  zero 0.018  mean 0.021  transfer 0.015
+T4_json        dev_llama3.2-1b     128  zero 0.002  mean 0.000  transfer 0.002
+T4_json        dev_llama3.2-1b     512  zero 0.001  mean 0.000  transfer 0.002
+T4_json        dev_qwen2.5-0.5b     32  zero 0.026  mean 0.045  transfer 0.043
+T4_json        dev_qwen2.5-0.5b    128  zero 0.001  mean 0.001  transfer 0.000
+T4_json        dev_qwen2.5-0.5b    512  zero 0.001  mean 0.000  transfer 0.000
+T8_arithmetic  dev_llama3.2-1b      32  zero 0.113  mean 0.079  transfer 5.996
+T8_arithmetic  dev_llama3.2-1b     128  zero 0.062  mean 0.051  transfer 0.131
+T8_arithmetic  dev_llama3.2-1b     512  zero 0.058  mean 0.055  transfer 0.073
+T8_arithmetic  dev_qwen2.5-0.5b     32  zero 0.128  mean 0.122  transfer 0.219
+T8_arithmetic  dev_qwen2.5-0.5b    128  zero 0.053  mean 0.057  transfer 0.096
+T8_arithmetic  dev_qwen2.5-0.5b    512  zero 0.042  mean 0.042  transfer 0.049
