@@ -1,6 +1,6 @@
 # Handoff: Universal Adaptation Geometry
 
-*Written 2026-10-04 at the end of a long working session (head-start results added the same evening). Read this first, then
+*Written 2026-10-04 at the end of a long working session (head-start results added the same evening). Next steps: [`NEXT_STEPS.md`](NEXT_STEPS.md). Read this first, then
 [`dev_scale_report.md`](dev_scale_report.md) for the results with tables.*
 
 ## Where things stand (one paragraph)
