@@ -1,0 +1,21 @@
+# Early-stopping patience test for the tasks that never took off in the v2 dry run (T1 on both
+# bases, T2 on Llama seed 0 / Qwen seed 1). Trainable A as in the dry run; stopping needs a full
+# pass over the training data first and 8 validations without improvement.
+name: dev_3080_patience
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+lora: ../lora/r16.yaml
+train: ../train/dev_3080_patient.yaml
+seeds: [0, 1]
+fewshot: {k: 5, seed: 0}
+splits: []
+gate: {min_heterogeneous_pairs: 1}
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []

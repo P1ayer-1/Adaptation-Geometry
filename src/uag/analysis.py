@@ -38,17 +38,43 @@ def _fmt(x: float | None, nd: int = 3) -> str:
     return f"{x:.{nd}f}"
 
 
+# Headroom flags (reported in the memo and enforced by the dry-run report).
+CEILING = 0.9        # a base (zero- or few-shot) at or above this leaves no room to measure transfer
+FORMAT_SHARE = 0.5   # few-shot gain >= this share of the zero-shot-referenced direct lift: format-dominated
+
+
+def base_scores(exp: ExperimentConfig, summaries: list[dict[str, Any]], template: str | None = None):
+    """Zero-shot and few-shot base scores keyed by (target, task), for one template."""
+    zs, fs = {}, {}
+    for s in summaries:
+        tmpl = template or exp.task(s["task_id"]).prompt_template_version
+        if s.get("template") != tmpl or s.get("eval_task", s["task_id"]) != s["task_id"]:
+            continue
+        if s["role"] == "base":
+            zs[(s["target_base"], s["task_id"])] = s["primary"]
+        elif s["role"] == "base_fewshot" and s.get("shots") == exp.fewshot.k \
+                and s.get("fewshot_seed") == exp.fewshot.seed:
+            fs[(s["target_base"], s["task_id"])] = s["primary"]
+    return zs, fs
+
+
+def reference_scores(exp: ExperimentConfig, zs: dict, fs: dict) -> dict:
+    """S_base used for lift / eligibility / RecoveredLift, per the declared ``gate.baseline``."""
+    return fs if exp.gate.baseline == "fewshot" else zs
+
+
 def build_tables(exp: ExperimentConfig, summaries: list[dict[str, Any]], template: str | None = None):
-    """Index scores: base[(target, task)], direct[(target, task, seed)], transfer rows."""
+    """Index scores: base[(target, task)] (the reference baseline), direct[(target, task, seed)],
+    transfer cells. Cells whose reference baseline was not evaluated are skipped."""
     higher = {t.task_id: t.metric_direction == "higher" for t in exp.tasks}
-    base, direct, transfer = {}, {}, []
+    zs, fs = base_scores(exp, summaries, template)
+    base = reference_scores(exp, zs, fs)
+    direct, transfer = {}, []
     for s in summaries:
         tmpl = template or exp.task(s["task_id"]).prompt_template_version
         if s.get("template") != tmpl or s.get("eval_task", s["task_id"]) != s["task_id"]:
             continue  # on-task, canonical-template scores only (controls handled separately)
-        if s["role"] == "base":
-            base[(s["target_base"], s["task_id"])] = s["primary"]
-        elif s["role"] == "direct":
+        if s["role"] == "direct":
             direct[(s["target_base"], s["task_id"], s["seed"])] = s["primary"]
         elif s["role"] == "transfer":
             transfer.append(s)
@@ -69,7 +95,8 @@ def build_tables(exp: ExperimentConfig, summaries: list[dict[str, Any]], templat
         cells.append({
             "source": s["source_base"], "target": s["target_base"], "heterogeneous": src_fam != tgt_fam,
             "task": s["task_id"], "split": s["split_id"], "seed": s["seed"], "method": s["method"],
-            "s_base": base[key_b], "s_direct": direct[key_d], "s_transfer": s["primary"],
+            "s_base": base[key_b], "s_base_zeroshot": zs.get(key_b), "s_base_fewshot": fs.get(key_b),
+            "s_direct": direct[key_d], "s_transfer": s["primary"],
             "transfer_lift": lift.transfer_lift, "direct_lift": lift.direct_lift,
             "recovered_lift": lift.recovered_lift if eligible else None, "capped": lift.capped,
             "eligible": eligible, "eval_id": s["eval_id"],
@@ -77,12 +104,72 @@ def build_tables(exp: ExperimentConfig, summaries: list[dict[str, Any]], templat
     return base, direct, cells
 
 
+def headroom_rows(exp: ExperimentConfig, summaries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """One row per base × task: zero-shot, few-shot and direct scores, lift vs the declared
+    baseline, and the ceiling / format-dominated flags."""
+    zs, fs = base_scores(exp, summaries)
+    ref = reference_scores(exp, zs, fs)
+    _, direct, _ = build_tables(exp, summaries)
+    rows = []
+    for b in exp.bases:
+        for t in exp.tasks:
+            key = (b.name, t.task_id)
+            sign = 1 if t.metric_direction == "higher" else -1
+            ds = [v for (bb, tt, _), v in direct.items() if (bb, tt) == key]
+            ss = seed_summary(ds)
+            s_zs, s_fs, s_ref = zs.get(key), fs.get(key), ref.get(key)
+            lift = sign * (ss["mean"] - s_ref) if ds and s_ref is not None else None
+            lift_zs = sign * (ss["mean"] - s_zs) if ds and s_zs is not None else None
+            fs_gain = sign * (s_fs - s_zs) if s_fs is not None and s_zs is not None else None
+            format_share = (fs_gain / lift_zs if fs_gain is not None and lift_zs is not None
+                            and lift_zs >= exp.gate.min_direct_lift else None)
+            known = [x for x in (s_zs, s_fs) if x is not None]
+            ceiling = sign > 0 and bool(known) and max(known) >= CEILING
+            rows.append({"base": b.name, "family": b.family, "task": t.task_id, "metric": t.metric,
+                         "s_base_zeroshot": s_zs, "s_base_fewshot": s_fs, "baseline": exp.gate.baseline,
+                         "s_base": s_ref, "s_direct_mean": ss["mean"], "s_direct_std": ss["std"],
+                         "n_seeds": ss["n"], "direct_lift": lift, "direct_lift_vs_zeroshot": lift_zs,
+                         "format_share": format_share, "ceiling": ceiling,
+                         "format_dominated": format_share is not None and format_share >= FORMAT_SHARE,
+                         "eligible": lift is not None and lift >= exp.gate.min_direct_lift})
+    return rows
+
+
 def per_example_scores(paths: Paths, eval_id: str) -> list[float]:
     f = paths.raw / f"{eval_id}.jsonl"
     return [json.loads(l)["score"] for l in f.read_text().splitlines()] if f.exists() else []
 
 
-def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]]) -> dict[str, Any]:
+def graded_criterion(exp: ExperimentConfig, graded_rows: list[dict[str, Any]] | None) -> dict[str, Any]:
+    """Primary method vs the strongest non-learned baseline on RecoveredNLL, paired over identical
+    source×target×task cells (seeds and splits averaged)."""
+    g = exp.gate
+    if not graded_rows:
+        return {"value": None, "passed": False, "note": "graded transfer not computed (run `uag graded-transfer`)"}
+
+    def cell_means(m: str) -> dict[tuple, float]:
+        acc = defaultdict(list)
+        for r in graded_rows:
+            if r["method"] == m and r.get("recovered_nll") is not None:
+                acc[(r["source"], r["target"], r["task"])].append(r["recovered_nll"])
+        return {k: float(np.mean(v)) for k, v in acc.items()}
+
+    learned = cell_means(g.primary_method)
+    base = {b: cell_means(b) for b in g.non_learned_baselines}
+    base = {b: v for b, v in base.items() if set(v) & set(learned)}
+    if not learned or not base:
+        return {"value": None, "passed": False, "note": "no comparable graded cells"}
+    means = {b: float(np.mean([v[k] for k in set(v) & set(learned)])) for b, v in base.items()}
+    strongest = max(means, key=means.get)
+    common = sorted(set(base[strongest]) & set(learned))
+    diff = paired_bootstrap_diff([learned[k] for k in common], [base[strongest][k] for k in common],
+                                 n_boot=g.bootstrap_samples, level=g.ci_level, seed=g.seed)
+    return {"value": diff, "passed": diff["low"] > 0, "strongest_baseline": strongest,
+            "mean_recovered_nll": {g.primary_method: float(np.mean([learned[k] for k in common])), **means}}
+
+
+def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]],
+                  graded_rows: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     g = exp.gate
     method = g.primary_method
     elig = [c for c in cells if c["eligible"]]
@@ -146,6 +233,8 @@ def evaluate_gate(exp: ExperimentConfig, cells: list[dict[str, Any]]) -> dict[st
     else:
         out["strongest_baseline"] = None
         out["criteria"]["beats_strongest_baseline"] = {"value": None, "passed": False}
+    if g.graded_beats_baselines:
+        out["criteria"]["graded_beats_baselines"] = graded_criterion(exp, graded_rows)
     out["passed"] = all(c["passed"] for c in out["criteria"].values())
     return out
 
@@ -174,24 +263,14 @@ def analyze(exp: ExperimentConfig) -> dict[str, Any]:
     paths = Paths(exp)
     decl = declare_gate(exp) if exp.splits else None  # raises if the gate was edited after declaration
     summaries = load_summaries(paths)
-    base, direct, cells = build_tables(exp, summaries)
-
-    # Headroom / direct table
-    direct_rows = []
-    for b in exp.bases:
-        for t in exp.tasks:
-            ds = [v for (bb, tt, _), v in direct.items() if (bb, tt) == (b.name, t.task_id)]
-            sb = base.get((b.name, t.task_id))
-            ss = seed_summary(ds)
-            lift = (ss["mean"] - sb) * (1 if t.metric_direction == "higher" else -1) if ds and sb is not None else None
-            direct_rows.append({"base": b.name, "family": b.family, "task": t.task_id, "metric": t.metric,
-                                "s_base": sb, "s_direct_mean": ss["mean"], "s_direct_std": ss["std"],
-                                "n_seeds": ss["n"], "direct_lift": lift,
-                                "eligible": lift is not None and lift >= exp.gate.min_direct_lift})
+    _, _, cells = build_tables(exp, summaries)
+    direct_rows = headroom_rows(exp, summaries)
     _write_csv(paths.tables / f"{exp.name}_direct.csv", direct_rows)
     _write_csv(paths.tables / f"{exp.name}_cells.csv", [{k: v for k, v in c.items()} for c in cells])
 
-    gate = evaluate_gate(exp, cells) if cells else None
+    graded_file = paths.exp_results / "graded_transfer.json"
+    graded_rows = json.loads(graded_file.read_text())["rows"] if graded_file.exists() else None
+    gate = evaluate_gate(exp, cells, graded_rows) if cells else None
     recon = _reconstruction_rows(paths)
     md = render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries)
     paths.decision.parent.mkdir(parents=True, exist_ok=True)
@@ -227,8 +306,14 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
               f"2. median RecoveredLift of `{g['primary_method']}` ≥ **{g['min_median_recovered_lift']}**;",
               f"3. `{g['primary_method']}` beats the strongest non-learned baseline "
               f"({', '.join(g['non_learned_baselines'])}) with a paired-bootstrap {int(g['ci_level'] * 100)}% CI "
-              f"excluding zero (resampling identical source×target×task cells).", "",
-              f"Cells whose mean direct-LoRA lift is below {g['min_direct_lift']} are ineligible (ratio unstable).", ""]
+              f"excluding zero (resampling identical source×target×task cells)"
+              + (";\n4. on gold-answer likelihood (RecoveredNLL, `uag graded-transfer`) it also beats the strongest "
+                 "non-learned baseline with a CI excluding zero." if g.get("graded_beats_baselines") else "."), "",
+              f"Lift is measured against the **{g.get('baseline', 'zeroshot')}** base"
+              + (f" ({decl['fewshot']['k']} worked training examples in the prompt, shot seed "
+                 f"{decl['fewshot']['seed']})" if g.get("baseline") == "fewshot" else "")
+              + f". Cells whose mean direct-LoRA lift is below {g['min_direct_lift']} are ineligible "
+                f"(ratio unstable).", ""]
 
     if gate is not None:
         verdict = "**GO** — proceed to Stage 1" if gate["passed"] else "**NO-GO** — see decision tree (spec §19)"
@@ -242,6 +327,12 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
         val = (f"Δ={_fmt(v['diff'])} [{_fmt(v['low'])}, {_fmt(v['high'])}] vs `{gate['strongest_baseline']}` (n={v['n']})"
                if v else "–")
         L.append(f"| Beats strongest baseline | {val} | CI > 0 | {c['beats_strongest_baseline']['passed']} |")
+        if "graded_beats_baselines" in c:
+            gc = c["graded_beats_baselines"]
+            gv = gc["value"]
+            gval = (f"Δ RecoveredNLL={_fmt(gv['diff'])} [{_fmt(gv['low'])}, {_fmt(gv['high'])}] vs "
+                    f"`{gc['strongest_baseline']}` (n={gv['n']})" if gv else gc.get("note", "–"))
+            L.append(f"| Graded (gold-answer NLL) beats strongest baseline | {gval} | CI > 0 | {gc['passed']} |")
         L += ["", "### Ordered pairs (heterogeneous only)", "", "| Source → Target | Eligible tasks | Positive | Passes |",
               "|---|---|---|---|"]
         for r in gate["pairs"]:
@@ -257,17 +348,23 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
         L += ["## Verdict", "", "No transfer cells were evaluated; the gate cannot be assessed.", ""]
 
     L += ["## Headroom: raw base vs direct LoRA (every base × task cell)", "",
-          "| Base | Task | Metric | Base | Direct (mean ± sd over seeds) | Lift | Eligible |",
-          "|---|---|---|---|---|---|---|"]
+          f"Lift = direct − {exp.gate.baseline} base. Flags: **ceiling** = a base scores ≥ {CEILING} "
+          f"(no room to measure transfer); **format** = the few-shot prompt alone recovers ≥ "
+          f"{FORMAT_SHARE:.0%} of the zero-shot-referenced lift (the adapter mostly teaches output format).", "",
+          "| Base | Task | Metric | Zero-shot | Few-shot | Direct (mean ± sd over seeds) | Lift | Eligible | Flags |",
+          "|---|---|---|---|---|---|---|---|---|"]
     for r in direct_rows:
-        L.append(f"| {r['base']} | {r['task']} | {r['metric']} | {_fmt(r['s_base'])} | "
+        flags = ", ".join(f for f, on in (("ceiling", r["ceiling"]), ("format", r["format_dominated"])) if on)
+        L.append(f"| {r['base']} | {r['task']} | {r['metric']} | {_fmt(r['s_base_zeroshot'])} | "
+                 f"{_fmt(r['s_base_fewshot'])} | "
                  f"{_fmt(r['s_direct_mean'])} ± {_fmt(r['s_direct_std'])} (n={r['n_seeds']}) | "
-                 f"{_fmt(r['direct_lift'])} | {r['eligible']} |")
+                 f"{_fmt(r['direct_lift'])} | {r['eligible']} | {flags or '–'} |")
     L.append("")
 
     if cells:
         L += ["## Held-out transfer cells (seed-averaged)", "",
-              "RecoveredLift = (S_transfer − S_base) / (S_direct − S_base); '–' marks ineligible cells.", "",
+              f"RecoveredLift = (S_transfer − S_base) / (S_direct − S_base) with S_base the "
+              f"{exp.gate.baseline} base; '–' marks ineligible cells.", "",
               "| Source → Target | Split | Task | Method | S_transfer | RecoveredLift (mean ± sd) | Δ rel. err | Seeds |",
               "|---|---|---|---|---|---|---|---|"]
         grouped = defaultdict(list)
@@ -287,7 +384,9 @@ def render_memo(exp, paths, decl, direct_rows, cells, gate, recon, summaries) ->
     controls = [s for s in summaries if s.get("eval_task", s["task_id"]) != s["task_id"]]
     if controls:
         base_scores = {(s["target_base"], s["task_id"]): s["primary"] for s in summaries if s["role"] == "base"}
-        L += ["## Collateral: control-task deltas", "", "| Kind | Target | Adapter task | Control task | Δ vs base |",
+        L += ["## Collateral: control-task deltas", "",
+              "Adapters are evaluated zero-shot on control tasks, so the reference here is the zero-shot base.", "",
+              "| Kind | Target | Adapter task | Control task | Δ vs base |",
               "|---|---|---|---|---|"]
         acc = defaultdict(list)
         for s in controls:

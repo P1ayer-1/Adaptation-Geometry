@@ -1,0 +1,196 @@
+Dry-run report for experiment 'dev_3080_frozenA'
+
+[PASS] 1. Training finished: 24/24 runs
+       dev_qwen2.5-0.5b_T3_paraphrase_seed0_r16: peak VRAM 1.8 GB, 4.2 min, 118,134 tokens, best valid_primary=1.0000 (start 0.6406), stopped at step 175 (early_stopping), best at step 75
+       dev_qwen2.5-0.5b_T3_paraphrase_seed1_r16: peak VRAM 1.8 GB, 5.7 min, 135,157 tokens, best valid_primary=1.0000 (start 0.6406), stopped at step 200 (early_stopping), best at step 100
+       dev_qwen2.5-0.5b_T7_python_seed0_r16: peak VRAM 2.6 GB, 7.8 min, 281,000 tokens, best valid_primary=1.0000 (start 0.0156), stopped at step 150 (early_stopping), best at step 50
+       dev_qwen2.5-0.5b_T7_python_seed1_r16: peak VRAM 2.6 GB, 7.9 min, 281,615 tokens, best valid_primary=1.0000 (start 0.0156), stopped at step 150 (early_stopping), best at step 25
+       dev_qwen2.5-0.5b_T9_clinical_seed0_r16: peak VRAM 1.8 GB, 8.4 min, 153,561 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 225 (early_stopping), best at step 125
+       dev_qwen2.5-0.5b_T9_clinical_seed1_r16: peak VRAM 1.8 GB, 6.3 min, 137,182 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 200 (early_stopping), best at step 100
+       dev_qwen2.5-0.5b_T10_format_seed0_r16: peak VRAM 1.8 GB, 21.7 min, 439,461 tokens, best valid_primary=0.9844 (start 0.0000), stopped at step 500 (early_stopping), best at step 400
+       dev_qwen2.5-0.5b_T10_format_seed1_r16: peak VRAM 1.8 GB, 23.0 min, 395,630 tokens, best valid_primary=0.9531 (start 0.0000), stopped at step 450 (early_stopping), best at step 350
+       dev_qwen2.5-0.5b_T4_json_seed0_r16: peak VRAM 2.4 GB, 10.8 min, 404,232 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 200 (early_stopping), best at step 100
+       dev_qwen2.5-0.5b_T4_json_seed1_r16: peak VRAM 2.4 GB, 10.3 min, 404,484 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 200 (early_stopping), best at step 100
+       dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16: peak VRAM 3.0 GB, 12.5 min, 601,637 tokens, best valid_primary=0.9219 (start 0.0000), stopped at step 250 (early_stopping), best at step 150
+       dev_qwen2.5-0.5b_T8_arithmetic_seed1_r16: peak VRAM 3.0 GB, 30.2 min, 1,501,400 tokens, best valid_primary=0.9688 (start 0.0000), stopped at step 623 (early_stopping), best at step 525
+       dev_llama3.2-1b_T3_paraphrase_seed0_r16: peak VRAM 3.8 GB, 7.5 min, 205,305 tokens, best valid_primary=1.0000 (start 0.4688), stopped at step 300 (early_stopping), best at step 200
+       dev_llama3.2-1b_T3_paraphrase_seed1_r16: peak VRAM 3.7 GB, 6.0 min, 170,875 tokens, best valid_primary=1.0000 (start 0.4688), stopped at step 250 (early_stopping), best at step 150
+       dev_llama3.2-1b_T7_python_seed0_r16: peak VRAM 3.9 GB, 7.2 min, 282,028 tokens, best valid_primary=1.0000 (start 0.0781), stopped at step 150 (early_stopping), best at step 50
+       dev_llama3.2-1b_T7_python_seed1_r16: peak VRAM 3.9 GB, 6.5 min, 282,633 tokens, best valid_primary=1.0000 (start 0.0781), stopped at step 150 (early_stopping), best at step 50
+       dev_llama3.2-1b_T9_clinical_seed0_r16: peak VRAM 3.7 GB, 3.9 min, 122,289 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 175 (early_stopping), best at step 75
+       dev_llama3.2-1b_T9_clinical_seed1_r16: peak VRAM 3.7 GB, 4.4 min, 140,382 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 200 (early_stopping), best at step 100
+       dev_llama3.2-1b_T10_format_seed0_r16: peak VRAM 3.8 GB, 6.9 min, 246,621 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 275 (early_stopping), best at step 175
+       dev_llama3.2-1b_T10_format_seed1_r16: peak VRAM 3.8 GB, 6.9 min, 223,371 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 250 (early_stopping), best at step 150
+       dev_llama3.2-1b_T4_json_seed0_r16: peak VRAM 3.8 GB, 9.1 min, 343,162 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 175 (early_stopping), best at step 75
+       dev_llama3.2-1b_T4_json_seed1_r16: peak VRAM 3.8 GB, 9.7 min, 392,279 tokens, best valid_primary=1.0000 (start 0.0000), stopped at step 200 (early_stopping), best at step 100
+       dev_llama3.2-1b_T8_arithmetic_seed0_r16: peak VRAM 3.9 GB, 10.8 min, 422,592 tokens, best valid_primary=0.9062 (start 0.0625), stopped at step 225 (early_stopping), best at step 125
+       dev_llama3.2-1b_T8_arithmetic_seed1_r16: peak VRAM 3.9 GB, 7.4 min, 329,366 tokens, best valid_primary=0.9219 (start 0.0625), stopped at step 175 (early_stopping), best at step 75
+
+[PASS] 2. ΔW reconstruction check: 24/24 runs pass
+       dev_qwen2.5-0.5b_T3_paraphrase_seed0_r16: max logit diff 3.88e-04 (tolerance 2.90e-03), adapter effect 1.85e+01
+       dev_qwen2.5-0.5b_T3_paraphrase_seed1_r16: max logit diff 9.73e-05 (tolerance 3.05e-03), adapter effect 1.85e+01
+       dev_qwen2.5-0.5b_T7_python_seed0_r16: max logit diff 1.64e-04 (tolerance 4.38e-03), adapter effect 2.46e+01
+       dev_qwen2.5-0.5b_T7_python_seed1_r16: max logit diff 1.89e-04 (tolerance 4.31e-03), adapter effect 2.32e+01
+       dev_qwen2.5-0.5b_T9_clinical_seed0_r16: max logit diff 2.64e-04 (tolerance 3.53e-03), adapter effect 2.07e+01
+       dev_qwen2.5-0.5b_T9_clinical_seed1_r16: max logit diff 2.95e-04 (tolerance 3.45e-03), adapter effect 2.14e+01
+       dev_qwen2.5-0.5b_T10_format_seed0_r16: max logit diff 1.37e-04 (tolerance 4.44e-03), adapter effect 2.89e+01
+       dev_qwen2.5-0.5b_T10_format_seed1_r16: max logit diff 2.04e-04 (tolerance 4.45e-03), adapter effect 2.83e+01
+       dev_qwen2.5-0.5b_T4_json_seed0_r16: max logit diff 2.92e-04 (tolerance 4.81e-03), adapter effect 3.08e+01
+       dev_qwen2.5-0.5b_T4_json_seed1_r16: max logit diff 3.02e-04 (tolerance 4.84e-03), adapter effect 2.98e+01
+       dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16: max logit diff 3.51e-04 (tolerance 4.04e-03), adapter effect 2.67e+01
+       dev_qwen2.5-0.5b_T8_arithmetic_seed1_r16: max logit diff 4.44e-04 (tolerance 4.13e-03), adapter effect 2.68e+01
+       dev_llama3.2-1b_T3_paraphrase_seed0_r16: max logit diff 2.09e-04 (tolerance 3.34e-03), adapter effect 1.81e+01
+       dev_llama3.2-1b_T3_paraphrase_seed1_r16: max logit diff 8.71e-05 (tolerance 3.20e-03), adapter effect 1.80e+01
+       dev_llama3.2-1b_T7_python_seed0_r16: max logit diff 1.49e-04 (tolerance 4.15e-03), adapter effect 2.24e+01
+       dev_llama3.2-1b_T7_python_seed1_r16: max logit diff 1.17e-04 (tolerance 4.19e-03), adapter effect 2.22e+01
+       dev_llama3.2-1b_T9_clinical_seed0_r16: max logit diff 1.10e-04 (tolerance 3.72e-03), adapter effect 2.14e+01
+       dev_llama3.2-1b_T9_clinical_seed1_r16: max logit diff 8.89e-05 (tolerance 3.77e-03), adapter effect 2.21e+01
+       dev_llama3.2-1b_T10_format_seed0_r16: max logit diff 1.15e-04 (tolerance 4.23e-03), adapter effect 2.35e+01
+       dev_llama3.2-1b_T10_format_seed1_r16: max logit diff 8.27e-05 (tolerance 4.31e-03), adapter effect 2.29e+01
+       dev_llama3.2-1b_T4_json_seed0_r16: max logit diff 1.69e-04 (tolerance 4.39e-03), adapter effect 2.99e+01
+       dev_llama3.2-1b_T4_json_seed1_r16: max logit diff 1.02e-04 (tolerance 4.34e-03), adapter effect 3.34e+01
+       dev_llama3.2-1b_T8_arithmetic_seed0_r16: max logit diff 1.20e-04 (tolerance 4.15e-03), adapter effect 2.54e+01
+       dev_llama3.2-1b_T8_arithmetic_seed1_r16: max logit diff 1.04e-04 (tolerance 4.03e-03), adapter effect 2.45e+01
+
+[CHECK] 3. Direct LoRA beats the fewshot base by >= 0.05, no base >= 0.9, lift not format-dominated (few-shot share < 50%): 11/12 cells
+       dev_qwen2.5-0.5b / T3_paraphrase (accuracy): zero-shot 0.650, 5-shot 0.640 -> direct 0.960 (lift vs fewshot +0.320)
+       dev_qwen2.5-0.5b / T7_python (unit_test_pass): zero-shot 0.030, 5-shot 0.090 -> direct 0.988 (lift vs fewshot +0.898)
+       dev_qwen2.5-0.5b / T9_clinical (exact_match): zero-shot 0.000, 5-shot 0.050 -> direct 1.000 (lift vs fewshot +0.950)
+       dev_qwen2.5-0.5b / T10_format (format_v2): zero-shot 0.000, 5-shot 0.000 -> direct 0.952 (lift vs fewshot +0.952)
+       dev_qwen2.5-0.5b / T4_json (json_exact): zero-shot 0.000, 5-shot 0.065 -> direct 0.970 (lift vs fewshot +0.905)
+       dev_qwen2.5-0.5b / T8_arithmetic (exact_number): zero-shot 0.000, 5-shot 0.060 -> direct 0.897 (lift vs fewshot +0.837)
+       dev_llama3.2-1b / T3_paraphrase (accuracy): zero-shot 0.445, 5-shot 0.585 -> direct 0.965 (lift vs fewshot +0.380)
+       dev_llama3.2-1b / T7_python (unit_test_pass): zero-shot 0.040, 5-shot 0.555 -> direct 0.998 (lift vs fewshot +0.443)
+         <- FORMAT: 54% of the lift comes from showing examples, not from the adapter
+       dev_llama3.2-1b / T9_clinical (exact_match): zero-shot 0.000, 5-shot 0.135 -> direct 0.990 (lift vs fewshot +0.855)
+       dev_llama3.2-1b / T10_format (format_v2): zero-shot 0.000, 5-shot 0.005 -> direct 0.980 (lift vs fewshot +0.975)
+       dev_llama3.2-1b / T4_json (json_exact): zero-shot 0.000, 5-shot 0.385 -> direct 0.998 (lift vs fewshot +0.613)
+       dev_llama3.2-1b / T8_arithmetic (exact_number): zero-shot 0.110, 5-shot 0.170 -> direct 0.905 (lift vs fewshot +0.735)
+
+[INFO] Token budget from learning curves
+       Learning curves on valid_primary (tokens until the run first reached 50/90/95% of its total improvement)
+         run                                                    start    best     t50     t90     t95   stopped  reason
+         dev_qwen2.5-0.5b_T3_paraphrase_seed0_r16               0.641   1.000     51k     51k     51k      118k  early_stopping
+         dev_qwen2.5-0.5b_T3_paraphrase_seed1_r16               0.641   1.000     51k     51k     51k      135k  early_stopping
+         dev_qwen2.5-0.5b_T7_python_seed0_r16                   0.016   1.000     47k     47k     94k      281k  early_stopping
+         dev_qwen2.5-0.5b_T7_python_seed1_r16                   0.016   1.000     48k     48k     48k      282k  early_stopping
+         dev_qwen2.5-0.5b_T9_clinical_seed0_r16                 0.000   1.000     34k     68k     68k      154k  early_stopping
+         dev_qwen2.5-0.5b_T9_clinical_seed1_r16                 0.000   1.000     35k     52k     69k      137k  early_stopping
+         dev_qwen2.5-0.5b_T10_format_seed0_r16                  0.000   0.984     88k    220k    264k      439k  early_stopping
+         dev_qwen2.5-0.5b_T10_format_seed1_r16                  0.000   0.953     66k    264k    264k      396k  early_stopping
+         dev_qwen2.5-0.5b_T4_json_seed0_r16                     0.000   1.000    151k    202k    202k      404k  early_stopping
+         dev_qwen2.5-0.5b_T4_json_seed1_r16                     0.000   1.000    152k    202k    202k      404k  early_stopping
+         dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16               0.000   0.922     60k    179k    299k      602k  early_stopping
+         dev_qwen2.5-0.5b_T8_arithmetic_seed1_r16               0.000   0.969     61k    603k    965k    1,501k  early_stopping
+         dev_llama3.2-1b_T3_paraphrase_seed0_r16                0.469   1.000     51k     85k    103k      205k  early_stopping
+         dev_llama3.2-1b_T3_paraphrase_seed1_r16                0.469   1.000     51k     86k     86k      171k  early_stopping
+         dev_llama3.2-1b_T7_python_seed0_r16                    0.078   1.000     47k     47k     94k      282k  early_stopping
+         dev_llama3.2-1b_T7_python_seed1_r16                    0.078   1.000     48k     48k     95k      283k  early_stopping
+         dev_llama3.2-1b_T9_clinical_seed0_r16                  0.000   1.000     35k     52k     52k      122k  early_stopping
+         dev_llama3.2-1b_T9_clinical_seed1_r16                  0.000   1.000     35k     53k     53k      140k  early_stopping
+         dev_llama3.2-1b_T10_format_seed0_r16                   0.000   1.000     45k     90k    112k      247k  early_stopping
+         dev_llama3.2-1b_T10_format_seed1_r16                   0.000   1.000     45k     67k    112k      223k  early_stopping
+         dev_llama3.2-1b_T4_json_seed0_r16                      0.000   1.000     98k    147k    147k      343k  early_stopping
+         dev_llama3.2-1b_T4_json_seed1_r16                      0.000   1.000     99k    148k    148k      392k  early_stopping
+         dev_llama3.2-1b_T8_arithmetic_seed0_r16                0.062   0.906     47k     93k    140k      423k  early_stopping
+         dev_llama3.2-1b_T8_arithmetic_seed1_r16                0.062   0.922     47k     95k     95k      329k  early_stopping
+       
+       Proposed per-task token cap = 2 x the largest t95 over bases and seeds (rounded up); the same cap applies to every base:
+         T10_format           max t95     264k -> cap   1,000k
+         T3_paraphrase        max t95     103k -> cap     500k
+         T4_json              max t95     202k -> cap     500k
+         T7_python            max t95      95k -> cap     200k
+         T8_arithmetic        max t95     965k -> cap   2,000k
+         T9_clinical          max t95      69k -> cap     200k
+
+[INFO] Geometry sanity (is ΔW task signal or random-init noise?)
+       Factor movement (selected checkpoint vs initialisation):
+         dev_qwen2.5-0.5b_T3_paraphrase_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.049, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T3_paraphrase_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.055, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T7_python_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.087, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T7_python_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.064, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T9_clinical_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.077, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T9_clinical_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.075, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T10_format_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.122, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T10_format_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.117, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T4_json_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.106, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T4_json_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.106, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.094, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_qwen2.5-0.5b_T8_arithmetic_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.104, row-space overlap with A0 = 1.000 (chance 0.0158)
+         dev_llama3.2-1b_T3_paraphrase_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.113, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T3_paraphrase_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.108, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T7_python_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.160, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T7_python_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.160, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T9_clinical_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.117, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T9_clinical_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.122, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T10_format_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.163, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T10_format_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.160, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T4_json_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.179, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T4_json_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.182, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T8_arithmetic_seed0_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.153, row-space overlap with A0 = 1.000 (chance 0.0070)
+         dev_llama3.2-1b_T8_arithmetic_seed1_r16: ||A-A0||/||A0|| = 0.000 (min 0.000, max 0.000), ||B||/||A0|| = 0.147, row-space overlap with A0 = 1.000 (chance 0.0070)
+         -> A is frozen by design (lora.train_A: false; one fixed A per base): only B trains, so compare tasks and seeds on B / the output side and on ΔW with the shared input basis.
+       
+       Seed comparison (pairwise ΔW similarity; module-averaged subspace overlaps, global cosine):
+         dev_qwen2.5-0.5b (init_seed_scope: base; runs T10_format/seed0, T10_format/seed1, T3_paraphrase/seed0, T3_paraphrase/seed1, T4_json/seed0, T4_json/seed1, T7_python/seed0, T7_python/seed1, T8_arithmetic/seed0, T8_arithmetic/seed1, T9_clinical/seed0, T9_clinical/seed1)
+           group                        pairs   cosine  in-side out-side
+           same task, diff seed             6    0.915    1.000    0.780
+           diff task, same seed            30    0.042    1.000    0.076
+           diff task, diff seed            30    0.042    1.000    0.076
+           chance (unrelated)                    0.000    0.016    0.044
+           seed invariance T3_paraphrase: cosine 0.905, in-side 1.000, out-side 0.760 (1 pairs)
+           seed invariance T7_python: cosine 0.935, in-side 1.000, out-side 0.809 (1 pairs)
+           seed invariance T9_clinical: cosine 0.949, in-side 1.000, out-side 0.843 (1 pairs)
+           seed invariance T10_format: cosine 0.922, in-side 1.000, out-side 0.772 (1 pairs)
+           seed invariance T4_json: cosine 0.966, in-side 1.000, out-side 0.897 (1 pairs)
+           seed invariance T8_arithmetic: cosine 0.811, in-side 1.000, out-side 0.600 (1 pairs)
+           -> same-task runs agree clearly more than unrelated runs: there is task signal.
+         dev_llama3.2-1b (init_seed_scope: base; runs T10_format/seed0, T10_format/seed1, T3_paraphrase/seed0, T3_paraphrase/seed1, T4_json/seed0, T4_json/seed1, T7_python/seed0, T7_python/seed1, T8_arithmetic/seed0, T8_arithmetic/seed1, T9_clinical/seed0, T9_clinical/seed1)
+           group                        pairs   cosine  in-side out-side
+           same task, diff seed             6    0.934    1.000    0.823
+           diff task, same seed            30    0.016    1.000    0.038
+           diff task, diff seed            30    0.016    1.000    0.038
+           chance (unrelated)                    0.000    0.007    0.013
+           seed invariance T3_paraphrase: cosine 0.890, in-side 1.000, out-side 0.746 (1 pairs)
+           seed invariance T7_python: cosine 0.970, in-side 1.000, out-side 0.901 (1 pairs)
+           seed invariance T9_clinical: cosine 0.946, in-side 1.000, out-side 0.854 (1 pairs)
+           seed invariance T10_format: cosine 0.938, in-side 1.000, out-side 0.794 (1 pairs)
+           seed invariance T4_json: cosine 0.981, in-side 1.000, out-side 0.939 (1 pairs)
+           seed invariance T8_arithmetic: cosine 0.880, in-side 1.000, out-side 0.705 (1 pairs)
+           -> same-task runs agree clearly more than unrelated runs: there is task signal.
+
+[INFO] 4. Timing on this machine (not a rental projection: run scripts/benchmark_gpu.sh on the rented GPU for that)
+       dev_qwen2.5-0.5b_T3_paraphrase_seed0_r16: 1.42 s/step, 675 tokens/step, 474 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T3_paraphrase_seed1_r16: 1.70 s/step, 676 tokens/step, 397 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T7_python_seed0_r16: 3.13 s/step, 1,873 tokens/step, 598 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T7_python_seed1_r16: 3.14 s/step, 1,877 tokens/step, 598 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T9_clinical_seed0_r16: 2.24 s/step, 682 tokens/step, 305 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T9_clinical_seed1_r16: 1.89 s/step, 686 tokens/step, 363 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T10_format_seed0_r16: 2.60 s/step, 879 tokens/step, 338 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T10_format_seed1_r16: 3.06 s/step, 879 tokens/step, 287 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T4_json_seed0_r16: 3.23 s/step, 2,021 tokens/step, 626 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T4_json_seed1_r16: 3.09 s/step, 2,022 tokens/step, 655 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T8_arithmetic_seed0_r16: 3.00 s/step, 2,407 tokens/step, 802 tokens/s (includes validation passes)
+       dev_qwen2.5-0.5b_T8_arithmetic_seed1_r16: 2.91 s/step, 2,410 tokens/step, 829 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T3_paraphrase_seed0_r16: 1.51 s/step, 684 tokens/step, 454 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T3_paraphrase_seed1_r16: 1.44 s/step, 684 tokens/step, 473 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T7_python_seed0_r16: 2.86 s/step, 1,880 tokens/step, 656 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T7_python_seed1_r16: 2.59 s/step, 1,884 tokens/step, 729 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T9_clinical_seed0_r16: 1.33 s/step, 699 tokens/step, 525 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T9_clinical_seed1_r16: 1.31 s/step, 702 tokens/step, 534 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T10_format_seed0_r16: 1.50 s/step, 897 tokens/step, 599 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T10_format_seed1_r16: 1.67 s/step, 893 tokens/step, 537 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T4_json_seed0_r16: 3.12 s/step, 1,961 tokens/step, 628 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T4_json_seed1_r16: 2.92 s/step, 1,961 tokens/step, 672 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T8_arithmetic_seed0_r16: 2.87 s/step, 1,878 tokens/step, 654 tokens/s (includes validation passes)
+       dev_llama3.2-1b_T8_arithmetic_seed1_r16: 2.53 s/step, 1,882 tokens/step, 743 tokens/s (includes validation passes)
+       evaluation dev_llama3.2-1b [choices, 0-shot]: 0.02 s per example
+       evaluation dev_llama3.2-1b [choices, 5-shot]: 0.01 s per example
+       evaluation dev_llama3.2-1b [generate, 0-shot]: 0.19 s per example
+       evaluation dev_llama3.2-1b [generate, 5-shot]: 0.14 s per example
+       evaluation dev_qwen2.5-0.5b [choices, 0-shot]: 0.01 s per example
+       evaluation dev_qwen2.5-0.5b [choices, 5-shot]: 0.00 s per example
+       evaluation dev_qwen2.5-0.5b [generate, 0-shot]: 0.30 s per example
+       evaluation dev_qwen2.5-0.5b [generate, 5-shot]: 0.21 s per example
+
+Overall: fix the CHECK items above first (paste this report to Claude if unsure).

@@ -4,3 +4,7 @@ alpha: 32
 dropout: 0.0
 target_modules: [q, k, v, o, up, down, gate]
 use_rslora: false
+# Each (task, seed) gets its own random A init. With the legacy "seed" scope, every task on a
+# base shared A0 for a given seed, and the v1 dry run showed ΔW's input directions are ~98%
+# set by A0 (A moves only 7-16%), so held-out tasks inherited geometry from the shared init.
+init_seed_scope: task

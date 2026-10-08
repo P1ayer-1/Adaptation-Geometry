@@ -8,30 +8,31 @@ bases:
   - ../bases/stage0_A2_qwen2.5-3b.yaml
   - ../bases/stage0_B_llama3.2-3b.yaml
   - ../bases/stage0_C_gemma2-2b.yaml
+# Task panel v2 (configs/tasks/v2): v1 was at ceiling or format-dominated for 0.5-1B bases.
 tasks:
-  - ../tasks/T1_sentiment.yaml
-  - ../tasks/T2_nli.yaml
-  - ../tasks/T3_paraphrase.yaml
-  - ../tasks/T4_json.yaml
-  - ../tasks/T5_concise.yaml
-  - ../tasks/T6_verbose.yaml
-  - ../tasks/T7_python.yaml
-  - ../tasks/T8_arithmetic.yaml
-  - ../tasks/T9_clinical.yaml
-  - ../tasks/T10_format.yaml
-lora: ../lora/r16.yaml
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+  - ../tasks/v2/T3_paraphrase.yaml
+  - ../tasks/v2/T4_json.yaml
+  - ../tasks/v2/T5_concise.yaml
+  - ../tasks/v2/T6_verbose.yaml
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T8_arithmetic.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
+lora: ../lora/r16_frozenA.yaml   # one fixed A per base (dev runs: same learning, seeds agree 0.92 vs 0.08)
 train: ../train/stage0.yaml
 seeds: [0, 1, 2]
 # 8 map-training / 2 held-out transformations per split; every task is held out once.
 # `primary_T9_T10` is the canonical split named in the spec.
 splits:
   - {split_id: primary_T9_T10, holdout: [T9_clinical, T10_format]}
-  - {split_id: alt_T1_T5, holdout: [T1_sentiment, T5_concise]}
+  - {split_id: alt_T1_T5, holdout: [T1_hidden_rule, T5_concise]}
   - {split_id: alt_T2_T6, holdout: [T2_nli, T6_verbose]}
   - {split_id: alt_T3_T7, holdout: [T3_paraphrase, T7_python]}
   - {split_id: alt_T4_T8, holdout: [T4_json, T8_arithmetic]}
 maps:
-  methods: [svd_procrustes, svd_linear, procrustes_full, identity, cross_lora, random]
+  methods: [svd_procrustes, svd_linear, procrustes_full, identity, cross_lora, random, random_coords, target_mean]
   k: 32
   ridge: 0.01
   als_iters: 50
@@ -39,7 +40,10 @@ maps:
 gate:
   primary_method: svd_procrustes
   learned_methods: [svd_procrustes, svd_linear, procrustes_full]
-  non_learned_baselines: [identity, cross_lora, random]
+  # target_mean = the target's own mean training adapter (no source information): in dev runs it
+  # recovered far more gold-answer likelihood than the learned maps, so it must be beaten.
+  non_learned_baselines: [identity, cross_lora, random, random_coords, target_mean]
+  graded_beats_baselines: true
   min_heterogeneous_pairs: 2
   min_median_recovered_lift: 0.30
   min_direct_lift: 0.05

@@ -1,0 +1,18 @@
+# Head-start test reference: ordinary trainable LoRA, 32 training examples of the held-out tasks.
+name: headstart_lora_n32
+bases:
+  - ../../bases/dev_qwen2.5-0.5b.yaml
+  - ../../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../../tasks/v2/T4_json.yaml
+  - ../../tasks/v2/T8_arithmetic.yaml
+lora: ../../lora/r16.yaml
+train: ../../train/headstart_lora_n32.yaml
+seeds: [0]
+splits: []
+gate: {min_heterogeneous_pairs: 1}
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []

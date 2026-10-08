@@ -1,0 +1,22 @@
+task           target            condition                                 score     NLL  RecNLL
+T4_json        dev_qwen2.5-0.5b  ceiling (core trained on target)          0.995   0.001   1.000
+T4_json        dev_qwen2.5-0.5b  zero core (= untouched base)              0.000   1.600   0.000
+T4_json        dev_qwen2.5-0.5b  mean training core                        0.000   1.272   0.205
+T4_json        dev_qwen2.5-0.5b  transferred from dev_llama3.2-1b          0.000   1.664  -0.040
+T4_json        dev_qwen2.5-0.5b  random (norm of dev_llama3.2-1b core)     0.000   1.733  -0.083
+T4_json        dev_llama3.2-1b   ceiling (core trained on target)          0.995   0.001   1.000
+T4_json        dev_llama3.2-1b   zero core (= untouched base)              0.000   1.447   0.000
+T4_json        dev_llama3.2-1b   mean training core                        0.000   1.453  -0.004
+T4_json        dev_llama3.2-1b   transferred from dev_qwen2.5-0.5b         0.000   1.958  -0.353
+T4_json        dev_llama3.2-1b   random (norm of dev_qwen2.5-0.5b core)    0.000   1.649  -0.139
+T8_arithmetic  dev_qwen2.5-0.5b  ceiling (core trained on target)          0.465   0.034   1.000
+T8_arithmetic  dev_qwen2.5-0.5b  zero core (= untouched base)              0.000   0.733   0.000
+T8_arithmetic  dev_qwen2.5-0.5b  mean training core                        0.000   0.695   0.054
+T8_arithmetic  dev_qwen2.5-0.5b  transferred from dev_llama3.2-1b          0.000   3.512  -3.978
+T8_arithmetic  dev_qwen2.5-0.5b  random (norm of dev_llama3.2-1b core)     0.000   2.236  -2.152
+T8_arithmetic  dev_llama3.2-1b   ceiling (core trained on target)          0.680   0.041   1.000
+T8_arithmetic  dev_llama3.2-1b   zero core (= untouched base)              0.110   1.072   0.000
+T8_arithmetic  dev_llama3.2-1b   mean training core                        0.005   0.984   0.086
+T8_arithmetic  dev_llama3.2-1b   transferred from dev_qwen2.5-0.5b         0.000   5.996  -4.777
+T8_arithmetic  dev_llama3.2-1b   random (norm of dev_qwen2.5-0.5b core)    0.000   5.870  -4.655
+RecNLL = (base NLL - NLL) / (base NLL - ceiling NLL); base = the untouched target model.

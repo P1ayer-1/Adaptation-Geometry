@@ -1,0 +1,208 @@
+{
+ "rows": [
+  {
+   "task": "T4_json",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "ceiling (core trained on target)",
+   "score": 0.995,
+   "nll": 0.0014590034377149996,
+   "base_score": 0.0,
+   "base_nll": 1.5998470478210702,
+   "recovered_nll_vs_ceiling": 1.0
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "identity core",
+   "score": 0.0,
+   "nll": 1.9086588437664604,
+   "base_score": 0.0,
+   "base_nll": 1.5998470478210702,
+   "recovered_nll_vs_ceiling": -0.19320201813979862
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "mean training core",
+   "score": 0.0,
+   "nll": 1.8990508367027752,
+   "base_score": 0.0,
+   "base_nll": 1.5998470478210702,
+   "recovered_nll_vs_ceiling": -0.1871909577483954
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "transferred from dev_llama3.2-1b",
+   "score": 0.0,
+   "nll": 1.8955750203191921,
+   "base_score": 0.0,
+   "base_nll": 1.5998470478210702,
+   "recovered_nll_vs_ceiling": -0.18501638168359255
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "random (norm of dev_llama3.2-1b core)",
+   "score": 0.0,
+   "nll": 1.5813103470561187,
+   "base_score": 0.0,
+   "base_nll": 1.5998470478210702,
+   "recovered_nll_vs_ceiling": 0.011597121756564948
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_llama3.2-1b",
+   "condition": "ceiling (core trained on target)",
+   "score": 0.985,
+   "nll": 0.004397145641198198,
+   "base_score": 0.0,
+   "base_nll": 1.4472965146381929,
+   "recovered_nll_vs_ceiling": 1.0
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_llama3.2-1b",
+   "condition": "identity core",
+   "score": 0.0,
+   "nll": 2.360128464900234,
+   "base_score": 0.0,
+   "base_nll": 1.4472965146381929,
+   "recovered_nll_vs_ceiling": -0.6326372925761133
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_llama3.2-1b",
+   "condition": "mean training core",
+   "score": 0.0,
+   "nll": 2.313332627169093,
+   "base_score": 0.0,
+   "base_nll": 1.4472965146381929,
+   "recovered_nll_vs_ceiling": -0.6002054828902652
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_llama3.2-1b",
+   "condition": "transferred from dev_qwen2.5-0.5b",
+   "score": 0.0,
+   "nll": 2.3449085863987853,
+   "base_score": 0.0,
+   "base_nll": 1.4472965146381929,
+   "recovered_nll_vs_ceiling": -0.6220891706291002
+  },
+  {
+   "task": "T4_json",
+   "target": "dev_llama3.2-1b",
+   "condition": "random (norm of dev_qwen2.5-0.5b core)",
+   "score": 0.0,
+   "nll": 1.4606814145163094,
+   "base_score": 0.0,
+   "base_nll": 1.4472965146381929,
+   "recovered_nll_vs_ceiling": -0.009276391802306213
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "ceiling (core trained on target)",
+   "score": 0.885,
+   "nll": 0.0034895217726186064,
+   "base_score": 0.0,
+   "base_nll": 0.7325512071947388,
+   "recovered_nll_vs_ceiling": 1.0
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "identity core",
+   "score": 0.0,
+   "nll": 2.2303007948740623,
+   "base_score": 0.0,
+   "base_nll": 0.7325512071947388,
+   "recovered_nll_vs_ceiling": -2.054352351285804
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "mean training core",
+   "score": 0.0,
+   "nll": 2.1752670059143853,
+   "base_score": 0.0,
+   "base_nll": 0.7325512071947388,
+   "recovered_nll_vs_ceiling": -1.978866572702044
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "transferred from dev_llama3.2-1b",
+   "score": 0.0,
+   "nll": 2.115113156191391,
+   "base_score": 0.0,
+   "base_nll": 0.7325512071947388,
+   "recovered_nll_vs_ceiling": -1.8963579853962034
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_qwen2.5-0.5b",
+   "condition": "random (norm of dev_llama3.2-1b core)",
+   "score": 0.0,
+   "nll": 0.7973157356023224,
+   "base_score": 0.0,
+   "base_nll": 0.7325512071947388,
+   "recovered_nll_vs_ceiling": -0.08883271429918244
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_llama3.2-1b",
+   "condition": "ceiling (core trained on target)",
+   "score": 0.87,
+   "nll": 0.010493273177998036,
+   "base_score": 0.11,
+   "base_nll": 1.0719092226377187,
+   "recovered_nll_vs_ceiling": 1.0
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_llama3.2-1b",
+   "condition": "identity core",
+   "score": 0.0,
+   "nll": 2.2510716441498135,
+   "base_score": 0.11,
+   "base_nll": 1.0719092226377187,
+   "recovered_nll_vs_ceiling": -1.110933392429527
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_llama3.2-1b",
+   "condition": "mean training core",
+   "score": 0.0,
+   "nll": 2.196926354466514,
+   "base_score": 0.11,
+   "base_nll": 1.0719092226377187,
+   "recovered_nll_vs_ceiling": -1.059921072790972
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_llama3.2-1b",
+   "condition": "transferred from dev_qwen2.5-0.5b",
+   "score": 0.0,
+   "nll": 2.164831682918901,
+   "base_score": 0.11,
+   "base_nll": 1.0719092226377187,
+   "recovered_nll_vs_ceiling": -1.0296834721934403
+  },
+  {
+   "task": "T8_arithmetic",
+   "target": "dev_llama3.2-1b",
+   "condition": "random (norm of dev_qwen2.5-0.5b core)",
+   "score": 0.0,
+   "nll": 1.2284894567347486,
+   "base_score": 0.11,
+   "base_nll": 1.0719092226377187,
+   "recovered_nll_vs_ceiling": -0.14752014436633631
+  }
+ ],
+ "holdout": [
+  "T4_json",
+  "T8_arithmetic"
+ ]
+}

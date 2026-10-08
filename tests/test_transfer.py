@@ -113,3 +113,32 @@ def test_map_save_load_roundtrip(tmp_path):
     for n in p1.modules:
         assert np.allclose(p1.modules[n].dense(), p2.modules[n].dense(), atol=1e-4)
     assert m2.split.holdout == ("T9", "T10")
+
+
+def test_target_mean_and_random_coords_baselines():
+    from uag.config import MapSettings
+    from uag.extract_delta import DeltaSet, LowRank
+    from uag.transfer import TaskSplit, fit_pair_map
+
+    rng = np.random.default_rng(0)
+    n = "model.layers.0.self_attn.q_proj"
+    info = {n: {"layer": 0, "cls": "q"}}
+
+    def ds(task, d_out, d_in):
+        return DeltaSet({"task_id": task, "num_layers": 1, "model_type": "llama"},
+                        {n: LowRank.from_dense(rng.normal(size=(d_out, 3)) @ rng.normal(size=(3, d_in)))}, info)
+
+    tasks = ["a", "b", "c"]
+    src = {t: ds(t, 12, 10) for t in tasks}
+    tgt = {t: ds(t, 14, 9) for t in tasks}
+    split = TaskSplit("s", ("a", "b"), ("c",))
+    train_t = {t: tgt[t] for t in split.train}
+    m = fit_pair_map("target_mean", {t: src[t] for t in split.train}, train_t, split, MapSettings(k=4), "S", "T")
+    pred = m.predict(src["c"]).modules[n].dense()
+    assert np.allclose(pred, (train_t["a"].modules[n].dense() + train_t["b"].modules[n].dense()) / 2)
+    r = fit_pair_map("random_coords", {t: src[t] for t in split.train}, train_t, split, MapSettings(k=4), "S", "T")
+    p = r.predict(src["c"]).modules[n]
+    Ut = r.modules[n].params["Ut"]
+    assert np.allclose(Ut @ (Ut.T @ p.dense()), p.dense())  # lives in the target's coordinate span
+    ns, nt = r.modules[n].stats["source_norm"], r.modules[n].stats["target_norm"]
+    assert p.fro() == pytest.approx(nt * src["c"].modules[n].fro() / ns)

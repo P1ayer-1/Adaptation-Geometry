@@ -1,0 +1,23 @@
+# Head-start reference: ordinary LoRA from scratch on only the first 512 training examples, for the
+# same step budget as the shared-core head-start runs (~10 passes = 320 steps of 16), best
+# validation checkpoint kept.
+learning_rate: 2.0e-4
+batch_size: 8
+grad_accum: 2
+max_tokens_seen: 1500000
+max_seq_len: 512
+warmup_ratio: 0.03
+eval_every_steps: 32
+selection_metric: valid_primary
+valid_max_examples: 64
+early_stopping_patience: 0
+early_stopping_min_delta: 0.005
+min_steps: 0
+dtype: bfloat16
+deterministic: true
+device: auto
+gradient_checkpointing: false
+min_epochs: 0.0
+
+max_train_examples: 512
+max_steps: 320

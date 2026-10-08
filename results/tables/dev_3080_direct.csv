@@ -1,0 +1,7 @@
+base,family,task,metric,s_base,s_direct_mean,s_direct_std,n_seeds,direct_lift,eligible
+dev_qwen2.5-0.5b,qwen2,T1_sentiment,accuracy,0.95,1.0,0.0,1,0.050000000000000044,True
+dev_qwen2.5-0.5b,qwen2,T4_json,json_field_f1,0.015238095238095238,1.0,0.0,1,0.9847619047619047,True
+dev_qwen2.5-0.5b,qwen2,T8_arithmetic,exact_number,0.2,0.99,0.0,1,0.79,True
+dev_llama3.2-1b,llama,T1_sentiment,accuracy,0.9,1.0,0.0,1,0.09999999999999998,True
+dev_llama3.2-1b,llama,T4_json,json_field_f1,0.0,1.0,0.0,1,1.0,True
+dev_llama3.2-1b,llama,T8_arithmetic,exact_number,0.14,1.0,0.0,1,0.86,True

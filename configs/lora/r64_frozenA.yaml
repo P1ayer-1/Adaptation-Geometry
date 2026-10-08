@@ -1,0 +1,8 @@
+# Frozen random A with 4x more eyes (rank 64, same alpha/rank ratio as r16).
+rank: 64
+alpha: 128
+dropout: 0.0
+target_modules: [q, k, v, o, up, down, gate]
+use_rslora: false
+init_seed_scope: base
+train_A: false

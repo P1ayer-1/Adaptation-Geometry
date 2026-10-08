@@ -1,0 +1,39 @@
+# The same dry run on a rented 24-80 GB GPU (A100 / A40 / H100), on the FULL v2 panel:
+# 2 dev bases x 10 tasks x 2 seeds = 40 runs. Doubles as the task-panel pilot on small bases:
+# `uag learning-curves` then proposes a token cap for every task.
+name: dev_a100_v2
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+  - ../tasks/v2/T3_paraphrase.yaml
+  - ../tasks/v2/T4_json.yaml
+  - ../tasks/v2/T5_concise.yaml
+  - ../tasks/v2/T6_verbose.yaml
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T8_arithmetic.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
+lora: ../lora/r16.yaml
+train: ../train/dev_gpu_es.yaml
+seeds: [0, 1]
+fewshot: {k: 5, seed: 0}
+splits:
+  - {split_id: dev_holdout_T4_T8, holdout: [T4_json, T8_arithmetic]}
+maps:
+  methods: [svd_procrustes, identity, random]
+  k: 16
+gate:
+  primary_method: svd_procrustes
+  learned_methods: [svd_procrustes]
+  non_learned_baselines: [identity, random]
+  baseline: fewshot
+  min_heterogeneous_pairs: 1
+  bootstrap_samples: 500
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []

@@ -1,0 +1,11 @@
+# Frozen smart eyes (whitened): one fixed, data-informed A per base (uag.eyes), only B trains.
+rank: 16
+alpha: 32
+dropout: 0.0
+target_modules: [q, k, v, o, up, down, gate]
+use_rslora: false
+init_seed_scope: base
+train_A: false
+a_init: whitened
+a_calibration: wikitext
+a_calibration_tokens: 32768

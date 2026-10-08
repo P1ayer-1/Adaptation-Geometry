@@ -1,0 +1,39 @@
+{
+ "gate": {
+  "primary_method": "svd_procrustes",
+  "baseline": "fewshot",
+  "min_heterogeneous_pairs": 1,
+  "min_median_recovered_lift": 0.3,
+  "min_direct_lift": 0.05,
+  "learned_methods": [
+   "svd_procrustes"
+  ],
+  "non_learned_baselines": [
+   "identity",
+   "random"
+  ],
+  "bootstrap_samples": 500,
+  "ci_level": 0.95,
+  "seed": 0
+ },
+ "splits": [
+  {
+   "split_id": "dev_holdout_T4_T8",
+   "holdout": [
+    "T4_json",
+    "T8_arithmetic"
+   ]
+  }
+ ],
+ "eval_split": "test",
+ "fewshot": {
+  "k": 5,
+  "seed": 0
+ },
+ "sha256": "e21d52269e340899d1a8367053211477fec0b07f8fc9d7c01ca820ada89556c7",
+ "declared_at": "2026-10-02T20:53:59",
+ "code_commit": {
+  "commit": "e4dae18f83219f6b52b922a04ab216abbdba7a48",
+  "dirty": false
+ }
+}

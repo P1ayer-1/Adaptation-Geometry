@@ -11,6 +11,7 @@ import math
 import re
 import subprocess
 import sys
+import textwrap
 from dataclasses import dataclass
 from typing import Any, Callable, Sequence
 
@@ -151,11 +152,81 @@ def json_field_f1(pred: str, ex: dict[str, Any]) -> float:
     return 2 * p * r / (p + r)
 
 
+def _flatten(d: dict[str, Any], prefix: str = "") -> list[tuple[str, str]]:
+    out = []
+    for k, v in d.items():
+        if isinstance(v, dict):
+            out += _flatten(v, f"{prefix}{k}.")
+        else:
+            out.append((f"{prefix}{k}", json.dumps(v)))
+    return out
+
+
+@register_metric("json_nested_f1")
+def json_nested_f1(pred: str, ex: dict[str, Any]) -> float:
+    """F1 over leaf fields (nested objects flattened to dotted paths; lists and nulls are leaf
+    values). 0 if the output is not a JSON object or has top-level keys outside the schema."""
+    gold = ex["metadata"]["record"]
+    obj = parse_json_object(pred)
+    if obj is None or set(obj) - set(gold):
+        return 0.0
+    gold_pairs, pred_pairs = set(_flatten(gold)), set(_flatten(obj))
+    tp = len(gold_pairs & pred_pairs)
+    if tp == 0:
+        return 0.0
+    p, r = tp / len(pred_pairs), tp / len(gold_pairs)
+    return 2 * p * r / (p + r)
+
+
+@register_metric("json_exact")
+def json_exact(pred: str, ex: dict[str, Any]) -> float:
+    """1 if the first JSON object in the output equals the gold record exactly (key order free)."""
+    obj = parse_json_object(pred)
+    return float(obj is not None and obj == ex["metadata"]["record"])
+
+
+def first_candidate(text: str, candidates: Sequence[str] | None) -> str | None:
+    """The answer a response commits to: the first number it mentions (numeric questions) or
+    the earliest-mentioned candidate name. Listing every candidate therefore does not count."""
+    if candidates is None:
+        nums = _NUM.findall(text.replace(",", ""))
+        return str(int(float(nums[0]))) if nums and float(nums[0]).is_integer() else (nums[0] if nums else None)
+    hits = [(m.start(), c) for c in candidates
+            for m in [re.search(r"(?<![\w-])" + re.escape(c) + r"(?![\w])", text)] if m]
+    return min(hits)[1] if hits else None
+
+
+@register_metric("concise_success_v2")
+def concise_success_v2(pred: str, ex: dict[str, Any]) -> float:
+    """First committed answer is correct AND the response has at most ``max_words`` words."""
+    p, m = pred.strip(), ex["metadata"]
+    return float(first_candidate(p, m["candidates"]) == m["answer"] and 0 < word_count(p) <= m["max_words"])
+
+
+@register_metric("verbose_success_v2")
+def verbose_success_v2(pred: str, ex: dict[str, Any]) -> float:
+    """First committed answer is correct AND the length is within [min_words, max_words]."""
+    p, m = pred.strip(), ex["metadata"]
+    return float(first_candidate(p, m["candidates"]) == m["answer"]
+                 and m["min_words"] <= word_count(p) <= m["max_words"])
+
+
+@register_metric("format_v2")
+def format_v2(pred: str, ex: dict[str, Any]) -> float:
+    """Exactly the rule's lines: sorted, numbered, case by length, TOTAL footer."""
+    from .tasks_v2 import format_v2_lines
+
+    lines = [ln.strip() for ln in pred.strip().split("\n")]
+    return float(lines == format_v2_lines(ex["metadata"]["items"]))
+
+
 def extract_code(pred: str) -> str:
     m = re.search(r"```(?:python)?\n(.*?)```", pred, flags=re.S)
     code = m.group(1) if m else pred
     # Stop at a trailing natural-language line after the function body.
-    lines, out = code.strip("\n").split("\n"), []
+    # The v1 template puts a space after "Output:", so answers start " def ..."; dedent removes
+    # that common indent (otherwise every such answer is an IndentationError).
+    lines, out = textwrap.dedent(code.strip("\n")).split("\n"), []
     for line in lines:
         if out and line and not line.startswith((" ", "\t", "def ", "import ", "from ", "#", "@")):
             break

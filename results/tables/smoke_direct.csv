@@ -1,5 +1,5 @@
-base,family,task,metric,s_base,s_direct_mean,s_direct_std,n_seeds,direct_lift,eligible
-tiny_llama_a1,tiny_llama,T1_sentiment,accuracy,0.49,0.5275000000000001,0.017677669529663705,2,0.03750000000000009,True
-tiny_llama_a1,tiny_llama,T3_paraphrase,accuracy,0.495,0.5025,0.0035355339059327407,2,0.007499999999999951,False
-tiny_qwen2_b,tiny_qwen2,T1_sentiment,accuracy,0.51,0.49,0.0,2,-0.020000000000000018,False
-tiny_qwen2_b,tiny_qwen2,T3_paraphrase,accuracy,0.495,0.5025,0.0035355339059327407,2,0.007499999999999951,False
+base,family,task,metric,s_base_zeroshot,s_base_fewshot,baseline,s_base,s_direct_mean,s_direct_std,n_seeds,direct_lift,direct_lift_vs_zeroshot,format_share,ceiling,format_dominated,eligible
+tiny_llama_a1,tiny_llama,T1_sentiment,accuracy,0.49,0.49,fewshot,0.49,0.5275000000000001,0.017677669529663705,2,0.03750000000000009,0.03750000000000009,0.0,False,False,True
+tiny_llama_a1,tiny_llama,T3_paraphrase,accuracy,0.495,0.505,fewshot,0.505,0.5025,0.0035355339059327407,2,-0.0025000000000000577,0.007499999999999951,,False,False,False
+tiny_qwen2_b,tiny_qwen2,T1_sentiment,accuracy,0.51,0.52,fewshot,0.52,0.49,0.0,2,-0.030000000000000027,-0.020000000000000018,,False,False,False
+tiny_qwen2_b,tiny_qwen2,T3_paraphrase,accuracy,0.495,0.495,fewshot,0.495,0.5025,0.0035355339059327407,2,0.007499999999999951,0.007499999999999951,,False,False,False

@@ -1,0 +1,33 @@
+# Dry run on the v2 task panel, 8 GB GPU: 2 dev bases x 3 tasks x 2 seeds = 12 runs, early stopping.
+# Checks: few-shot base below ceiling, direct LoRA beats the few-shot base, learning curves
+# (-> token caps), factor movement and seed agreement (is ΔW task signal or init noise?).
+# Not evidence for or against the hypothesis (two tiny bases; the map sees only 2 tasks).
+name: dev_3080_v2
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T1_hidden_rule.yaml   # classification (label scoring)
+  - ../tasks/v2/T4_json.yaml          # extraction with hidden conventions
+  - ../tasks/v2/T8_arithmetic.yaml    # multi-step reasoning
+lora: ../lora/r16.yaml                # init_seed_scope: task
+train: ../train/dev_3080_es.yaml
+seeds: [0, 1]
+fewshot: {k: 5, seed: 0}
+splits:
+  - {split_id: dev_holdout_T8, holdout: [T8_arithmetic]}
+maps:
+  methods: [svd_procrustes, identity, random]
+  k: 16
+gate:
+  primary_method: svd_procrustes
+  learned_methods: [svd_procrustes]
+  non_learned_baselines: [identity, random]
+  baseline: fewshot
+  min_heterogeneous_pairs: 1
+  bootstrap_samples: 500
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []

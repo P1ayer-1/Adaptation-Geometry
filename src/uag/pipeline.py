@@ -92,6 +92,16 @@ def _verification_batch(tok, task, n: int = 4):
     return b
 
 
+def _free_gpu() -> None:
+    import gc
+
+    import torch
+
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
 def postprocess_run(exp: ExperimentConfig, run_dir: Path, base, task) -> dict[str, Any]:
     """Extract ΔW, verify it against the PEFT forward pass, cache factored spectra."""
     from .train_lora import load_trained
@@ -103,11 +113,12 @@ def postprocess_run(exp: ExperimentConfig, run_dir: Path, base, task) -> dict[st
     inv = manifest["module_inventory"]
     meta = {"run_id": manifest["run_id"], "base_name": base.name, "family": base.family, "task_id": task.task_id,
             "seed": manifest["seed"], "num_layers": inv["num_layers"], "module_omissions": inv["omissions"]}
-    pm, tok = load_trained(base, run_dir, device=exp.train.device)
+    pm, tok = load_trained(base, run_dir, device=exp.train.device, dtype="float32")  # exact check in fp32
     ds = extract_deltas(run_dir / "adapter", manifest["module_inventory"]["model_type"], meta)
     batch = {k: v.to(next(pm.parameters()).device) for k, v in _verification_batch(tok, task).items()}
-    atol = 1e-4 if manifest["dtype"] == "float32" else 5e-2
-    report = verify_delta_reconstruction(pm, ds, batch, atol=atol)
+    report = verify_delta_reconstruction(pm, ds, batch)
+    del pm
+    _free_gpu()
     (run_dir / "delta_verification.json").write_text(json.dumps(report, indent=1))
     save_spectral(ds, spec_dir)
     return report
@@ -123,6 +134,7 @@ def train_grid(exp: ExperimentConfig, only_bases: list[str] | None = None, only_
             for seed in _filter(exp.seeds, only_seeds):
                 t0 = time.time()
                 run_dir = train_lora(base, task, exp.lora, exp.train, seed, paths.runs, exp.data_dir)
+                _free_gpu()
                 manifest = yaml.safe_load((run_dir / "manifest.yaml").read_text())
                 if manifest.get("diverged"):
                     record_exclusion(paths, kind="run", reason="training_divergence", run_id=manifest["run_id"])
@@ -158,7 +170,12 @@ def _eval(exp: ExperimentConfig, base, task, eval_id: str, cache: dict, template
     from .evaluate import run_evaluation
 
     paths = Paths(exp)
-    if (paths.raw / f"{eval_id}.summary.json").exists():
+    done = paths.raw / f"{eval_id}.summary.json"
+    if done.exists():
+        old = json.loads(done.read_text()).get("dataset_key")
+        if old is not None and old != task.dataset_key:
+            raise RuntimeError(f"{eval_id} was evaluated on {old}, but the config now uses {task.dataset_key}; "
+                               f"use a new experiment name")
         return
     s = run_evaluation(base, task, paths.raw, eval_id, split=exp.eval_split, template=template,
                        data_dir=exp.data_dir, max_examples=exp.eval_max_examples, device=exp.train.device,
@@ -175,22 +192,33 @@ def _eval_targets(exp: ExperimentConfig, task_id: str) -> list:
     return [exp.task(task_id)] + [exp.task(c) for c in exp.control_tasks if c != task_id]
 
 
-def eval_bases(exp: ExperimentConfig) -> None:
-    for base in exp.bases:
+def fewshot_eval_id(exp: ExperimentConfig, base: str, task: str, tmpl: str) -> str:
+    return f"base_fewshot{exp.fewshot.k}s{exp.fewshot.seed}__{base}__{task}__{tmpl}"
+
+
+def eval_bases(exp: ExperimentConfig, only_bases: list[str] | None = None,
+               only_tasks: list[str] | None = None) -> None:
+    """Zero-shot base (role ``base``) and few-shot base (role ``base_fewshot``) per template."""
+    for base in _filter(exp.bases, only_bases, lambda b: b.name):
         cache: dict = {}
-        for task in exp.tasks:
+        for task in _filter(exp.tasks, only_tasks, lambda t: t.task_id):
             for tmpl in _templates(exp, task):
+                meta = {"task_id": task.task_id, "target_base": base.name, "eval_task": task.task_id}
                 _eval(exp, base, task, f"base__{base.name}__{task.task_id}__{tmpl}", cache, tmpl,
-                      extra_meta={"role": "base", "task_id": task.task_id, "target_base": base.name,
-                                  "eval_task": task.task_id})
+                      extra_meta={"role": "base", **meta})
+                if exp.fewshot.k > 0:
+                    _eval(exp, base, task, fewshot_eval_id(exp, base.name, task.task_id, tmpl), cache, tmpl,
+                          fewshot_k=exp.fewshot.k, fewshot_seed=exp.fewshot.seed,
+                          extra_meta={"role": "base_fewshot", **meta})
 
 
-def eval_direct(exp: ExperimentConfig) -> None:
+def eval_direct(exp: ExperimentConfig, only_bases: list[str] | None = None,
+                only_tasks: list[str] | None = None) -> None:
     paths = Paths(exp)
     excluded = {e.get("run_id") for e in read_exclusions(paths) if e.get("kind") == "run"}
-    for base in exp.bases:
+    for base in _filter(exp.bases, only_bases, lambda b: b.name):
         cache: dict = {}
-        for task in exp.tasks:
+        for task in _filter(exp.tasks, only_tasks, lambda t: t.task_id):
             for seed in exp.seeds:
                 run_dir = paths.run_dir(base.name, task.task_id, seed)
                 if not (run_dir / "adapter").exists() or run_dir.name in excluded:
@@ -209,11 +237,17 @@ def eval_direct(exp: ExperimentConfig) -> None:
 # ---------------------------------------------------------------------------
 
 
+# Gate fields added after experiments were declared: omitted from the declared payload while at
+# their default, so earlier declarations keep their hash (setting them changes the hash).
+_LATE_GATE_FIELDS = {"graded_beats_baselines": False}
+
+
 def declare_gate(exp: ExperimentConfig) -> dict[str, Any]:
     """Freeze the gate before any held-out test runs; later edits are detected (spec §5.6)."""
     paths = Paths(exp)
-    payload = {"gate": to_dict(exp.gate), "splits": [dataclasses.asdict(s) for s in exp.splits],
-               "eval_split": exp.eval_split}
+    gate = {k: v for k, v in to_dict(exp.gate).items() if not (k in _LATE_GATE_FIELDS and v == _LATE_GATE_FIELDS[k])}
+    payload = {"gate": gate, "splits": [dataclasses.asdict(s) for s in exp.splits],
+               "eval_split": exp.eval_split, "fewshot": to_dict(exp.fewshot)}
     digest = sha256_bytes(json.dumps(payload, sort_keys=True).encode())
     if paths.gate_declaration.exists():
         old = json.loads(paths.gate_declaration.read_text())
@@ -254,14 +288,20 @@ def _base_topk(exp: ExperimentConfig, base_name: str) -> dict[str, dict[str, np.
     return out
 
 
-def fit_maps(exp: ExperimentConfig, only_methods: list[str] | None = None) -> None:
+def fit_maps(exp: ExperimentConfig, only_methods: list[str] | None = None,
+             only_bases: list[str] | None = None, only_tasks: list[str] | None = None) -> None:
+    """``only_bases`` restricts the *target* base (so two GPUs can split the targets);
+    ``only_tasks`` restricts which held-out tasks are predicted. Fitting always uses every
+    training task of the split, so the filters never change what a map is fitted on."""
     declare_gate(exp)
     paths = Paths(exp)
     task_ids = [t.task_id for t in exp.tasks]
     methods = _filter(exp.maps.methods, only_methods)
     for split in splits_of(exp):
+        if only_tasks and not set(split.holdout) & set(only_tasks):
+            continue
         for src in exp.bases:
-            for tgt in exp.bases:
+            for tgt in _filter(exp.bases, only_bases, lambda b: b.name):
                 if src.name == tgt.name:
                     continue
                 for seed in exp.seeds:
@@ -273,10 +313,12 @@ def fit_maps(exp: ExperimentConfig, only_methods: list[str] | None = None) -> No
                                          source=src.name, target=tgt.name, seed=seed)
                         continue
                     for method in methods:
-                        _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_train, tgt_train)
+                        _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_train, tgt_train,
+                                         only_tasks)
 
 
-def _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_train, tgt_train) -> None:
+def _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_train, tgt_train,
+                     only_tasks: list[str] | None = None) -> None:
     map_dir = paths.maps / f"{src.name}__to__{tgt.name}__{split.split_id}__{method}__seed{seed}"
     if (map_dir / "map_meta.json").exists():
         pmap = PairMap.load(map_dir)
@@ -292,7 +334,7 @@ def _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_tra
         record_exclusion(paths, kind="map", reason="method_not_applicable", map_id=pmap.map_id, seed=seed,
                          note=next((m.note for m in pmap.modules.values() if m.note), ""))
         return
-    for task_id in split.holdout:
+    for task_id in _filter(split.holdout, only_tasks):
         if task_id not in src_all:
             record_exclusion(paths, kind="prediction", reason="missing_source_run", map_id=pmap.map_id,
                              task_id=task_id, seed=seed)
@@ -313,13 +355,17 @@ def _fit_and_predict(exp, paths, method, src, tgt, seed, split, src_all, src_tra
     log(f"map {map_dir.name}: fitted on {len(src_train)} tasks, predicted {list(split.holdout)}")
 
 
-def eval_transfer(exp: ExperimentConfig) -> None:
+def eval_transfer(exp: ExperimentConfig, only_bases: list[str] | None = None,
+                  only_tasks: list[str] | None = None) -> None:
+    """``only_bases`` restricts the target base, ``only_tasks`` the held-out task."""
     paths = Paths(exp)
     if not paths.preds.exists():
         return
     by_target: dict[str, list[Path]] = {}
     for d in sorted(paths.preds.glob("*/*/delta_meta.json")):
         meta = json.loads(d.read_text())["meta"]
+        if (only_bases and meta["target_base"] not in only_bases) or (only_tasks and meta["task_id"] not in only_tasks):
+            continue
         by_target.setdefault(meta["target_base"], []).append(d.parent)
     for tgt_name, dirs in by_target.items():
         base = exp.base(tgt_name)

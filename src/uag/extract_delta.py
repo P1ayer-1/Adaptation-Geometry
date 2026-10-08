@@ -172,7 +172,10 @@ def _linear(model, name: str):
 
 @contextlib.contextmanager
 def applied_delta(model, ds: DeltaSet, coef: float = 1.0):
-    """Temporarily add coef · ΔW to the base weights (restored exactly on exit)."""
+    """Temporarily add coef · ΔW to the base weights (restored exactly on exit).
+
+    The original weights are kept in CPU memory: on an 8 GB GPU, a second on-GPU copy of a
+    1B model's weights in fp32 (the exact ΔW check) does not fit."""
     saved = {}
     try:
         with torch.no_grad():
@@ -180,21 +183,23 @@ def applied_delta(model, ds: DeltaSet, coef: float = 1.0):
                 lin = _linear(model, name)
                 if tuple(lin.weight.shape) != lr.shape:
                     raise ValueError(f"{name}: delta shape {lr.shape} != weight {tuple(lin.weight.shape)}")
-                saved[name] = lin.weight.detach().clone()
+                saved[name] = lin.weight.detach().to("cpu", copy=True)
                 d = torch.from_numpy(lr.dense()).to(device=lin.weight.device, dtype=torch.float32)
                 lin.weight.copy_((lin.weight.float() + coef * d).to(lin.weight.dtype))
         yield model
     finally:
         with torch.no_grad():
             for name, w in saved.items():
-                _linear(model, name).weight.copy_(w)
+                _linear(model, name).weight.copy_(w.to(_linear(model, name).weight.device))
 
 
 def verify_delta_reconstruction(peft_model, ds: DeltaSet, batch: dict[str, torch.Tensor],
-                                atol: float = 1e-4) -> dict[str, Any]:
+                                atol: float = 1e-4, rtol: float = 1e-4) -> dict[str, Any]:
     """Acceptance test (spec §20.3): base + ΔW reproduces the active LoRA's logits.
 
-    Also checks each reconstructed ΔW against PEFT's own ``get_delta_weight``.
+    Also checks each reconstructed ΔW against PEFT's own ``get_delta_weight``. Run it on a
+    float32 copy of the model: in bf16, adding ΔW into rounded weights differs from the
+    unmerged LoRA path by rounding noise alone. Tolerance: atol + rtol · max|logit|.
     """
     per_module_err = 0.0
     root = peft_model.base_model.model
@@ -203,15 +208,14 @@ def verify_delta_reconstruction(peft_model, ds: DeltaSet, batch: dict[str, torch
         ref = lora_layer.get_delta_weight("default").detach().float().cpu().numpy()
         per_module_err = max(per_module_err, float(np.abs(ref - lr.dense()).max()))
     peft_model.eval()
-    with torch.no_grad():
+    with torch.no_grad():  # at most two logit tensors alive at once (memory on small GPUs)
         logits_lora = peft_model(**batch).logits.float()
         with peft_model.disable_adapter():
-            logits_base = peft_model(**batch).logits.float()
+            adapter_effect = float((logits_lora - peft_model(**batch).logits.float()).abs().max())
             with applied_delta(peft_model, ds):
-                logits_merged = peft_model(**batch).logits.float()
-    max_diff = float((logits_lora - logits_merged).abs().max())
-    adapter_effect = float((logits_lora - logits_base).abs().max())
+                max_diff = float((logits_lora - peft_model(**batch).logits.float()).abs().max())
+    tol = atol + rtol * float(logits_lora.abs().max())
     return {"max_abs_logit_diff": max_diff, "adapter_effect_max_abs": adapter_effect,
-            "max_abs_module_delta_err": per_module_err, "atol": atol,
-            "passed": bool(max_diff <= atol and per_module_err <= atol),
+            "max_abs_module_delta_err": per_module_err, "tolerance": tol,
+            "passed": bool(max_diff <= tol and per_module_err <= atol),
             "n_modules": len(ds.modules)}

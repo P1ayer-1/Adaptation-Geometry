@@ -1,0 +1,9 @@
+# Dry-run base (fits an 8 GB GPU). Not part of Stage 0.
+name: dev_qwen2.5-0.5b
+model_id: Qwen/Qwen2.5-0.5B-Instruct
+source: hub
+revision: null
+tokenizer_revision: null
+family: qwen2
+role: dev
+dtype: bfloat16

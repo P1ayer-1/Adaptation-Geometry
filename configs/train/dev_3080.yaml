@@ -1,0 +1,15 @@
+# Dry run on an 8 GB GPU: small micro-batches + gradient checkpointing, short budget.
+# Effective batch = 2 x 8 = 16 sequences.
+learning_rate: 2.0e-4
+batch_size: 2
+grad_accum: 8
+max_tokens_seen: 300000
+max_seq_len: 384
+warmup_ratio: 0.05
+eval_every_steps: 25
+selection_metric: valid_loss
+valid_max_examples: 64
+dtype: bfloat16
+deterministic: true
+device: auto
+gradient_checkpointing: true

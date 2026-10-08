@@ -1,0 +1,242 @@
+{
+ "order": [
+  "T3_paraphrase",
+  "T7_python",
+  "T9_clinical",
+  "T10_format",
+  "T1_hidden_rule",
+  "T2_nli",
+  "T5_concise",
+  "T6_verbose"
+ ],
+ "heldout": [
+  "T4_json",
+  "T8_arithmetic"
+ ],
+ "rows": [
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 1,
+   "k16": 0.09625550518191602,
+   "k_all": 0.09625550518191602
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 2,
+   "k16": 0.11372258201909487,
+   "k_all": 0.16222510866426165
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 3,
+   "k16": 0.12127587388288319,
+   "k_all": 0.21545728306570378
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 4,
+   "k16": 0.12427227628192143,
+   "k_all": 0.26315088693057026
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 5,
+   "k16": 0.1256672782269672,
+   "k_all": 0.3039877443762001
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 6,
+   "k16": 0.12619688417778346,
+   "k_all": 0.3437803757759177
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 7,
+   "k16": 0.12592520103180344,
+   "k_all": 0.38351106756993414
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T4_json",
+   "n_train": 8,
+   "k16": 0.12619875262423866,
+   "k_all": 0.42024315110061766
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 1,
+   "k16": 0.132114577718678,
+   "k_all": 0.132114577718678
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 2,
+   "k16": 0.1515012759747567,
+   "k_all": 0.20267834242130578
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 3,
+   "k16": 0.15428112890986623,
+   "k_all": 0.2516058508102334
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 4,
+   "k16": 0.1565202593877036,
+   "k_all": 0.29819189546627395
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 5,
+   "k16": 0.16147912991349814,
+   "k_all": 0.34112428898716185
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 6,
+   "k16": 0.16379367736448125,
+   "k_all": 0.3816987151690279
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 7,
+   "k16": 0.17507396116297388,
+   "k_all": 0.42604657013384845
+  },
+  {
+   "base": "dev_qwen2.5-0.5b",
+   "heldout": "T8_arithmetic",
+   "n_train": 8,
+   "k16": 0.1778300042535631,
+   "k_all": 0.4611625592192756
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 1,
+   "k16": 0.04090197383962342,
+   "k_all": 0.04090197383962342
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 2,
+   "k16": 0.04972359074108019,
+   "k_all": 0.07245541947725857
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 3,
+   "k16": 0.05617068326849079,
+   "k_all": 0.10083605041367573
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 4,
+   "k16": 0.060090003593412315,
+   "k_all": 0.12389923009341976
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 5,
+   "k16": 0.06177876783796399,
+   "k_all": 0.1425880577035392
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 6,
+   "k16": 0.06080010115234032,
+   "k_all": 0.16013578261579633
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 7,
+   "k16": 0.062299886305268795,
+   "k_all": 0.17828438517801554
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T4_json",
+   "n_train": 8,
+   "k16": 0.0631506873208529,
+   "k_all": 0.19395864893786025
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 1,
+   "k16": 0.053903328413070294,
+   "k_all": 0.053903328413070294
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 2,
+   "k16": 0.0714886716357471,
+   "k_all": 0.09626171298563684
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 3,
+   "k16": 0.07507118785831889,
+   "k_all": 0.1228312631927155
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 4,
+   "k16": 0.07911662073323351,
+   "k_all": 0.14898653815969082
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 5,
+   "k16": 0.08046366760703959,
+   "k_all": 0.16919829551862423
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 6,
+   "k16": 0.07983944802465628,
+   "k_all": 0.18793970822948064
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 7,
+   "k16": 0.08664900131659685,
+   "k_all": 0.21518399934930293
+  },
+  {
+   "base": "dev_llama3.2-1b",
+   "heldout": "T8_arithmetic",
+   "n_train": 8,
+   "k16": 0.08964685730246634,
+   "k_all": 0.236662758154301
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+# LoRA-FA style: one fixed random A per base (shared by every task and seed), only B trains.
+# Motivation: in the v2 dry run trained A stayed 96-99.8% at its random init, so with per-task
+# inits a held-out adapter's input side was unrelated to the training tasks' (chance overlap)
+# and maps predicted ~zero updates. With a fixed A_m the input basis is part of the model
+# (D_m in the spec), and each task is described by its B.
+rank: 16
+alpha: 32
+dropout: 0.0
+target_modules: [q, k, v, o, up, down, gate]
+use_rslora: false
+init_seed_scope: base
+train_A: false

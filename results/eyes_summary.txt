@@ -1,0 +1,31 @@
+variant      base              task             valid best   test  take-off (t50)  stopped
+random16     dev_qwen2.5-0.5b  T1_hidden_rule        1.000  1.000        175k tok     1500
+random16     dev_qwen2.5-0.5b  T2_nli                0.906  0.930        270k tok     1700
+random16     dev_qwen2.5-0.5b  T3_paraphrase         1.000  0.935         50k tok     1500
+random16     dev_llama3.2-1b   T1_hidden_rule        1.000  1.000        148k tok     1500
+random16     dev_llama3.2-1b   T2_nli                1.000  0.950        273k tok     1500
+random16     dev_llama3.2-1b   T3_paraphrase         1.000  0.975         51k tok     1500
+whitened16   dev_qwen2.5-0.5b  T1_hidden_rule        1.000  0.965        292k tok     1500
+whitened16   dev_qwen2.5-0.5b  T2_nli                1.000  0.905        212k tok     1500
+whitened16   dev_qwen2.5-0.5b  T3_paraphrase         1.000  0.990         50k tok     1500
+whitened16   dev_llama3.2-1b   T1_hidden_rule        1.000  1.000        131k tok     1500
+whitened16   dev_llama3.2-1b   T2_nli                1.000  0.965        215k tok     1500
+whitened16   dev_llama3.2-1b   T3_paraphrase         1.000  0.950         51k tok     1500
+pca16        dev_qwen2.5-0.5b  T1_hidden_rule        1.000  1.000        166k tok     1500
+pca16        dev_qwen2.5-0.5b  T2_nli                0.906  0.905        270k tok     1525
+pca16        dev_qwen2.5-0.5b  T3_paraphrase         1.000  0.955         50k tok     1500
+pca16        dev_llama3.2-1b   T1_hidden_rule        1.000  0.975        183k tok     1500
+pca16        dev_llama3.2-1b   T2_nli                0.969  0.910        391k tok     1500
+pca16        dev_llama3.2-1b   T3_paraphrase         1.000  0.960         51k tok     1500
+random64     dev_qwen2.5-0.5b  T1_hidden_rule    (not run)
+random64     dev_qwen2.5-0.5b  T2_nli            (not run)
+random64     dev_qwen2.5-0.5b  T3_paraphrase     (not run)
+random64     dev_llama3.2-1b   T1_hidden_rule    (not run)
+random64     dev_llama3.2-1b   T2_nli            (not run)
+random64     dev_llama3.2-1b   T3_paraphrase     (not run)
+trainable16  dev_qwen2.5-0.5b  T1_hidden_rule    (not run)
+trainable16  dev_qwen2.5-0.5b  T2_nli            (not run)
+trainable16  dev_qwen2.5-0.5b  T3_paraphrase     (not run)
+trainable16  dev_llama3.2-1b   T1_hidden_rule    (not run)
+trainable16  dev_llama3.2-1b   T2_nli            (not run)
+trainable16  dev_llama3.2-1b   T3_paraphrase     (not run)

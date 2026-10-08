@@ -9,6 +9,7 @@ used under an old version number.
 from __future__ import annotations
 
 import json
+import os
 import random
 from pathlib import Path
 from typing import Any, Iterable
@@ -17,7 +18,7 @@ import yaml
 
 from . import __version__
 from .config import REPO_ROOT, TaskConfig, dump_yaml
-from .provenance import git_commit, sha256_file
+from .provenance import git_commit, sha256_bytes, sha256_file
 from .tasks import get_generator
 
 SPLITS = ("train", "valid", "test")
@@ -56,11 +57,11 @@ def manifest_path(task: TaskConfig, data_dir: str | Path = "data") -> Path:
 
 
 def instruction_for(task: TaskConfig) -> str:
-    return get_generator(task.generator).instruction
+    return get_generator(task.generator, task.generator_version).instruction
 
 
 def _generate_split(task: TaskConfig, split: str, n: int, exclude: set[str]) -> list[dict[str, Any]]:
-    gen = get_generator(task.generator)
+    gen = get_generator(task.generator, task.generator_version)
     rng = random.Random(task.seed * 1000 + _SPLIT_SEED_OFFSET[split])
     out: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -83,12 +84,17 @@ def _generate_split(task: TaskConfig, split: str, n: int, exclude: set[str]) -> 
     return out
 
 
+def jsonl_bytes(rows: Iterable[dict[str, Any]]) -> bytes:
+    return "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows).encode("utf-8")
+
+
 def write_jsonl(path: str | Path, rows: Iterable[dict[str, Any]]) -> None:
+    """Atomic write (temp file + rename): a concurrent reader never sees a half-written file."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        for r in rows:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    tmp.write_bytes(jsonl_bytes(rows))
+    os.replace(tmp, path)
 
 
 def read_jsonl(path: str | Path) -> list[dict[str, Any]]:
@@ -102,10 +108,10 @@ def generate_dataset(task: TaskConfig, data_dir: str | Path = "data", overwrite:
     If a manifest for this ``task_id``/version already exists, the regenerated hashes must
     match it exactly; otherwise a :class:`DataIntegrityError` tells you to bump the version.
     """
-    gen = get_generator(task.generator)
-    if gen.version != str(task.generator_version):
-        raise DataIntegrityError(f"{task.task_id}: config generator_version {task.generator_version} "
-                                 f"!= code generator version {gen.version}")
+    try:
+        gen = get_generator(task.generator, task.generator_version)
+    except KeyError as e:
+        raise DataIntegrityError(f"{task.task_id}: {e}") from e
     sizes = {"train": task.n_train, "valid": task.n_valid, "test": task.n_test}
     used: set[str] = set()
     splits: dict[str, list[dict[str, Any]]] = {}
@@ -114,9 +120,15 @@ def generate_dataset(task: TaskConfig, data_dir: str | Path = "data", overwrite:
         used.update(ex["input"] for ex in splits[split])
 
     ddir = dataset_dir(task, data_dir)
+    # Hash in memory; only (re)write a split file that is missing or differs. Several GPU
+    # processes can therefore start `uag train` at once without rewriting shared files.
+    hashes = {}
     for split in SPLITS:
-        write_jsonl(ddir / f"{split}.jsonl", splits[split])
-    hashes = {f"{s}_sha256": sha256_file(ddir / f"{s}.jsonl") for s in SPLITS}
+        data = jsonl_bytes(splits[split])
+        hashes[f"{split}_sha256"] = sha256_bytes(data)
+        path = ddir / f"{split}.jsonl"
+        if not path.exists() or sha256_file(path) != hashes[f"{split}_sha256"]:
+            write_jsonl(path, splits[split])
 
     manifest = {
         "task_id": task.task_id,

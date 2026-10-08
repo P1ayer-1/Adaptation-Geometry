@@ -1,0 +1,46 @@
+# Does held-out transfer grow with the number of map-training tasks? (frozen A, local RTX 3080)
+# Nested training sets of 2 / 4 / 6 / 8 tasks always predict T4 and T8 (other held-out
+# predictions are by-products). Scored with `uag graded-transfer` (gold-answer likelihood) plus
+# the coverage curve (scripts/coverage_scaling.py); task-metric transfer evals are skipped.
+# The T3/T7/T9/T10/T4/T8 seed-0 runs are reused from dev_3080_frozenA (trained with patience 4,
+# min_epochs 0); T1/T2/T5/T6 are new and use patient stopping, which T1/T2 need to take off.
+name: dev_3080_frozenA_scale
+bases:
+  - ../bases/dev_qwen2.5-0.5b.yaml
+  - ../bases/dev_llama3.2-1b.yaml
+tasks:
+  - ../tasks/v2/T3_paraphrase.yaml
+  - ../tasks/v2/T7_python.yaml
+  - ../tasks/v2/T9_clinical.yaml
+  - ../tasks/v2/T10_format.yaml
+  - ../tasks/v2/T1_hidden_rule.yaml
+  - ../tasks/v2/T2_nli.yaml
+  - ../tasks/v2/T5_concise.yaml
+  - ../tasks/v2/T6_verbose.yaml
+  - ../tasks/v2/T4_json.yaml
+  - ../tasks/v2/T8_arithmetic.yaml
+lora: ../lora/r16_frozenA.yaml
+train: ../train/dev_3080_patient.yaml
+seeds: [0]
+fewshot: {k: 5, seed: 0}
+splits:
+  - {split_id: n2_T3_T7, holdout: [T4_json, T8_arithmetic, T9_clinical, T10_format, T1_hidden_rule, T2_nli, T5_concise, T6_verbose]}
+  - {split_id: n4_plus_T9_T10, holdout: [T4_json, T8_arithmetic, T1_hidden_rule, T2_nli, T5_concise, T6_verbose]}
+  - {split_id: n6_plus_T1_T2, holdout: [T4_json, T8_arithmetic, T5_concise, T6_verbose]}
+  - {split_id: n8_plus_T5_T6, holdout: [T4_json, T8_arithmetic]}
+maps:
+  methods: [svd_procrustes, random, target_mean]
+  k: 16
+gate:
+  primary_method: svd_procrustes
+  learned_methods: [svd_procrustes]
+  non_learned_baselines: [random, target_mean]
+  baseline: fewshot
+  min_heterogeneous_pairs: 1
+  bootstrap_samples: 1000
+  graded_beats_baselines: true
+require_pinned_revisions: false
+eval_split: test
+eval_max_examples: 200
+control_tasks: []
+alt_templates: []

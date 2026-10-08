@@ -1,5 +1,5 @@
 {
- "decision_path": "/home/user/Adaptation-Geometry/results/smoke_decision.md",
+ "decision_path": "/home/noahp/Adaptation-Geometry/results/smoke_decision.md",
  "n_cells": 48,
  "gate": {
   "primary_method": "svd_procrustes",

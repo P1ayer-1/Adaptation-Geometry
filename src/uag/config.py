@@ -122,8 +122,31 @@ class LoraSettings:
     dropout: float = 0.0
     target_modules: list[str] = field(default_factory=lambda: list(CANONICAL_MODULES))
     use_rslora: bool = False
+    # Which RNG draws the random LoRA A init: "seed" = the run seed alone (every task on a base
+    # shares A0 for a given seed), "task" = derived from (task, seed) so tasks get independent
+    # inits, "base" = derived from the base name only (one A per base, for every task and seed).
+    init_seed_scope: str = "seed"
+    # False = LoRA-FA style: A stays frozen at its init and only B trains. With
+    # init_seed_scope: base, every adapter of a base then shares one fixed input basis A_m, and
+    # a task is fully described by its B (the v2 dry run showed trained A moves only 4-22% anyway).
+    train_A: bool = True
+    # How the fixed A is chosen (uag.eyes): random (PEFT default), whitened (random after
+    # equalising input-direction variances) or pca (top input directions), from generic
+    # calibration text (wikitext, or builtin for offline/tests). Data-informed eyes need one A
+    # per base (init_seed_scope: base).
+    a_init: str = "random"
+    a_calibration: str = "wikitext"
+    a_calibration_tokens: int = 32768
 
     def validate(self) -> None:
+        if self.a_init not in {"random", "whitened", "pca"}:
+            raise ConfigError("LoRA a_init must be random|whitened|pca")
+        if self.a_init != "random" and self.init_seed_scope != "base":
+            raise ConfigError("a_init whitened/pca needs init_seed_scope: base (one A per base)")
+        if self.init_seed_scope not in {"seed", "task", "base"}:
+            raise ConfigError("LoRA init_seed_scope must be seed|task|base")
+        if not self.train_A and self.init_seed_scope != "base":
+            raise ConfigError("train_A: false needs init_seed_scope: base (one fixed A per base)")
         bad = [m for m in self.target_modules if m not in CANONICAL_MODULES]
         if bad:
             raise ConfigError(
@@ -153,10 +176,35 @@ class TrainSettings:
     dtype: str = "bfloat16"
     deterministic: bool = True
     device: str = "auto"
+    gradient_checkpointing: bool = False  # trades ~30% speed for much less activation memory
+    # Early stopping on ``selection_metric``: stop after this many consecutive validation
+    # evaluations without an improvement larger than ``early_stopping_min_delta``, but never
+    # before ``min_steps``. 0 disables it; ``max_tokens_seen`` is then the fixed budget, and
+    # with early stopping it is the cap. The selected checkpoint is always the best one.
+    early_stopping_patience: int = 0
+    early_stopping_min_delta: float = 0.0
+    min_steps: int = 0
+    max_wall_minutes: float | None = None  # hard time limit (GPU benchmark only)
+    # Early stopping is not allowed before this many passes over the training split (on top of
+    # min_steps): tasks such as T1/T2 sit at chance for a while before they take off.
+    min_epochs: float = 0.0
+    # Per-task token caps (set from pilot learning curves, `uag learning-curves`). A task's cap
+    # is the same for every base, so budgets stay identical across bases; tasks not listed use
+    # max_tokens_seen.
+    max_tokens_by_task: dict[str, int] = field(default_factory=dict)
+    # Few-example experiments: train on only the first N training examples, for a fixed number
+    # of optimizer steps (the best validation checkpoint is still selected).
+    max_train_examples: int | None = None
+    max_steps: int | None = None
+
+    def token_cap(self, task_id: str) -> int:
+        return int(self.max_tokens_by_task.get(task_id, self.max_tokens_seen))
 
     def validate(self) -> None:
         if self.selection_metric not in {"valid_loss", "valid_primary"}:
             raise ConfigError("selection_metric must be valid_loss|valid_primary")
+        if self.early_stopping_patience < 0 or self.min_steps < 0:
+            raise ConfigError("early_stopping_patience and min_steps must be >= 0")
         if self.optimizer != "adamw":
             raise ConfigError("only adamw is implemented")
 
@@ -181,15 +229,32 @@ class HoldoutSplitSpec:
 
 
 @dataclass
+class FewShotSettings:
+    """Few-shot base evaluation: k worked training examples in the prompt (deterministic)."""
+
+    k: int = 5
+    seed: int = 0
+
+
+@dataclass
 class GateSettings:
     """Pre-declared Stage-0 gate (spec §5.6). Fixed before held-out tests are run."""
 
     primary_method: str = "svd_procrustes"  # the learned map the gate is evaluated on (no post-hoc pick)
+    # Reference score S_base for lift, eligibility and RecoveredLift: the few-shot base (so that
+    # an adapter only gets credit for what k demonstrations of the output format cannot give)
+    # or the zero-shot base. The other one is still evaluated and reported.
+    baseline: str = "fewshot"  # fewshot | zeroshot
     min_heterogeneous_pairs: int = 2
     min_median_recovered_lift: float = 0.30
     min_direct_lift: float = 0.05  # cells with smaller direct-LoRA lift are ineligible
     learned_methods: list[str] = field(default_factory=lambda: ["svd_procrustes", "svd_linear"])
     non_learned_baselines: list[str] = field(default_factory=lambda: ["identity", "cross_lora", "random"])
+    # Criterion 4 (optional): on the graded measure (`uag graded-transfer`, gold-answer NLL), the
+    # primary method's RecoveredNLL beats the strongest non-learned baseline with a paired
+    # bootstrap CI excluding zero. Catches transfer that all-or-nothing task metrics miss, and
+    # (with target_mean as a baseline) whether anything source-specific transfers at all.
+    graded_beats_baselines: bool = False
     bootstrap_samples: int = 2000
     ci_level: float = 0.95
     seed: int = 0
@@ -211,6 +276,7 @@ class ExperimentConfig:
     eval_max_examples: int | None = None
     control_tasks: list[str] = field(default_factory=list)
     alt_templates: list[str] = field(default_factory=list)  # robustness prompt formats
+    fewshot: FewShotSettings = field(default_factory=FewShotSettings)
     artifacts_dir: str = "artifacts"
     results_dir: str = "results"
     data_dir: str = "data"
@@ -241,6 +307,10 @@ class ExperimentConfig:
             raise ConfigError(f"unknown control tasks {sorted(unknown_controls)}")
         if self.gate.primary_method not in self.gate.learned_methods:
             raise ConfigError("gate.primary_method must be one of gate.learned_methods")
+        if self.gate.baseline not in {"fewshot", "zeroshot"}:
+            raise ConfigError("gate.baseline must be fewshot|zeroshot")
+        if self.gate.baseline == "fewshot" and self.fewshot.k <= 0:
+            raise ConfigError("gate.baseline: fewshot needs fewshot.k > 0")
 
     def base(self, name: str) -> BaseConfig:
         for b in self.bases:
@@ -337,6 +407,7 @@ def load_experiment(path: str | Path, allow_unpinned: bool = False) -> Experimen
         splits=[HoldoutSplitSpec(**s) for s in data.get("splits", [])],
         maps=_from_dict(MapSettings, data.get("maps", {})),
         gate=_from_dict(GateSettings, data.get("gate", {})),
+        fewshot=_from_dict(FewShotSettings, data.get("fewshot", {})),
         **{k: data[k] for k in ("require_pinned_revisions", "eval_split", "eval_max_examples",
                                 "control_tasks", "alt_templates", "artifacts_dir", "results_dir", "data_dir")
            if k in data},
