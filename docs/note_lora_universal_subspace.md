@@ -176,7 +176,10 @@ different GPU.
 | Output side, layer 0 | 0.21-0.60 | 0.19-0.62 | 0.14-0.32 | 0.14-0.59 | 0.07-0.09 |
 | Output side, layers 8-31 | 0.17-0.33 | 0.15-0.30 | 0.10-0.23 | 0.12-0.26 | 0.05-0.09 |
 
-**[TODO: add the subsample spread of the singleton excess (excess_subsample.json).]**
+*Stability.* Over 20 subsamples of 193 of the 242 singletons (without replacement, fresh null
+each time), the singleton excess over the strength-matched null is stable. Input side, layers
+8-31: 0.002-0.020 (sd ≤ 0.001); output side, layers 8-31: 0.019-0.097 raw (sd ≤ 0.005) and
+0.049-0.183 unit-norm (sd ≤ 0.006); layer 0 output q and k: 0.21 and 0.34 raw (sd 0.011).
 
 *Input side.* The group remains far more concentrated than the singletons in the invariant
 analysis (0.53-0.67 against 0.11-0.37), so the A-side result is not an artefact of analysing the
@@ -338,7 +341,7 @@ Responses to the ChatGPT review (`review_gpt_note_lora_universal_subspace.md`) a
 | Null at wrong N; "indistinguishable" | Size-matched null (N = 242, 10 repeats); wording "close to random, 1.3-3.3×" |
 | Clusters are inferred, not seed histories; "untouched init"; distance from group mean | Terminology changed; kurtosis leads; distance described as from the group mean, a lower bound |
 | "Almost all", "reproduces the spectrum"; 5% noise in the simulation | Simulation now pure, plus a movement-matched variant; output-side structure reported as real |
-| Repeated nulls, bootstraps, unit-norm | 10 null repeats; unit-norm variants; subsample spread (without replacement) **[pending]** |
+| Repeated nulls, bootstraps, unit-norm | 10 null repeats; unit-norm variants; subsample spread (20 × 80%, without replacement) |
 | JD: seeding, restarts, exact SVD, init sensitivity, metric name | All added (Section 3.6); metric named precisely |
 | Threshold sensitivity, all-slot agreement, saved diagnostics | Thresholds 0.15-0.6 and all 15 slots; all diagnostics saved to JSON |
 | Provenance: manifest, no `exec` of external files | `common.py`, manifest input, seeds recorded |
