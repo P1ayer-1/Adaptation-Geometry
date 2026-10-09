@@ -20,7 +20,7 @@ The effect survives a factorisation-invariant analysis of ΔW = BA on the input 
 side behaves differently: it shows shared structure that is the same with or without the shared
 initialisation, exceeds a null that preserves each adapter's singular values in every layer we
 examined, and outside the first layer is not explained by the base model's dominant weight
-directions. **[TODO: one sentence on the crossed experiment.]** We conclude that the input-side
+directions. In a controlled experiment on Qwen2.5-0.5B, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a subspace fitted on other tasks does not reconstruct a held-out task. We conclude that the input-side
 (A) evidence for a universal LoRA subspace is largely an initialisation artefact, while a weaker,
 genuinely shared output-side structure deserves separate study. We recommend that analyses of
 adapter collections report seeds, group by inferred initialisation, use factorisation-invariant
@@ -159,13 +159,53 @@ group are close to independent random matrices.*
 
 ### 3.3 Crossed task × initialisation experiment
 
-**[TODO: results pending.]** Design: the same 10 tasks on Qwen2.5-0.5B, trained with identical
-data, optimiser and early stopping under (a) one shared random A per seed for all tasks (two seeds,
-i.e. two shared initialisations) and (b) an independent A per task and seed. A subspace is fitted on
-nine tasks and evaluated on the held-out task by captured update energy and by task score after
-projection, with the basis taken from the same initialisation, the other initialisation, or
-independent initialisations. A hardware check reruns four independent-initialisation runs on a
-different GPU.
+To separate initialisation from task directly, we trained the same 10 tasks (our synthetic panel:
+hidden-rule sentiment, NLI, paraphrase, JSON extraction, concise and verbose rewriting, Python,
+arithmetic, clinical extraction, formatting) on Qwen2.5-0.5B, rank 16 on all seven projection
+types (168 modules), with identical data, optimiser and early stopping, under two regimes:
+**shared**, one random A per seed used by every task (two seeds, so two shared initialisations),
+and **independent**, a separate random A per task and seed. A hardware check retrained four
+independent runs on a different GPU (RTX 3080 vs A100) from the same initialisation: ΔW cosine
+0.88-0.94 and A cosine ≥ 0.997, so training is reproducible across machines.
+
+| Paper-style A spectrum, 10 adapters per group | Top-16 share (median over 168 modules) |
+|---|---|
+| Shared initialisation (each of the two groups) | 0.99 |
+| Both shared groups pooled (20 adapters) | 0.59 |
+| Independent initialisations | 0.18 |
+| Independent random matrices, same N | 0.18 |
+
+With everything else fixed, the rank-16 subspace appears when tasks share an initialisation,
+splits into two subspaces when two initialisations are pooled, and is at the random level when
+initialisations are independent.
+
+We then fitted rank-16 input and output bases (top singular vectors of the stacked A rows and B
+columns) on nine tasks and projected the held-out task's adapter onto them
+(ΔW′ = U Uᵀ B A V Vᵀ):
+
+| Basis fitted on | Share of held-out ‖ΔW‖²_F captured (median, range over 10 tasks) |
+|---|---|
+| Other tasks, same initialisation | 0.070 (0.029-0.115) |
+| Other tasks, other initialisation | 0.001 (0.001-0.002) |
+| All tasks *including the same task*, other initialisation | 0.006 (0.002-0.011) |
+| Other tasks, independent initialisations | 0.002 (0.001-0.004) |
+
+| Task score (test, n = 200) | Direct adapter | Projected, same init | Projected, other init | Projected, independent | Base model |
+|---|---|---|---|---|---|
+| Paraphrase | 0.99-1.00 | 0.71 | 0.65 | 0.65 | 0.65 |
+| JSON extraction | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| Arithmetic | 0.90 | 0.01 | 0.00 | 0.00 | 0.00 |
+| Clinical extraction | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
+Three points follow. First, the shared input subspace is the initialisation's: a basis from the
+other initialisation captures almost nothing, even when it contains the same task trained from a
+different start. Second, even within one initialisation, a subspace fitted on other tasks
+captures only 3-12% of a new task's update, because the output side of a new task is not spanned
+by the others. Third, projection reduces every held-out task to base-model performance (zero-shot base: 0.65, 0.00, 0.00, 0.00);
+sharing the initialisation does not rescue it (0.71 vs 0.65 on paraphrase is within sampling
+error). This experiment uses a small model and synthetic tasks, so it shows the mechanism rather
+than replicating the paper; it does not test the paper's own held-out procedure, which may
+re-fit coefficients rather than project.
 
 ### 3.4 Factorisation-invariant updates: input side and output side differ
 
@@ -348,6 +388,6 @@ Responses to the ChatGPT review (`review_gpt_note_lora_universal_subspace.md`) a
 | Seed in metadata? | Checked: none in model cards or configs |
 | Learned movement of A in the group | Strength-matched null on the residual (Section 3.5) |
 | What the null is made of | Effective ranks and norm spread reported (Section 3.4) |
-| Crossed task × initialisation experiment | Run on Qwen2.5-0.5B (Section 3.3) **[pending]** |
+| Crossed task × initialisation experiment | Run on Qwen2.5-0.5B (Section 3.3) |
 | 903 vs 904; rank cap; d_out for k/v; define slot, top-16 share, k90; "gauge-free" | Fixed / defined in Section 2 |
 | Performance by group | Not possible from published cards; listed as a limitation |
