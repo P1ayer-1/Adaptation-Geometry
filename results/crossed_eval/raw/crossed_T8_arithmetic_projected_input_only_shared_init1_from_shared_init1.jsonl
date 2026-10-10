@@ -1,0 +1,200 @@
+{"example_id": "T8_arithmetic-test-000000", "prediction": " 941 - 130 = 811. 811 - 493 = 318. 318 + 73 = 391. Answer: 391", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000001", "prediction": " 3 * 32 = 96. 392 + 96 = 488. 488 + 36 = 524. 2 * 36 = 72. 524 + 72 = 596. Answer: 596", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000002", "prediction": " 660 - 517 = 143. 143 - 39 = 104. 104 - 47 = 57. 57 / 3 = 19. Answer: 19", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000003", "prediction": " 552 - 300 = 252. 8 * 49 = 392. 252 + 392 = 644. 644 + 270 = 914. Answer: 914", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000004", "prediction": " 3 * 22 = 66. 208 + 66 = 274. 8 * 35 = 280. 274 + 280 = 554. 554 - 40 = 514. 514 + 182 = 696. Answer: 696", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000005", "prediction": " 7 * 41 = 287. 534 + 287 = 821. 821 - 685 = 136. 136 - 110 = 26. 5 * 39 = 195. 26 + 195 = 221. Answer: 221", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000006", "prediction": " 8 * 43 = 344. 703 + 344 = 1047. 1047 - 434 = 613. 613 + 300 = 913. Answer: 913", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000007", "prediction": " 213 + 369 = 582. 582 + 33 = 615. 615 + 168 = 783. 783 - 122 = 661. Answer: 661", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000008", "prediction": " 783 - 729 = 54. 54 - 25 = 29. 29 + 184 = 213. 213 - 117 = 96. 96 / 4 = 24. Answer: 24", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000009", "prediction": " 740 + 140 = 880. 880 - 159 = 721. 4 * 40 = 160. 721 + 160 = 881. 8 * 46 = 368. 881 + 368 = 1249. Answer: 1249", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000010", "prediction": " 2 * 37 = 74. 581 + 74 = 655. 7 * 54 = 378. 655 + 378 = 1033. 8 * 15 = 120. 1033 + 120 = 1153. Answer: 1153", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000011", "prediction": " 168 + 64 = 232. 232 - 200 = 32. 6 * 20 = 120. 32 + 120 = 152. 152 + 312 = 464. Answer: 464", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000012", "prediction": " 158 + 202 = 360. 360 + 318 = 678. 5 * 43 = 215. 678 + 215 = 893. 893 + 365 = 1258. 1258 / 2 = 629. Answer: 629", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000013", "prediction": " 455 - 229 = 226. 226 - 182 = 44. 44 - 24 = 20. Answer: 20", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000014", "prediction": " 906 + 396 = 1202. 1202 + 93 = 1295. 1295 + 300 = 1595. 1595 / 5 = 319. Answer: 319", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000015", "prediction": " 466 + 174 = 640. 9 * 20 = 180. 640 + 180 = 820. 3 * 32 = 96. 820 + 96 = 916. 916 + 233 = 1159. 1159 / 3 = 386. Answer: 386", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000016", "prediction": " 749 + 317 = 1066. 3 * 29 = 87. 1066 + 87 = 1153. 1153 - 615 = 538. 538 - 469 = 69. 69 / 3 = 23. Answer: 23", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000017", "prediction": " 806 + 236 = 1042. 1042 + 121 = 1163. 8 * 22 = 176. 1163 + 176 = 1339. Answer: 1339", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000018", "prediction": " 6 * 57 = 342. 945 + 342 = 1287. 1287 - 654 = 633. 633 + 358 = 991. 991 + 38 = 1029. Answer: 1029", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000019", "prediction": " 447 - 170 = 277. 277 + 57 = 334. 9 * 19 = 171. 334 + 171 = 505. 505 - 120 = 385. Answer: 385", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000020", "prediction": " 407 - 56 = 351. 351 + 224 = 575. 575 + 192 = 767. Answer: 767", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000021", "prediction": " 946 + 137 = 1083. 1083 + 230 = 1313. 1313 - 1138 = 175. Answer: 175", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000022", "prediction": " 223 + 285 = 508. 508 + 101 = 609. 609 - 322 = 287. 6 * 20 = 120. 287 + 120 = 407. Answer: 407", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000023", "prediction": " 859 - 648 = 211. 211 + 178 = 389. 4 * 15 = 60. 389 + 60 = 449. Answer: 449", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000024", "prediction": " 9 * 39 = 351. 378 + 351 = 729. 6 * 46 = 276. 729 + 276 = 1005. 1005 - 881 = 124. 124 / 4 = 31. Answer: 31", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000025", "prediction": " 4 * 49 = 196. 183 + 196 = 379. 379 + 95 = 474. 474 - 213 = 261. 261 + 338 = 609. Answer: 609", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000026", "prediction": " 822 + 185 = 1007. 9 * 26 = 234. 1007 + 234 = 1241. 8 * 33 = 264. 1241 + 264 = 1505. Answer: 1505", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000027", "prediction": " 781 + 61 = 842. 842 + 286 = 1128. 1128 - 621 = 507. Answer: 507", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000028", "prediction": " 506 + 153 = 659. 659 + 316 = 975. 975 - 707 = 268. Answer: 268", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000029", "prediction": " 763 - 95 = 668. 3 * 40 = 120. 668 + 120 = 788. 788 + 220 = 1008. 1008 / 4 = 252. Answer: 252", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000030", "prediction": " 6 * 29 = 174. 538 + 174 = 712. 712 + 218 = 930. 930 + 295 = 1225. Answer: 1225", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000031", "prediction": " 325 - 138 = 187. 187 + 304 = 491. 491 - 225 = 266. 266 + 317 = 583. Answer: 583", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000032", "prediction": " 423 + 281 = 704. 6 * 39 = 234. 704 + 234 = 938. 7 * 60 = 420. 938 + 420 = 1358. Answer: 1358", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000033", "prediction": " 921 + 356 = 1277. 1277 - 427 = 850. 850 - 660 = 190. 190 - 163 = 27. Answer: 27", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000034", "prediction": " 580 - 548 = 32. 8 * 49 = 392. 32 + 392 = 424. 424 - 217 = 207. Answer: 207", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000035", "prediction": " 6 * 52 = 312. 624 + 312 = 936. 936 + 233 = 1169. 8 * 29 = 232. 1169 + 232 = 1401. Answer: 1401", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000036", "prediction": " 130 - 100 = 30. 6 * 21 = 126. 30 + 126 = 156. 156 - 116 = 40. 4 * 41 = 164. 40 + 164 = 204. Answer: 204", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000037", "prediction": " 4 * 56 = 224. 140 + 224 = 364. 364 + 230 = 594. 6 * 25 = 150. 594 + 150 = 744. Answer: 744", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000038", "prediction": " 599 + 177 = 776. 776 - 634 = 142. 142 - 81 = 61. Answer: 61", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000039", "prediction": " 8 * 32 = 256. 796 + 256 = 1052. 1052 - 965 = 87. 87 - 22 = 65. Answer: 65", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000040", "prediction": " 659 + 95 = 754. 754 - 327 = 427. 427 + 84 = 511. Answer: 511", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000041", "prediction": " 2 * 60 = 120. 166 + 120 = 286. 286 + 374 = 660. 660 - 551 = 109. Answer: 109", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000042", "prediction": " 529 - 240 = 289. 289 + 143 = 432. 432 - 246 = 186. 186 / 6 = 31. Answer: 31", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000043", "prediction": " 936 - 337 = 599. 6 * 24 = 144. 599 + 144 = 743. 743 - 173 = 570. Answer: 570", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000044", "prediction": " 508 + 65 = 573. 6 * 12 = 72. 573 + 72 = 645. 645 + 299 = 944. 4 * 14 = 56. 944 + 56 = 990. Answer: 990", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000045", "prediction": " 314 - 76 = 238. 5 * 54 = 270. 238 + 270 = 508. 508 - 209 = 299. Answer: 299", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000046", "prediction": " 4 * 34 = 136. 371 + 136 = 507. 507 - 319 = 188. 188 - 150 = 38. Answer: 38", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000047", "prediction": " 6 * 59 = 354. 798 + 354 = 1152. 3 * 28 = 84. 1152 + 84 = 1236. 1236 + 74 = 1310. 1310 / 2 = 655. Answer: 655", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000048", "prediction": " 9 * 44 = 396. 772 + 396 = 1168. 1168 - 213 = 955. 955 + 89 = 1044. 1044 / 3 = 348. Answer: 348", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000049", "prediction": " 145 + 153 = 298. 298 + 179 = 477. 477 - 39 = 438. 438 - 386 = 52. 52 / 4 = 13. Answer: 13", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000050", "prediction": " 216 + 282 = 498. 498 - 183 = 315. 9 * 18 = 162. 315 + 162 = 477. 477 + 359 = 836. Answer: 836", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000051", "prediction": " 668 - 170 = 598. 598 - 209 = 389. 389 + 234 = 623. Answer: 623", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000052", "prediction": " 425 - 149 = 276. 2 * 45 = 90. 276 + 90 = 366. 366 + 101 = 467. 7 * 32 = 224. 467 + 224 = 691. Answer: 691", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000053", "prediction": " 611 - 399 = 212. 2 * 20 = 40. 212 + 40 = 252. 252 + 293 = 545. 6 * 27 = 162. 545 + 162 = 707. Answer: 707", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000054", "prediction": " 532 - 316 = 216. 4 * 13 = 52. 216 + 52 = 268. 268 + 153 = 421. 4 * 19 = 76. 421 + 76 = 497. 497 / 7 = 71. Answer: 71", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000055", "prediction": " 3 * 25 = 75. 221 + 75 = 296. 296 - 44 = 252. 252 + 136 = 388. 8 * 13 = 104. 388 + 104 = 492. Answer: 492", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000056", "prediction": " 9 * 27 = 243. 345 + 243 = 588. 588 - 473 = 115. 5 * 42 = 210. 115 + 210 = 325. Answer: 325", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000057", "prediction": " 8 * 44 = 352. 326 + 352 = 678. 678 - 88 = 590. 8 * 14 = 112. 590 + 112 = 702. 702 / 9 = 78. Answer: 78", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000058", "prediction": " 8 * 46 = 368. 915 + 368 = 1283. 8 * 50 = 400. 1283 + 400 = 1683. 6 * 40 = 240. 1683 + 240 = 1923. 1923 - 278 = 1645. Answer: 1645", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000059", "prediction": " 771 - 687 = 84. 84 - 36 = 48. 48 - 10 = 38. Answer: 38", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000060", "prediction": " 595 - 502 = 93. 93 - 68 = 25. 7 * 21 = 147. 25 + 147 = 172. 172 - 47 = 125. Answer: 125", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000061", "prediction": " 723 - 274 = 449. 8 * 56 = 448. 449 + 448 = 907. 907 - 453 = 454. 454 - 120 = 334. Answer: 334", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000062", "prediction": " 867 + 154 = 1021. 1021 - 803 = 218. 218 - 176 = 42. Answer: 42", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000063", "prediction": " 8 * 54 = 432. 787 + 432 = 1219. 3 * 28 = 84. 1219 + 84 = 1203. 6 * 23 = 138. 1203 + 138 = 1341. Answer: 1341", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000064", "prediction": " 804 - 708 = 96. 96 - 24 = 72. 72 + 101 = 173. 5 * 22 = 110. 173 + 110 = 283. Answer: 283", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000065", "prediction": " 5 * 60 = 300. 415 + 300 = 715. 7 * 43 = 301. 715 + 301 = 1016. 1016 + 29 = 1045. 6 * 15 = 90. 1045 + 90 = 1135. Answer: 1135", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000066", "prediction": " 541 + 156 = 697. 697 - 584 = 113. 4 * 38 = 152. 113 + 152 = 265. 265 / 5 = 53. Answer: 53", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000067", "prediction": " 339 - 316 = 23. 23 + 198 = 221. 4 * 59 = 236. 221 + 236 = 457. 9 * 46 = 414. 457 + 414 = 871. Answer: 871", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000068", "prediction": " 442 - 178 = 264. 264 + 96 = 360. 360 + 70 = 430. 4 * 55 = 220. 430 + 220 = 650. 650 / 2 = 325. Answer: 325", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000069", "prediction": " 552 + 35 = 587. 5 * 17 = 85. 587 + 85 = 672. 5 * 29 = 145. 672 + 145 = 817. 7 * 29 = 203. 817 + 203 = 1020. Answer: 1020", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000070", "prediction": " 457 + 83 = 540. 540 + 373 = 913. 913 - 89 = 824. 3 * 31 = 93. 824 + 93 = 917. 917 / 7 = 131. Answer: 131", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000071", "prediction": " 200 - 105 = 95. 95 + 372 = 467. 467 - 14 = 453. Answer: 453", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000072", "prediction": " 8 * 46 = 368. 862 + 368 = 1230. 1230 - 626 = 604. 6 * 47 = 282. 604 + 282 = 886. 886 + 52 = 938. 938 / 2 = 469. Answer: 469", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000073", "prediction": " 6 * 45 = 270. 140 + 270 = 410. 410 - 252 = 158. 158 - 36 = 122. 122 + 360 = 482. Answer: 482", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000074", "prediction": " 6 * 40 = 240. 821 + 240 = 1061. 4 * 21 = 84. 1061 + 84 = 1145. 1145 + 321 = 1466. Answer: 1466", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000075", "prediction": " 493 + 104 = 597. 597 - 425 = 172. 4 * 29 = 116. 172 + 116 = 288. 288 - 14 = 274. Answer: 274", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000076", "prediction": " 223 + 246 = 469. 469 - 199 = 270. 270 - 165 = 105. 105 + 75 = 180. Answer: 180", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000077", "prediction": " 4 * 45 = 180. 163 + 180 = 343. 7 * 47 = 329. 343 + 329 = 672. 672 - 591 = 81. Answer: 81", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000078", "prediction": " 7 * 22 = 154. 365 + 154 = 519. 519 + 45 = 564. 564 - 364 = 200. Answer: 200", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000079", "prediction": " 751 - 395 = 356. 356 - 184 = 172. 5 * 52 = 260. 172 + 260 = 432. 4 * 15 = 60. 432 + 60 = 492. 492 / 2 = 246. Answer: 246", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000080", "prediction": " 778 - 737 = 41. 2 * 42 = 84. 41 + 84 = 125. 125 + 221 = 346. 346 - 126 = 220. 220 / 4 = 55. Answer: 55", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000081", "prediction": " 880 - 514 = 366. 366 - 235 = 131. 3 * 48 = 144. 131 + 144 = 275. 275 - 247 = 28. Answer: 28", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000082", "prediction": " 6 * 21 = 126. 589 + 126 = 715. 715 + 293 = 1008. 1008 - 29 = 979. 979 - 840 = 139. Answer: 139", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000083", "prediction": " 677 - 172 = 505. 505 - 349 = 156. 156 + 299 = 455. 455 / 5 = 91. Answer: 91", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000084", "prediction": " 5 * 56 = 280. 933 + 280 = 1213. 3 * 27 = 81. 1213 + 81 = 1294. 1294 - 962 = 332. Answer: 332", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000085", "prediction": " 364 + 184 = 548. 548 - 435 = 113. 4 * 47 = 188. 113 + 188 = 301. Answer: 301", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000086", "prediction": " 835 + 278 = 1113. 1113 - 320 = 793. 6 * 23 = 138. 793 + 138 = 931. 3 * 58 = 174. 931 + 174 = 1005. 1005 / 5 = 201. Answer: 201", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000087", "prediction": " 272 - 67 = 105. 105 + 321 = 426. 8 * 57 = 456. 426 + 456 = 882. Answer: 882", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000088", "prediction": " 520 + 345 = 865. 865 + 366 = 1231. 1231 + 232 = 1463. 1463 / 7 = 209. Answer: 209", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000089", "prediction": " 679 + 220 = 899. 899 - 217 = 682. 682 - 192 = 490. 490 / 2 = 245. Answer: 245", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000090", "prediction": " 3 * 51 = 153. 142 + 153 = 295. 295 - 237 = 58. 2 * 15 = 30. 58 + 30 = 88. 88 - 20 = 68. Answer: 68", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000091", "prediction": " 5 * 44 = 220. 565 + 220 = 785. 8 * 19 = 152. 785 + 152 = 937. 5 * 36 = 180. 937 + 180 = 1117. Answer: 1117", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000092", "prediction": " 2 * 57 = 114. 853 + 114 = 967. 967 + 128 = 1095. 9 * 46 = 414. 1095 + 414 = 1509. 5 * 29 = 145. 1509 + 145 = 1654. 1654 / 2 = 827. Answer: 827", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000093", "prediction": " 358 - 225 = 133. 133 - 73 = 60. 4 * 23 = 92. 60 + 92 = 152. 2 * 41 = 82. 152 + 82 = 234. Answer: 234", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000094", "prediction": " 814 - 462 = 352. 352 + 329 = 681. 8 * 45 = 360. 681 + 360 = 1041. 1041 / 3 = 347. Answer: 347", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000095", "prediction": " 301 - 250 = 51. 3 * 48 = 144. 51 + 144 = 195. 195 - 33 = 162. Answer: 162", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000096", "prediction": " 523 - 250 = 273. 9 * 13 = 117. 273 + 117 = 390. 390 - 165 = 225. 225 + 330 = 555. 555 / 5 = 111. Answer: 111", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000097", "prediction": " 662 + 195 = 857. 857 - 778 = 79. 7 * 49 = 343. 79 + 343 = 422. 422 / 2 = 211. Answer: 211", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000098", "prediction": " 632 + 191 = 823. 823 + 99 = 922. 3 * 37 = 111. 922 + 111 = 1033. Answer: 1033", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000099", "prediction": " 5 * 28 = 140. 848 + 140 = 988. 988 - 573 = 415. 3 * 16 = 48. 415 + 48 = 463. Answer: 463", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000100", "prediction": " 205 - 151 = 54. 54 + 132 = 186. 186 - 132 = 54. Answer: 54", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000101", "prediction": " 648 + 251 = 909. 2 * 13 = 26. 909 + 26 = 935. 935 - 437 = 498. Answer: 498", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000102", "prediction": " 6 * 41 = 246. 253 + 246 = 499. 499 + 53 = 552. 552 - 352 = 200. 200 / 2 = 100. Answer: 100", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000103", "prediction": " 4 * 14 = 56. 355 + 56 = 411. 5 * 25 = 125. 411 + 125 = 536. 536 - 157 = 379. Answer: 379", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000104", "prediction": " 6 * 49 = 294. 305 + 294 = 599. 599 - 495 = 104. 104 + 274 = 378. Answer: 378", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000105", "prediction": " 562 - 85 = 477. 477 + 384 = 861. 9 * 50 = 450. 861 + 450 = 1311. 9 * 50 = 450. 1311 + 450 = 1761. 1761 / 3 = 587. Answer: 587", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000106", "prediction": " 6 * 28 = 168. 696 + 168 = 864. 864 - 25 = 839. 839 - 478 = 361. 361 + 285 = 646. 646 / 2 = 323. Answer: 323", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000107", "prediction": " 513 + 353 = 866. 866 - 813 = 53. 53 - 27 = 26. 8 * 12 = 96. 26 + 96 = 122. 122 / 2 = 61. Answer: 61", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000108", "prediction": " 333 - 71 = 262. 262 + 378 = 640. 640 - 358 = 282. 282 / 6 = 47. Answer: 47", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000109", "prediction": " 887 - 310 = 577. 577 - 549 = 28. 28 + 126 = 154. 154 + 336 = 490. Answer: 490", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000110", "prediction": " 4 * 58 = 232. 508 + 232 = 740. 740 - 378 = 362. 6 * 40 = 240. 362 + 240 = 602. 602 / 2 = 301. Answer: 301", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000111", "prediction": " 6 * 47 = 282. 738 + 282 = 1020. 6 * 39 = 234. 1020 + 234 = 1254. 1254 + 184 = 1438. Answer: 1438", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000112", "prediction": " 731 + 174 = 905. 905 + 136 = 1041. 2 * 39 = 78. 1041 + 78 = 1119. Answer: 1119", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000113", "prediction": " 7 * 33 = 231. 129 + 231 = 360. 360 + 338 = 698. 5 * 42 = 210. 698 + 210 = 908. 908 / 4 = 227. Answer: 227", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000114", "prediction": " 359 + 225 = 584. 584 + 309 = 893. 893 + 194 = 1087. Answer: 1087", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000115", "prediction": " 343 + 180 = 523. 523 + 185 = 708. 708 + 251 = 959. 959 / 7 = 137. Answer: 137", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000116", "prediction": " 211 + 141 = 352. 352 + 54 = 406. 406 + 397 = 803. 803 + 137 = 940. Answer: 940", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000117", "prediction": " 861 + 191 = 1052. 1052 - 475 = 577. 8 * 17 = 136. 577 + 136 = 713. 713 - 260 = 453. Answer: 453", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000118", "prediction": " 365 - 151 = 214. 214 - 104 = 110. 110 - 56 = 54. 54 / 9 = 6. Answer: 6", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000119", "prediction": " 429 - 300 = 129. 4 * 22 = 88. 129 + 88 = 217. 217 - 175 = 42. 42 / 2 = 21. Answer: 21", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000120", "prediction": " 484 + 166 = 650. 650 - 89 = 561. 561 + 306 = 867. 867 - 120 = 747. Answer: 747", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000121", "prediction": " 7 * 44 = 308. 785 + 308 = 1093. 1093 - 1041 = 52. 52 - 30 = 22. 22 + 217 = 239. Answer: 239", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000122", "prediction": " 183 - 93 = 90. 90 + 209 = 299. 299 + 173 = 472. 472 / 2 = 236. Answer: 236", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000123", "prediction": " 707 - 604 = 103. 103 + 287 = 390. 390 + 246 = 636. 636 - 220 = 416. Answer: 416", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000124", "prediction": " 922 + 337 = 1259. 5 * 17 = 85. 1259 + 85 = 1344. 1344 - 412 = 932. 932 + 319 = 1251. 1251 / 9 = 139. Answer: 139", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000125", "prediction": " 631 + 274 = 905. 7 * 54 = 378. 905 + 378 = 1283. 6 * 50 = 300. 1283 + 300 = 1583. 1583 - 1183 = 400. 400 / 8 = 50. Answer: 50", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000126", "prediction": " 794 + 117 = 911. 911 + 185 = 1096. 1096 - 637 = 459. 459 - 16 = 443. Answer: 443", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000127", "prediction": " 9 * 48 = 432. 404 + 432 = 836. 836 - 633 = 203. 4 * 32 = 128. 203 + 128 = 331. 331 + 205 = 536. 536 / 8 = 67. Answer: 67", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000128", "prediction": " 525 + 271 = 796. 796 + 398 = 1194. 1194 + 61 = 1255. 9 * 48 = 432. 1255 + 432 = 1687. 1687 / 7 = 241. Answer: 241", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000129", "prediction": " 696 - 23 = 673. 9 * 22 = 198. 673 + 198 = 871. 7 * 15 = 105. 871 + 105 = 976. 7 * 34 = 238. 976 + 238 = 1214. 1214 / 2 = 607. Answer: 607", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000130", "prediction": " 319 + 251 = 570. 570 - 355 = 215. 9 * 42 = 378. 215 + 378 = 593. Answer: 593", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000131", "prediction": " 529 + 186 = 715. 715 + 111 = 826. 826 + 117 = 943. 943 + 308 = 1251. 1251 / 9 = 139. Answer: 139", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000132", "prediction": " 818 - 131 = 687. 687 - 535 = 152. 9 * 40 = 360. 152 + 360 = 512. Answer: 512", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000133", "prediction": " 516 - 213 = 303. 303 - 239 = 64. 5 * 49 = 245. 64 + 245 = 309. 309 / 3 = 103. Answer: 103", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000134", "prediction": " 3 * 47 = 141. 689 + 141 = 830. 830 + 253 = 1083. 1083 - 696 = 387. 387 / 9 = 43. Answer: 43", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000135", "prediction": " 9 * 44 = 396. 674 + 396 = 1070. 1070 + 188 = 1258. 1258 - 291 = 967. 967 + 135 = 1102. Answer: 1102", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000136", "prediction": " 449 - 17 = 432. 432 - 376 = 56. 56 - 33 = 23. 8 * 32 = 256. 23 + 256 = 279. Answer: 279", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000137", "prediction": " 7 * 32 = 224. 671 + 224 = 895. 895 - 703 = 192. 7 * 47 = 329. 192 + 329 = 521. Answer: 521", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000138", "prediction": " 5 * 22 = 110. 616 + 110 = 726. 726 + 299 = 1025. 5 * 15 = 75. 1025 + 75 = 1000. 1000 - 136 = 864. 864 / 2 = 432. Answer: 432", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000139", "prediction": " 4 * 12 = 48. 835 + 48 = 883. 883 - 676 = 207. 5 * 26 = 130. 207 + 130 = 337. 337 + 338 = 675. 675 / 9 = 75. Answer: 75", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000140", "prediction": " 124 + 233 = 357. 357 + 298 = 655. 655 - 157 = 498. 498 - 176 = 322. Answer: 322", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000141", "prediction": " 718 - 147 = 571. 7 * 50 = 350. 571 + 350 = 921. 921 + 35 = 956. Answer: 956", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000142", "prediction": " 4 * 25 = 100. 665 + 100 = 765. 765 - 735 = 30. 7 * 16 = 112. 30 + 112 = 142. 142 - 70 = 72. Answer: 72", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000143", "prediction": " 6 * 14 = 84. 331 + 84 = 415. 415 - 275 = 140. 140 + 79 = 219. Answer: 219", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000144", "prediction": " 266 - 175 = 91. 91 - 36 = 55. 55 - 27 = 28. 28 + 58 = 86. 86 / 2 = 43. Answer: 43", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000145", "prediction": " 2 * 14 = 28. 175 + 28 = 203. 203 - 81 = 122. 122 + 145 = 267. Answer: 267", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000146", "prediction": " 638 + 377 = 1015. 2 * 34 = 68. 1015 + 68 = 1083. 1083 + 150 = 1233. 1233 - 314 = 919. Answer: 919", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000147", "prediction": " 188 + 265 = 453. 453 + 300 = 753. 8 * 27 = 216. 753 + 216 = 969. 8 * 42 = 336. 969 + 336 = 1305. Answer: 1305", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000148", "prediction": " 226 - 37 = 189. 189 + 378 = 567. 567 + 287 = 854. Answer: 854", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000149", "prediction": " 2 * 54 = 108. 425 + 108 = 533. 2 * 29 = 58. 533 + 58 = 591. 9 * 40 = 360. 591 + 360 = 951. 951 + 162 = 1113. Answer: 1113", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000150", "prediction": " 4 * 59 = 236. 176 + 236 = 412. 9 * 41 = 369. 412 + 369 = 781. 781 - 609 = 172. 172 - 140 = 32. Answer: 32", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000151", "prediction": " 731 - 655 = 76. 76 - 11 = 65. 65 + 277 = 342. 342 - 142 = 200. Answer: 200", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000152", "prediction": " 229 - 19 = 210. 210 - 155 = 55. 7 * 20 = 140. 55 + 140 = 195. Answer: 195", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000153", "prediction": " 2 * 48 = 96. 782 + 96 = 878. 878 - 124 = 754. 7 * 50 = 350. 754 + 350 = 1104. 9 * 17 = 153. 1104 + 153 = 1257. Answer: 1257", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000154", "prediction": " 312 + 340 = 652. 652 + 85 = 737. 737 + 107 = 844. 844 / 2 = 422. Answer: 422", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000155", "prediction": " 711 + 330 = 1041. 1041 + 36 = 1077. 6 * 42 = 252. 1077 + 252 = 1329. 1329 / 3 = 443. Answer: 443", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000156", "prediction": " 271 + 142 = 413. 413 - 44 = 369. 369 - 121 = 248. 248 / 8 = 31. Answer: 31", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000157", "prediction": " 510 - 360 = 150. 150 - 49 = 101. 6 * 25 = 150. 101 + 150 = 251. Answer: 251", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000158", "prediction": " 798 - 478 = 320. 320 + 143 = 463. 3 * 30 = 90. 463 + 90 = 553. Answer: 553", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000159", "prediction": " 302 - 231 = 71. 8 * 60 = 480. 71 + 480 = 551. 551 + 345 = 996. 996 + 242 = 1238. 1238 / 2 = 619. Answer: 619", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000160", "prediction": " 326 - 226 = 100. 3 * 32 = 96. 100 + 96 = 196. 196 + 312 = 508. 2 * 47 = 94. 508 + 94 = 502. Answer: 502", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000161", "prediction": " 585 + 170 = 755. 755 + 233 = 988. 988 + 270 = 1258. 8 * 43 = 344. 1258 + 344 = 1602. Answer: 1602", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000162", "prediction": " 505 - 317 = 188. 188 + 369 = 557. 557 - 95 = 462. Answer: 462", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000163", "prediction": " 9 * 51 = 459. 435 + 459 = 894. 894 - 344 = 550. 7 * 45 = 315. 550 + 315 = 865. 865 / 5 = 173. Answer: 173", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000164", "prediction": " 7 * 57 = 399. 438 + 399 = 837. 837 - 611 = 226. 9 * 28 = 252. 226 + 252 = 478. 5 * 21 = 105. 478 + 105 = 583. Answer: 583", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000165", "prediction": " 385 + 95 = 480. 3 * 32 = 96. 480 + 96 = 576. 576 - 226 = 350. 350 + 253 = 603. 603 / 3 = 201. Answer: 201", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000166", "prediction": " 9 * 33 = 297. 858 + 297 = 1155. 1155 + 60 = 1215. 1215 + 86 = 1299. 9 * 12 = 108. 1299 + 108 = 1407. Answer: 1407", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000167", "prediction": " 563 + 32 = 595. 595 - 229 = 366. 366 - 145 = 221. Answer: 221", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000168", "prediction": " 163 + 186 = 349. 6 * 19 = 114. 349 + 114 = 463. 463 + 369 = 832. 832 / 2 = 416. Answer: 416", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000169", "prediction": " 730 - 39 = 691. 691 - 187 = 504. 504 + 95 = 599. Answer: 599", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000170", "prediction": " 319 + 303 = 622. 622 - 275 = 347. 347 - 281 = 66. 66 - 15 = 51. Answer: 51", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000171", "prediction": " 2 * 32 = 64. 333 + 64 = 397. 397 + 137 = 534. 534 - 30 = 504. Answer: 504", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000172", "prediction": " 937 + 309 = 1246. 8 * 46 = 368. 1246 + 368 = 1614. 1614 - 1222 = 392. 392 / 7 = 56. Answer: 56", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000173", "prediction": " 143 + 299 = 442. 442 + 70 = 512. 512 - 94 = 418. 8 * 30 = 240. 418 + 240 = 658. 658 / 2 = 329. Answer: 329", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000174", "prediction": " 560 + 136 = 696. 3 * 54 = 162. 696 + 162 = 858. 858 - 239 = 619. 619 + 198 = 817. Answer: 817", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000175", "prediction": " 533 - 420 = 113. 113 - 89 = 24. 24 + 376 = 300. 300 + 38 = 338. Answer: 338", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000176", "prediction": " 644 - 47 = 597. 7 * 20 = 140. 597 + 140 = 737. 4 * 39 = 156. 737 + 156 = 893. Answer: 893", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000177", "prediction": " 867 - 777 = 90. 90 + 281 = 371. 371 + 171 = 542. 542 / 2 = 271. Answer: 271", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000178", "prediction": " 586 - 473 = 113. 3 * 48 = 144. 113 + 144 = 257. 257 - 154 = 103. 2 * 15 = 30. 103 + 30 = 133. 133 / 7 = 19. Answer: 19", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000179", "prediction": " 137 - 40 = 97. 97 - 17 = 80. 80 - 42 = 38. 4 * 23 = 92. 38 + 92 = 130. 130 / 5 = 26. Answer: 26", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000180", "prediction": " 159 + 156 = 315. 315 + 45 = 360. 360 - 214 = 146. 146 - 66 = 80. Answer: 80", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000181", "prediction": " 916 - 432 = 484. 484 - 187 = 297. 297 - 202 = 95. 95 / 5 = 19. Answer: 19", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000182", "prediction": " 378 + 106 = 484. 484 + 137 = 621. 621 + 221 = 842. 842 + 59 = 901. Answer: 901", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000183", "prediction": " 879 - 619 = 260. 260 + 198 = 458. 458 - 344 = 114. 114 / 2 = 57. Answer: 57", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000184", "prediction": " 477 - 373 = 104. 6 * 23 = 138. 104 + 138 = 242. 242 + 52 = 294. 294 - 202 = 92. Answer: 92", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000185", "prediction": " 3 * 46 = 138. 301 + 138 = 439. 439 + 269 = 708. 708 - 641 = 67. Answer: 67", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000186", "prediction": " 8 * 39 = 312. 887 + 312 = 1199. 1199 - 728 = 471. 3 * 13 = 39. 471 + 39 = 510. 510 / 3 = 170. Answer: 170", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000187", "prediction": " 466 - 51 = 415. 415 + 309 = 724. 724 + 71 = 795. 795 + 37 = 832. 832 / 8 = 104. Answer: 104", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000188", "prediction": " 690 + 387 = 1077. 1077 - 504 = 573. 7 * 20 = 140. 573 + 140 = 713. 2 * 52 = 104. 713 + 104 = 817. Answer: 817", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000189", "prediction": " 2 * 56 = 112. 417 + 112 = 529. 9 * 32 = 288. 529 + 288 = 817. 2 * 60 = 120. 817 + 120 = 937. 7 * 58 = 406. 937 + 406 = 1343. Answer: 1343", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000190", "prediction": " 3 * 39 = 117. 717 + 117 = 834. 834 - 763 = 71. 2 * 12 = 24. 71 + 24 = 95. 8 * 60 = 480. 95 + 480 = 575. Answer: 575", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000191", "prediction": " 9 * 58 = 522. 540 + 522 = 1062. 1062 - 534 = 528. 528 - 286 = 242. Answer: 242", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000192", "prediction": " 8 * 28 = 224. 777 + 224 = 991. 991 - 510 = 481. 6 * 22 = 132. 481 + 132 = 613. Answer: 613", "score": 0.0}
+{"example_id": "T8_arithmetic-test-000193", "prediction": " 247 + 86 = 333. 333 - 87 = 246. 246 + 146 = 392. 392 + 65 = 457. Answer: 457", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000194", "prediction": " 712 + 154 = 866. 866 + 202 = 1068. 1068 + 224 = 1292. 1292 / 4 = 323. Answer: 323", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000195", "prediction": " 4 * 32 = 128. 739 + 128 = 867. 3 * 52 = 156. 867 + 156 = 1023. 1023 + 32 = 1055. 1055 + 255 = 1310. 1310 / 2 = 655. Answer: 655", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000196", "prediction": " 725 - 402 = 323. 5 * 31 = 155. 323 + 155 = 478. 4 * 44 = 176. 478 + 176 = 654. 2 * 35 = 70. 654 + 70 = 724. Answer: 724", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000197", "prediction": " 5 * 51 = 255. 456 + 255 = 711. 711 + 142 = 853. 853 - 666 = 187. Answer: 187", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000198", "prediction": " 7 * 24 = 168. 174 + 168 = 342. 342 + 142 = 484. 484 - 187 = 297. 297 + 276 = 573. 573 / 3 = 191. Answer: 191", "score": 1.0}
+{"example_id": "T8_arithmetic-test-000199", "prediction": " 5 * 22 = 110. 237 + 110 = 347. 347 + 164 = 511. 7 * 34 = 238. 511 + 238 = 749. 6 * 48 = 288. 749 + 288 = 1037. Answer: 1037", "score": 1.0}

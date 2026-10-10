@@ -1,0 +1,36 @@
+{
+ "task_id": "T9_clinical",
+ "dataset_key": "T9_clinical.v2",
+ "metric": "exact_match",
+ "direction": "higher",
+ "primary": 0.865,
+ "ci95": [
+  0.815,
+  0.91
+ ],
+ "n": 200,
+ "template": "v1",
+ "shots": 0,
+ "shot_example_ids": [],
+ "stop_markers": [],
+ "mean_output_words": 6.47,
+ "eval_seconds": 7.7084901332855225,
+ "eval_id": "crossed_T9_clinical_projinv_input_only_shared_init1_from_shared_init1",
+ "base": "dev_qwen2.5-0.5b",
+ "family": "qwen2",
+ "split": "test",
+ "kind": "delta",
+ "adapter_dir": null,
+ "delta_dir": "/home/noahp/Adaptation-Geometry/artifacts/crossed_eval_sides/invariant__shared_init1__shared_init1__T9_clinical__input_only",
+ "provenance": {
+  "base_name": "dev_qwen2.5-0.5b",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_revision": null,
+  "resolved_commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": null,
+  "family": "qwen2",
+  "model_type": "qwen2",
+  "dtype": "bfloat16"
+ },
+ "fewshot_seed": null
+}
