@@ -1,0 +1,686 @@
+{
+ "base": "dev_qwen2.5-0.5b",
+ "tasks": [
+  "T1_hidden_rule",
+  "T2_nli",
+  "T3_paraphrase",
+  "T4_json",
+  "T5_concise",
+  "T6_verbose",
+  "T7_python",
+  "T8_arithmetic",
+  "T9_clinical",
+  "T10_format"
+ ],
+ "k": 16,
+ "n_modules": 168,
+ "sides": [
+  "input_only",
+  "output_only",
+  "both"
+ ],
+ "capture_by_side": [
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T1_hidden_rule",
+   "input_only": 0.9930046493398238,
+   "output_only": 0.07217741378675288,
+   "both": 0.07123792978539756
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T2_nli",
+   "input_only": 0.9335966153836153,
+   "output_only": 0.09186581783883054,
+   "both": 0.08307160597431208
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T3_paraphrase",
+   "input_only": 0.9801272562077692,
+   "output_only": 0.11960360847185156,
+   "both": 0.11510814546292426
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T4_json",
+   "input_only": 0.9404814201203298,
+   "output_only": 0.04530963508755823,
+   "both": 0.04137187090388308
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T5_concise",
+   "input_only": 0.9402188658981999,
+   "output_only": 0.12722351897505,
+   "both": 0.11425377750655824
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T6_verbose",
+   "input_only": 0.9254408932569594,
+   "output_only": 0.07256585299073551,
+   "both": 0.06409046946675945
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T7_python",
+   "input_only": 0.9708189407486065,
+   "output_only": 0.07451201955142428,
+   "both": 0.06949372126031685
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T8_arithmetic",
+   "input_only": 0.9549388466277409,
+   "output_only": 0.11982433425328526,
+   "both": 0.10829251039995735
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T9_clinical",
+   "input_only": 0.9500954789067706,
+   "output_only": 0.04867954210407982,
+   "both": 0.045346885351174655
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T10_format",
+   "input_only": 0.8101349828212466,
+   "output_only": 0.03422238798103997,
+   "both": 0.0289261013349559
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T1_hidden_rule",
+   "input_only": 0.017310328279071287,
+   "output_only": 0.07062245320142682,
+   "both": 0.0011953855869081215
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T2_nli",
+   "input_only": 0.01713944374336204,
+   "output_only": 0.09512165967221752,
+   "both": 0.0017812030557794961
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T3_paraphrase",
+   "input_only": 0.017921327400727913,
+   "output_only": 0.12041681944422525,
+   "both": 0.0023386135349490644
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T4_json",
+   "input_only": 0.01696667589213364,
+   "output_only": 0.04464919270825548,
+   "both": 0.0007384297871051011
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T5_concise",
+   "input_only": 0.0166265043336825,
+   "output_only": 0.1203377854629998,
+   "both": 0.0019850311309876
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T6_verbose",
+   "input_only": 0.017510266408710545,
+   "output_only": 0.07088721752363258,
+   "both": 0.0012395496195975891
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T7_python",
+   "input_only": 0.01713508199960794,
+   "output_only": 0.07401169798819926,
+   "both": 0.0012901216313246954
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T8_arithmetic",
+   "input_only": 0.017534866612109887,
+   "output_only": 0.12041725013745973,
+   "both": 0.0021942035529334764
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T9_clinical",
+   "input_only": 0.01642309511504314,
+   "output_only": 0.04909273624396892,
+   "both": 0.0007604971512214389
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T10_format",
+   "input_only": 0.016779571736786528,
+   "output_only": 0.033250181882849936,
+   "both": 0.0005302069952907137
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T1_hidden_rule",
+   "input_only": 0.01764095241176036,
+   "output_only": 0.07215468752901605,
+   "both": 0.0012165782394423872
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T2_nli",
+   "input_only": 0.018330673016166,
+   "output_only": 0.09389084243254235,
+   "both": 0.002200868542059752
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T3_paraphrase",
+   "input_only": 0.019002009096371314,
+   "output_only": 0.1183857277973787,
+   "both": 0.0028255290038559887
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T4_json",
+   "input_only": 0.01786347218361574,
+   "output_only": 0.04457023531639476,
+   "both": 0.000992708590499229
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T5_concise",
+   "input_only": 0.019009274716051933,
+   "output_only": 0.12488102911355128,
+   "both": 0.002982233652648888
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T6_verbose",
+   "input_only": 0.01930494284041738,
+   "output_only": 0.06857515482568068,
+   "both": 0.0015906915483466717
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T7_python",
+   "input_only": 0.018926211941876266,
+   "output_only": 0.0740572044510758,
+   "both": 0.0019151192683375304
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T8_arithmetic",
+   "input_only": 0.020782073726374757,
+   "output_only": 0.12100175038085448,
+   "both": 0.0035735737068078362
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T9_clinical",
+   "input_only": 0.0188908811704559,
+   "output_only": 0.04882646965538099,
+   "both": 0.0010895322441893003
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T10_format",
+   "input_only": 0.019863138700219145,
+   "output_only": 0.03335065271524058,
+   "both": 0.0007357966244080376
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T1_hidden_rule",
+   "input_only": 0.019436633726070896,
+   "output_only": 0.10380446491697784,
+   "both": 0.0021585235796282866
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T2_nli",
+   "input_only": 0.01930492056075725,
+   "output_only": 0.0911660972875628,
+   "both": 0.002381598676198993
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T3_paraphrase",
+   "input_only": 0.019324905980886858,
+   "output_only": 0.11671628461076669,
+   "both": 0.0027579034324784093
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T4_json",
+   "input_only": 0.018018985692606678,
+   "output_only": 0.04601277031924218,
+   "both": 0.0011410105115503266
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T5_concise",
+   "input_only": 0.018797651026419997,
+   "output_only": 0.13047530856498155,
+   "both": 0.0031168129328679856
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T6_verbose",
+   "input_only": 0.019285088491418776,
+   "output_only": 0.0710334332145557,
+   "both": 0.0015801256117376821
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T7_python",
+   "input_only": 0.019474842232665053,
+   "output_only": 0.07868952894132776,
+   "both": 0.0022739590014451186
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T8_arithmetic",
+   "input_only": 0.020679698617686218,
+   "output_only": 0.11405121827929578,
+   "both": 0.0036411607032868104
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T9_clinical",
+   "input_only": 0.018772522942568926,
+   "output_only": 0.049187001550341655,
+   "both": 0.0010463909468825159
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T10_format",
+   "input_only": 0.019943061144070854,
+   "output_only": 0.033988499639563144,
+   "both": 0.0007560928330587212
+  }
+ ],
+ "scores_by_side": [
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected input_only shared_init0<-shared_init0",
+   "score": 0.995,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected output_only shared_init0<-shared_init0",
+   "score": 0.72,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected input_only shared_init0<-shared_init1",
+   "score": 0.65,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected output_only shared_init0<-shared_init1",
+   "score": 0.715,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected input_only indep_seed0<-indep_seed0",
+   "score": 0.65,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected output_only indep_seed0<-indep_seed0",
+   "score": 0.71,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected input_only shared_init0<-shared_init0",
+   "score": 0.75,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected output_only shared_init0<-shared_init0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected input_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected output_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected input_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected output_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected input_only shared_init0<-shared_init0",
+   "score": 0.89,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected output_only shared_init0<-shared_init0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected input_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected output_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected input_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected output_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected input_only shared_init0<-shared_init0",
+   "score": 0.855,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected output_only shared_init0<-shared_init0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected input_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected output_only shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected input_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected output_only indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  }
+ ],
+ "paired_vs_base_T3_paraphrase": {
+  "direct_indep_seed0": {
+   "score": 0.99,
+   "base": 0.65,
+   "diff": 0.34,
+   "ci95_paired_bootstrap": [
+    0.27,
+    0.405
+   ],
+   "discordant_variant_only": 70,
+   "discordant_base_only": 2,
+   "mcnemar_exact_p": 1.1134248091657778e-18,
+   "prediction_agreement_with_base": 0.64,
+   "n": 200
+  },
+  "direct_shared_init0": {
+   "score": 1.0,
+   "base": 0.65,
+   "diff": 0.35,
+   "ci95_paired_bootstrap": [
+    0.285,
+    0.415
+   ],
+   "discordant_variant_only": 70,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 1.6940658945086007e-21,
+   "prediction_agreement_with_base": 0.65,
+   "n": 200
+  },
+  "projected_indep_seed0_from_indep_seed0": {
+   "score": 0.65,
+   "base": 0.65,
+   "diff": 0.0,
+   "ci95_paired_bootstrap": [
+    0.0,
+    0.0
+   ],
+   "discordant_variant_only": 0,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 1.0,
+   "prediction_agreement_with_base": 1.0,
+   "n": 200
+  },
+  "projected_input_only_indep_seed0_from_indep_seed0": {
+   "score": 0.65,
+   "base": 0.65,
+   "diff": 0.0,
+   "ci95_paired_bootstrap": [
+    0.0,
+    0.0
+   ],
+   "discordant_variant_only": 0,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 1.0,
+   "prediction_agreement_with_base": 1.0,
+   "n": 200
+  },
+  "projected_input_only_shared_init0_from_shared_init0": {
+   "score": 0.995,
+   "base": 0.65,
+   "diff": 0.345,
+   "ci95_paired_bootstrap": [
+    0.28,
+    0.41
+   ],
+   "discordant_variant_only": 69,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 3.3881317890172014e-21,
+   "prediction_agreement_with_base": 0.655,
+   "n": 200
+  },
+  "projected_input_only_shared_init0_from_shared_init1": {
+   "score": 0.65,
+   "base": 0.65,
+   "diff": 0.0,
+   "ci95_paired_bootstrap": [
+    0.0,
+    0.0
+   ],
+   "discordant_variant_only": 0,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 1.0,
+   "prediction_agreement_with_base": 1.0,
+   "n": 200
+  },
+  "projected_output_only_indep_seed0_from_indep_seed0": {
+   "score": 0.71,
+   "base": 0.65,
+   "diff": 0.06,
+   "ci95_paired_bootstrap": [
+    0.02,
+    0.1
+   ],
+   "discordant_variant_only": 15,
+   "discordant_base_only": 3,
+   "mcnemar_exact_p": 0.007537841796875,
+   "prediction_agreement_with_base": 0.91,
+   "n": 200
+  },
+  "projected_output_only_shared_init0_from_shared_init0": {
+   "score": 0.72,
+   "base": 0.65,
+   "diff": 0.07,
+   "ci95_paired_bootstrap": [
+    0.02,
+    0.125
+   ],
+   "discordant_variant_only": 21,
+   "discordant_base_only": 7,
+   "mcnemar_exact_p": 0.012540951371192932,
+   "prediction_agreement_with_base": 0.86,
+   "n": 200
+  },
+  "projected_output_only_shared_init0_from_shared_init1": {
+   "score": 0.715,
+   "base": 0.65,
+   "diff": 0.065,
+   "ci95_paired_bootstrap": [
+    0.015,
+    0.115
+   ],
+   "discordant_variant_only": 20,
+   "discordant_base_only": 7,
+   "mcnemar_exact_p": 0.0191572904586792,
+   "prediction_agreement_with_base": 0.865,
+   "n": 200
+  },
+  "projected_shared_init0_from_shared_init0": {
+   "score": 0.71,
+   "base": 0.65,
+   "diff": 0.06,
+   "ci95_paired_bootstrap": [
+    0.01,
+    0.115
+   ],
+   "discordant_variant_only": 21,
+   "discordant_base_only": 9,
+   "mcnemar_exact_p": 0.042773945257067694,
+   "prediction_agreement_with_base": 0.85,
+   "n": 200
+  },
+  "projected_shared_init0_from_shared_init1": {
+   "score": 0.65,
+   "base": 0.65,
+   "diff": 0.0,
+   "ci95_paired_bootstrap": [
+    0.0,
+    0.0
+   ],
+   "discordant_variant_only": 0,
+   "discordant_base_only": 0,
+   "mcnemar_exact_p": 1.0,
+   "prediction_agreement_with_base": 1.0,
+   "n": 200
+  }
+ }
+}

@@ -1,0 +1,200 @@
+{"example_id": "T9_clinical-test-000000", "prediction": " Imaging confirmed lymphadenopathy and hepatitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000001", "prediction": " She was scheduled for gastroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000002", "prediction": " He was admitted with encephalopathy and underwent neurotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000003", "prediction": " After tongue repair surgery, he developed otitis.", "score": 0.0}
+{"example_id": "T9_clinical-test-000004", "prediction": " Imaging confirmed hepatomegaly and glossitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000005", "prediction": " The patient presented with otitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000006", "prediction": " He was admitted with gastritis and underwent phlebectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000007", "prediction": " He was admitted with arthralgia and underwent phlebotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000008", "prediction": " The team recommended rhinoscopy to treat cardiomegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000009", "prediction": " The patient presented with neuralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000010", "prediction": " The patient presented with gastralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000011", "prediction": " The patient presented with stomatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000012", "prediction": " After arthroplasty, he developed cardiac pain.", "score": 0.0}
+{"example_id": "T9_clinical-test-000013", "prediction": " After neuroplasty, he developed gastralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000014", "prediction": " Imaging confirmed encephalopathy and glossitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000015", "prediction": " History is notable for cardiomegaly, rhinitis and prior nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000016", "prediction": " After laryngectomy, he developed cardiomegaly.", "score": 0.0}
+{"example_id": "T9_clinical-test-000017", "prediction": " He was admitted with arthropathy and underwent gastrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000018", "prediction": " He was admitted with lymphadenitis and underwent otoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000019", "prediction": " The patient presented with nephropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000020", "prediction": " After gastroplasty, he developed arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000021", "prediction": " After phlebotomy, he developed neuropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000022", "prediction": " After arthroplasty, he developed glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000023", "prediction": " History is notable for carditis, neuritis and prior cardiotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000024", "prediction": " History is notable for glossitis, glossalgia and prior arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000025", "prediction": " History is notable for gastromegaly, phlebopathy and prior nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000026", "prediction": " After arthroplasty, he developed otalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000027", "prediction": " After arthrotomy, he developed nephropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000028", "prediction": " History is notable for rhinalgia, hepatalgia and prior neurectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000029", "prediction": " After gastroplasty, he developed glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000030", "prediction": " The team recommended neuroplasty to treat nephromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000031", "prediction": " The team recommended arthrotomy to treat otalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000032", "prediction": " He was admitted with gastralgia and underwent neurotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000033", "prediction": " The patient presented with neuritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000034", "prediction": " After otoscopy, he developed earache.", "score": 0.0}
+{"example_id": "T9_clinical-test-000035", "prediction": " Imaging confirmed nephromegaly and glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000036", "prediction": " Imaging confirmed gastritis and carditis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000037", "prediction": " History is notable for lymphadenitis, cardiomegaly and prior arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000038", "prediction": " History is notable for rhinitis, lymphadenopathy and prior arthrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000039", "prediction": " He was admitted with arthralgia and underwent otoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000040", "prediction": " History is notable for gastritis, otitis and prior glossoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000041", "prediction": " The team recommended glossoplasty to treat glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000042", "prediction": " Imaging confirmed stomatitis and lymphadenitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000043", "prediction": " Imaging confirmed encephalalgia and gastropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000044", "prediction": " He was admitted with rhinitis and underwent nasal endoscopy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000045", "prediction": " History is notable for carditis, glossalgia and prior arthroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000046", "prediction": " He was admitted with rhinitis and underwent arthroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000047", "prediction": " She was scheduled for gastroplasty.", "score": 0.0}
+{"example_id": "T9_clinical-test-000048", "prediction": " History is notable for stomatalgia, neuropathy and prior neurectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000049", "prediction": " History is notable for gastralgia, cardiomegaly and prior otoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000050", "prediction": " Imaging confirmed lymphadenitis and nephropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000051", "prediction": " The team recommended glossoplasty to treat hepatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000052", "prediction": " History is notable for arthritis, gastromegaly and prior stomatoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000053", "prediction": " After gastroscopy, he developed hepatitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000054", "prediction": " The team recommended neurectomy to treat gastralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000055", "prediction": " The patient presented with arthralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000056", "prediction": " Imaging confirmed arthralgia and hepatopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000057", "prediction": " The team recommended arthrotomy to treat nephropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000058", "prediction": " She was scheduled for gastroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000059", "prediction": " Imaging confirmed nephromegaly and arthritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000060", "prediction": " History is notable for nephromegaly, arthralgia and prior otoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000061", "prediction": " After neurectomy, he developed arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000062", "prediction": " After neurotomy, he developed neuralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000063", "prediction": " He was admitted with hepatopathy and underwent gastrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000064", "prediction": " She was scheduled for arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000065", "prediction": " She was scheduled for arthroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000066", "prediction": " The team recommended nephroscopy to treat myocarditis.", "score": 0.0}
+{"example_id": "T9_clinical-test-000067", "prediction": " The patient presented with arthritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000068", "prediction": " After nephrectomy, he developed glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000069", "prediction": " History is notable for encephalalgia, gastralgia and prior nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000070", "prediction": " The patient presented with otalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000071", "prediction": " Imaging confirmed gastromegaly and nephromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000072", "prediction": " He was admitted with glossalgia and underwent otoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000073", "prediction": " He was admitted with stomatalgia and underwent oral surgery.", "score": 0.0}
+{"example_id": "T9_clinical-test-000074", "prediction": " Imaging confirmed stomatitis and encephalopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000075", "prediction": " Imaging confirmed stomatitis and gastralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000076", "prediction": " He was admitted with lymphadenopathy and underwent tongue repair.", "score": 0.0}
+{"example_id": "T9_clinical-test-000077", "prediction": " She was scheduled for otoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000078", "prediction": " After gastrotomy, he developed headache.", "score": 0.0}
+{"example_id": "T9_clinical-test-000079", "prediction": " After hepatectomy, he developed neuritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000080", "prediction": " Imaging confirmed gastropathy and neuritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000081", "prediction": " The patient presented with hepatitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000082", "prediction": " She was scheduled for cardiotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000083", "prediction": " After arthroplasty, he developed nephromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000084", "prediction": " History is notable for arthritis, nephritis and prior gastrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000085", "prediction": " History is notable for gastromegaly, cardiac pain and prior rhinoscopy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000086", "prediction": " He was admitted with nephromegaly and underwent stomatoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000087", "prediction": " The team recommended gastroplasty to treat glossalgia.", "score": 0.0}
+{"example_id": "T9_clinical-test-000088", "prediction": " He was admitted with carditis and underwent arthrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000089", "prediction": " The patient presented with cardialgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000090", "prediction": " History is notable for encephalalgia, cardiitis and prior neurotomy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000091", "prediction": " She was scheduled for neuroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000092", "prediction": " He was admitted with gastralgia and underwent arthrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000093", "prediction": " History is notable for otalgia, arthropathy and prior gastrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000094", "prediction": " Imaging confirmed myocarditis and neuralgia.", "score": 0.0}
+{"example_id": "T9_clinical-test-000095", "prediction": " The team recommended glossoplasty to treat lymphadenopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000096", "prediction": " Imaging confirmed neuropathy and encephalalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000097", "prediction": " Imaging confirmed arthralgia and hepatomegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000098", "prediction": " The team recommended rhinotomy to treat otitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000099", "prediction": " She was scheduled for oral surgery.", "score": 0.0}
+{"example_id": "T9_clinical-test-000100", "prediction": " After neurotomy, he developed stomatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000101", "prediction": " The team recommended nephrotomy to treat stomatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000102", "prediction": " The patient presented with gastromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000103", "prediction": " The patient presented with nephritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000104", "prediction": " Imaging confirmed nephromegaly and stomatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000105", "prediction": " Imaging confirmed arthralgia and neuropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000106", "prediction": " History is notable for glossalgia, arthritis and prior arthrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000107", "prediction": " She was scheduled for arthrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000108", "prediction": " The patient presented with arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000109", "prediction": " Imaging confirmed glossitis and nephritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000110", "prediction": " History is notable for lymphadenitis, hepatomegaly and prior arthrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000111", "prediction": " The patient presented with encephalitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000112", "prediction": " The team recommended stomatoplasty to treat nephralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000113", "prediction": " Imaging confirmed neuropathy and hepatopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000114", "prediction": " History is notable for otitis, hepatitis and prior rhinoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000115", "prediction": " History is notable for cardiomegaly, lymphadenopathy and prior gastroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000116", "prediction": " She was scheduled for arthrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000117", "prediction": " She was scheduled for rhinoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000118", "prediction": " History is notable for hepatopathy, phlebitis and prior nephroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000119", "prediction": " The team recommended gastrectomy to treat arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000120", "prediction": " History is notable for gastritis, hepatalgia and prior arthroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000121", "prediction": " Imaging confirmed cardiopathy and encephalitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000122", "prediction": " Imaging confirmed hepatopathy and encephalopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000123", "prediction": " Imaging confirmed cardiopathy and nephromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000124", "prediction": " After arthroplasty, he developed hepatomegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000125", "prediction": " She was scheduled for nasal incision.", "score": 0.0}
+{"example_id": "T9_clinical-test-000126", "prediction": " She was scheduled for phlebectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000127", "prediction": " He was admitted with neuralgia and underwent gastroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000128", "prediction": " Imaging confirmed neuralgia and gastromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000129", "prediction": " The patient presented with gastritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000130", "prediction": " The team recommended phlebotomy to treat arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000131", "prediction": " History is notable for neuralgia, encephalopathy and prior arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000132", "prediction": " She was scheduled for rhinoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000133", "prediction": " He was admitted with hepatopathy and underwent nephroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000134", "prediction": " Imaging confirmed stomatalgia and phlebopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000135", "prediction": " After nephroscopy, he developed rhinitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000136", "prediction": " Imaging confirmed stomatalgia and cardiacgia.", "score": 0.0}
+{"example_id": "T9_clinical-test-000137", "prediction": " She was scheduled for nephrectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000138", "prediction": " Imaging confirmed rhinitis and hepatalgia.", "score": 0.0}
+{"example_id": "T9_clinical-test-000139", "prediction": " The team recommended gastroscopy to treat arthralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000140", "prediction": " The team recommended gastroscopy to treat encephalopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000141", "prediction": " After otoscopy, he developed lymphadenopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000142", "prediction": " She was scheduled for nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000143", "prediction": " He was admitted with neuritis and underwent gastrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000144", "prediction": " She was scheduled for hepatectomy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000145", "prediction": " She was scheduled for tongue repair.", "score": 0.0}
+{"example_id": "T9_clinical-test-000146", "prediction": " The team recommended nephrotomy to treat neuritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000147", "prediction": " History is notable for hepatalgia, cardiopathy and prior nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000148", "prediction": " The patient presented with cardiopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000149", "prediction": " He was admitted with hepatitis and underwent nephroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000150", "prediction": " History is notable for hepatitis, gastralgia and prior otoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000151", "prediction": " The team recommended neurotomy to treat rhinitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000152", "prediction": " He was admitted with nephritis and underwent gastroplasty.", "score": 0.0}
+{"example_id": "T9_clinical-test-000153", "prediction": " History is notable for neuralgia, hepatitis and prior neuroplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000154", "prediction": " After hepatectomy, he developed nephropathy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000155", "prediction": " The team recommended hepatectomy to treat nephralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000156", "prediction": " The team recommended cardiectomy to treat neuralgia.", "score": 0.0}
+{"example_id": "T9_clinical-test-000157", "prediction": " The patient presented with glossalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000158", "prediction": " The team recommended hepatectomy to treat arthropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000159", "prediction": " Imaging confirmed nephralgia and stomatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000160", "prediction": " After glossectomy, he developed gastromegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000161", "prediction": " History is notable for lymphadenitis, cardialgia and prior hepatectomy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000162", "prediction": " History is notable for nephromegaly, gastropathy and prior phlebectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000163", "prediction": " The team recommended nephroscopy to treat cardiopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000164", "prediction": " The team recommended otoplasty to treat hepatitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000165", "prediction": " He was admitted with encephalalgia and underwent rhinotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000166", "prediction": " He was admitted with stomatalgia and underwent neurectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000167", "prediction": " The team recommended hepatectomy to treat neuropathy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000168", "prediction": " She was scheduled for neurotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000169", "prediction": " History is notable for gastralgia, gastropathy and prior phlebectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000170", "prediction": " Imaging confirmed nephritis and arthritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000171", "prediction": " The team recommended arthroscopy to treat arthralgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000172", "prediction": " History is notable for otalgia, nephropathy and prior rhinoplasty.", "score": 1.0}
+{"example_id": "T9_clinical-test-000173", "prediction": " The patient presented with cardiomegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000174", "prediction": " He was admitted with gastritis and underwent hepatectomy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000175", "prediction": " History is notable for neuralgia, glossalgia and prior otoscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000176", "prediction": " He was admitted with cardiomegaly and underwent nephrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000177", "prediction": " After nephrotomy, he developed phlebopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000178", "prediction": " After arthrectomy, he developed encephalitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000179", "prediction": " History is notable for arthralgia, cardiomegaly and prior gastrotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000180", "prediction": " After hepatectomy, he developed rhinitis.", "score": 0.0}
+{"example_id": "T9_clinical-test-000181", "prediction": " History is notable for cardialgia, neuritis and prior cardiotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000182", "prediction": " After lymphadenectomy, he developed neuritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000183", "prediction": " History is notable for rhinalgia, nephromegaly and prior phlebectomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000184", "prediction": " After rhinoplasty, he developed phlebitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000185", "prediction": " The patient presented with hepatopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000186", "prediction": " History is notable for glossalgia, lymphadenopathy and prior arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000187", "prediction": " Imaging confirmed nephralgia and arthritis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000188", "prediction": " He was admitted with palpitation and underwent rhinoscopy.", "score": 0.0}
+{"example_id": "T9_clinical-test-000189", "prediction": " After neurotomy, he developed gastropathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000190", "prediction": " After phlebectomy, he developed otalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000191", "prediction": " After arthroscopy, he developed rhinitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000192", "prediction": " History is notable for nephromegaly, stomatalgia and prior phlebotomy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000193", "prediction": " The patient presented with stomatitis.", "score": 1.0}
+{"example_id": "T9_clinical-test-000194", "prediction": " After nephroscopy, he developed hepatomegaly.", "score": 1.0}
+{"example_id": "T9_clinical-test-000195", "prediction": " After hepatectomy, he developed hepatic pain.", "score": 0.0}
+{"example_id": "T9_clinical-test-000196", "prediction": " The team recommended neurectomy to treat hepatalgia.", "score": 1.0}
+{"example_id": "T9_clinical-test-000197", "prediction": " The team recommended lymphadenectomy to treat cardiopathy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000198", "prediction": " He was admitted with encephalalgia and underwent arthroscopy.", "score": 1.0}
+{"example_id": "T9_clinical-test-000199", "prediction": " Imaging confirmed neuralgia and encephalopathy.", "score": 1.0}
