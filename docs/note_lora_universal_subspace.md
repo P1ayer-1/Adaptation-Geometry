@@ -1,6 +1,6 @@
 # Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces
 
-*Draft v3, 2026-10-10. [Author]. Revised after three external reviews (see the revision logs at the
+*Draft v3.1, 2026-10-10. [Author]. Revised after four external reviews (see the revision logs at the
 end). Items marked **[TODO]** must be resolved before posting.*
 
 ## Abstract
@@ -19,7 +19,7 @@ simulated collection with the same grouping and no training at all shows the sam
 The effect survives a factorisation-invariant analysis of ΔW = BA on the input side. The output
 side behaves differently: it shows shared structure that is present in both inferred groups,
 exceeds a null that preserves each adapter's singular values in every layer we examined, and
-outside the first layer is little reduced by removing the base model's dominant weight directions. In a controlled experiment on Qwen2.5-0.5B, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a subspace fitted on other tasks does not reconstruct a held-out task, and projecting one side at a time shows that within a shared initialisation the output side is what fails. We conclude that the input-side
+outside the first layer is little reduced by removing the base model's dominant weight directions. In a controlled experiment on Qwen2.5-0.5B, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a rank-16 basis fitted on other tasks captures little of a held-out task's update, and projecting one side at a time shows that within a shared initialisation the fitted output basis is what fails, for paper-style and factorisation-invariant bases alike. We conclude that the input-side
 (A) evidence for a universal LoRA subspace is largely an initialisation artefact, while a weaker,
 genuinely shared output-side structure deserves separate study. We recommend that analyses of
 adapter collections report seeds, group by inferred initialisation, use factorisation-invariant
@@ -159,7 +159,7 @@ Singletons are 1.3-3.3 times the size-matched random level, highest in layer 0 (
 they are close to, but not exactly, random. The rank-16 concentration is absent among them.
 
 For B, the group and the singletons agree to within 0.015 in every slot (top-16 share 0.11-0.56),
-so B's spectrum does not depend on group membership.
+so B has similar spectra in both groups.
 
 ![Figure 1](figures/figure1_spectrum.png)
 
@@ -189,70 +189,75 @@ With everything else fixed, the rank-16 subspace appears when tasks share an ini
 splits into two subspaces when two initialisations are pooled, and is at the random level when
 initialisations are independent.
 
-We then fitted rank-16 input and output bases (top singular vectors of the stacked A rows and B
-columns) on nine tasks and projected the held-out task's adapter onto them
-(ΔW′ = U Uᵀ B A V Vᵀ):
+**Projection onto bases fitted on other tasks.** For each held-out task we fitted rank-16 input
+and output bases on the other nine tasks and projected the held-out adapter onto them, on both
+sides (ΔW′ = U Uᵀ B A V Vᵀ), on the input side only (ΔW′ = B A V Vᵀ, keeping the adapter's own
+output directions) or on the output side only (ΔW′ = U Uᵀ B A, keeping its own input directions).
+We fitted the bases in two ways. *Paper-style* bases are the top singular vectors of the stacked
+raw A rows (V) and B columns (U), as in the paper's analysis; they depend on how each update is
+split into B and A. *Invariant* bases are the top eigenvectors of C_in = Σ ΔWᵀΔW and
+C_out = Σ ΔW ΔWᵀ over the nine tasks (Section 2), which do not. Each shared initialisation was held
+out in turn, with bases from the same and from the other initialisation; the independent group was
+held out against itself.
 
-| Basis fitted on | Share of held-out ‖ΔW‖²_F captured (median, range over 10 tasks) |
-|---|---|
-| Other tasks, same initialisation | 0.070 (0.029-0.115) |
-| Other tasks, other initialisation | 0.001 (0.001-0.002) |
-| All tasks *including the same task*, other initialisation | 0.006 (0.002-0.011) |
-| Other tasks, independent initialisations | 0.002 (0.001-0.004) |
+| Held-out adapter, basis from other tasks | Basis | Input side only | Output side only | Both sides |
+|---|---|---|---|---|
+| Initialisation 0, same initialisation | paper-style / invariant | 0.945 / 0.924 | 0.074 / 0.073 | 0.070 / 0.068 |
+| Initialisation 1, same initialisation | paper-style / invariant | 0.945 / 0.925 | 0.089 / 0.089 | 0.082 / 0.080 |
+| Initialisation 0, other initialisation | paper-style / invariant | 0.017 / 0.018 | 0.072 / 0.072 | 0.001 / 0.002 |
+| Initialisation 1, other initialisation | paper-style / invariant | 0.017 / 0.018 | 0.086 / 0.086 | 0.001 / 0.002 |
+| Independent, independent | paper-style / invariant | 0.019 / 0.021 | 0.085 / 0.084 | 0.002 / 0.002 |
 
-A two-sided projection cannot say which side loses the update, so we also projected one side at a
-time: input only (ΔW′ = B A V Vᵀ, keeping the adapter's own output directions) and output only
-(ΔW′ = U Uᵀ B A, keeping its own input directions).
+(Share of the held-out ‖ΔW‖²_F captured, median over 10 tasks. Ranges over tasks: input side with
+the same initialisation 0.80-0.99, otherwise 0.016-0.023; output side 0.033-0.130; both sides with
+the same initialisation 0.028-0.118, otherwise 0.001-0.004.) With paper-style bases and
+initialisation 0 held out, adding the held-out task itself, trained from the other initialisation,
+to the basis raises the two-sided share only to 0.006 (0.002-0.011).
 
-| Basis fitted on other tasks | Input side only | Output side only | Both sides |
+| Task score: paraphrase / JSON / arithmetic / clinical | Input side only | Output side only | Both sides |
 |---|---|---|---|
-| Same initialisation | 0.945 (0.810-0.993) | 0.074 (0.034-0.127) | 0.070 (0.029-0.115) |
-| Other initialisation | 0.017 (0.016-0.018) | 0.072 (0.033-0.120) | 0.001 (0.001-0.002) |
-| Independent initialisations | 0.019 (0.018-0.021) | 0.085 (0.034-0.130) | 0.002 (0.001-0.004) |
+| Initialisation 0, same initialisation, paper-style | 0.995 / 0.75 / 0.89 / 0.855 | 0.72 / 0 / 0 / 0 | 0.71 / 0 / 0.01 / 0 |
+| Initialisation 0, same initialisation, invariant | 0.995 / 0.755 / 0.90 / 0.88 | 0.715 / 0 / 0 / 0 | 0.705 / 0 / 0.01 / 0 |
+| Initialisation 1, same initialisation, paper-style | 0.955 / 0.835 / 0.92 / 0.85 | 0.72 / 0 / 0 / 0 | 0.70 / 0 / 0.005 / 0 |
+| Initialisation 1, same initialisation, invariant | 0.955 / 0.865 / 0.915 / 0.865 | 0.72 / 0 / 0 / 0 | 0.715 / 0 / 0 / 0 |
+| Other initialisation (either held out, either basis) | 0.65-0.66 / 0 / 0 / 0 | 0.715-0.74 / 0 / 0 / 0 | 0.65 / 0 / 0 / 0 |
+| Independent, independent (either basis) | 0.65-0.665 / 0 / 0-0.01 / 0 | 0.71 / 0 / 0 / 0 | 0.65-0.655 / 0 / 0 / 0 |
 
-(Share of the held-out ‖ΔW‖²_F captured; median and range over 10 tasks. Rows 1-2 hold out an
-adapter from one shared-initialisation group; row 3 holds out an independently initialised one.)
+(Test sets of n = 200. Direct adapters score 0.975-1.00 / 1.00 / 0.90-0.915 / 1.00 and the base
+model 0.65 / 0 / 0 / 0. The two-sided paper-style projections of initialisation 0 and the
+independent group were scored on an A100, everything else on an RTX 3080; rescoring the
+initialisation-0 projections on the 3080 gave the same score on 197-200 of 200 examples per task.)
 
-| Task score (test, n = 200) | Direct adapter | Projected, same init | Projected, other init | Projected, independent | Base model |
-|---|---|---|---|---|---|
-| Paraphrase | 0.99-1.00 | 0.71 | 0.65 | 0.65 | 0.65 |
-| JSON extraction | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 |
-| Arithmetic | 0.90 | 0.01 | 0.00 | 0.00 | 0.00 |
-| Clinical extraction | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+Several points follow; all concern the fitted rank-16 bases, not every basis that could be built
+from the nine tasks or one of higher rank.
 
-| Task score, one side projected | Same init, input only | Same init, output only | Other init, input only | Other init, output only | Independent, input only | Independent, output only |
-|---|---|---|---|---|---|---|
-| Paraphrase | 0.995 | 0.72 | 0.65 | 0.715 | 0.65 | 0.71 |
-| JSON extraction | 0.75 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
-| Arithmetic | 0.89 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
-| Clinical extraction | 0.855 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+1. *The fitted input basis is the initialisation's.* With the same initialisation, the input-only
+   projection keeps 92-95% of the update's energy and most of each task (0.75-0.995). With a basis
+   from another or an independent initialisation it keeps about 2% and returns every task to the
+   base model's level; on paraphrase it changes at most 3 of 200 base-model predictions, close to
+   the 1 of 200 that changes when the same projection is rescored on a different GPU.
+2. *The fitted output basis captures little of a held-out update in every condition* (7-9% of the
+   energy). Within one initialisation, the output-only projection removes almost all of the task
+   effect, while the input-only projection keeps most of it, so the two-sided loss comes from the
+   output side.
+3. *Two-sided projection leaves a held-out task near the base model.* With the same initialisation
+   it scores 0-0.01 on the three generation tasks and 0.70-0.715 on paraphrase against the base
+   model's 0.65. On the same 200 examples, this paraphrase gain is 0.05-0.065 (exact McNemar
+   p = 0.019-0.053 across the four variants; paired bootstrap 95% intervals from 0.005-0.015 to
+   0.095-0.115), far below the direct adapters' 0.975-1.00. With a basis from another or an
+   independent initialisation, the two-sided projection matches the base model on at least 199 of
+   200 paraphrase examples.
+4. *A small paraphrase gain survives every output-only projection* (0.71-0.74 against 0.65; paired
+   differences 0.06-0.09, p = 0.0003-0.024, uncorrected for the ten comparisons), consistent with
+   weak output-side structure shared across tasks.
+5. *Paper-style and invariant bases agree.* Median captured shares differ by at most 0.022 (0.028 for
+   any single task) and task scores by at most 0.03, so these results are not an artefact of fitting
+   the bases to the raw factors.
 
-Three points follow. First, the shared input subspace is the initialisation's: a basis from the
-other initialisation captures almost nothing, even when it contains the same task trained from a
-different start. Second, even within one initialisation, a subspace fitted on other tasks
-captures only 3-12% of a new task's update, because the output side of a new task is not spanned
-by the others (the side-split capture table above). Third, projection reduces the held-out tasks to base-model performance (zero-shot base: 0.65,
-0.00, 0.00, 0.00). The other-initialisation and independent projections reproduce the base model's
-prediction on every paraphrase example and score zero on the three generation tasks. The
-same-initialisation projection keeps a small effect on paraphrase: 0.71 against 0.65 is a paired
-difference of 0.06 (21 examples gained, 9 lost; exact McNemar p = 0.04; paired bootstrap 95% CI
-0.01-0.115), far below the direct adapter's 0.99-1.00, and it too scores zero on the generation
-tasks.
-
-The one-sided projections locate the loss. With a basis from the same initialisation, projecting
-only the input side keeps 95% of the update's energy and most of each task (0.75-0.995, against
-0.90-1.00 for the direct adapter). Projecting only the output side keeps 7% of the energy and
-returns every task to the base model's level, apart from a small paraphrase gain. Within one
-initialisation, then, the loss comes from the output side. With a basis from another or an
-independent initialisation, each side fails on its own. Input-only projection reproduces the base
-model's prediction on every paraphrase example and scores zero on the generation tasks, and
-output-only projection behaves as it does with the same initialisation. So a new task's input side
-is spanned by other tasks only when they share its initialisation, and its output side is not
-spanned in any condition. The small paraphrase gain survives every output-only projection (0.71-0.72
-against 0.65; paired differences 0.06-0.07, exact McNemar p = 0.008-0.019, uncorrected for the three
-comparisons), consistent with weak output-side structure shared across tasks. This experiment uses a small model and synthetic tasks, so it shows the mechanism rather
-than replicating the paper; it does not test the paper's own held-out procedure, which may
-re-fit coefficients rather than project.
+The experiment covers two shared initialisations, each held out in turn, one independent group and
+one training run per task and initialisation. It uses a small model and synthetic tasks, so it
+shows the mechanism rather than replicating the paper. It also does not test the paper's own
+held-out procedure, which may re-fit coefficients rather than project.
 
 ### 3.4 Factorisation-invariant updates: input side and output side differ
 
@@ -378,9 +383,11 @@ more than 16 directions (k90 of B 140-1,200 on the full set).
   the full-set top-16 share is 0.44-0.46, and the knee at r = 16 is reproduced by a no-training
   simulation. "Most information in 16 or fewer directions" is therefore best read as describing
   this knee.
-- *"One 16-dimensional input subspace serving 255 tasks is itself universality."* The subspace is
-  a random one, and the other 242 adapters each use a different random one; any random
-  16-dimensional input subspace appears to suffice. This is redundancy, consistent with frozen-A
+- *"One 16-dimensional input subspace serving 255 tasks is itself universality."* The shared subspace
+  looks like a random initialisation, and the other 242 adapters each start from a different
+  one. Training worked from each of the tested initialisations: in our controlled runs, the same
+  tasks reached similar scores from shared and from independent initialisations (Section 3.3).
+  This suggests redundancy, consistent with frozen-A
   LoRA variants (Zhang et al., 2023, LoRA-FA) **[TODO: cite]**, not evidence of a privileged
   subspace. Whether task performance differs between the group and the singletons cannot be
   checked from published numbers (the model cards report none) **[TODO: or evaluate a sample]**.
@@ -403,7 +410,8 @@ more than 16 directions (k90 of B 140-1,200 on the full set).
 **Limitations.** One collection and base model; 15 of 96 slots; the fitting/evaluation split of
 Table 10 inferred from its colouring (including all 502 changes nothing material); the shared seed not recovered; base-model alignment measured
 with weight singular vectors rather than activation statistics; compression re-implemented without
-clustering or serving evaluation. Our claims concern the LoRA evidence only.
+clustering or serving evaluation; the controlled experiment uses two shared initialisations, one
+independent group and one training run per task and initialisation. Our claims concern the LoRA evidence only.
 
 **A constructive direction.** Adapter geometry is only interpretable when the update shape is set
 by the task rather than the seed. Task-gradient initialisation (LoRA-GA, Wang et al., 2024;
@@ -482,4 +490,17 @@ Responses to the second ChatGPT review (of draft v2):
 | Base removal is not a percentage explained | Fixed-denominator and renormalised excess both reported, with energy in base directions (Section 3.5); no "explained" percentages |
 | Title overstates | Retitled "Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces" |
 | "Independent of initialisation" | Replaced by "present in both inferred groups" where the evidence is observational |
+
+## Revision log (v3 → v3.1)
+
+Responses to the third ChatGPT review (of draft v3):
+
+| Point | Change |
+|---|---|
+| "Not spanned in any condition" is too broad | All projection conclusions restricted to the fitted rank-16 bases (Section 3.3) |
+| Bases fitted from raw A/B factors are factorisation-dependent | Added bases from the invariant operators C_in and C_out; captured shares and task scores agree with the paper-style bases to within 0.03 |
+| Arithmetic 0.01 contradicts "zero on all generation tasks"; opening with "reduces to base" | Generation scores stated as 0-0.01; the paraphrase gain is described before the comparison with the base model |
+| Only initialisation 0 held out | Initialisation 1 now held out as well, with both basis types; results match. Seed coverage stated in Section 3.3 and the limitations |
+| "Any random subspace appears to suffice"; "B's spectrum does not depend on group membership" | Now "the tested initialisations" and "similar spectra in both groups" |
+| (Own check) | Two-sided projections rescored on the 3080: same score on 197-200 of 200 examples per task |
 
