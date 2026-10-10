@@ -1,6 +1,6 @@
-# Shared Initialisation, Not a Universal Subspace: Revisiting the LoRA Evidence for the Universal Weight Subspace Hypothesis
+# Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces
 
-*Draft v2, 2026-10-08. [Author]. Revised after two external reviews (see the revision log at the
+*Draft v3, 2026-10-10. [Author]. Revised after three external reviews (see the revision logs at the
 end). Items marked **[TODO]** must be resolved before posting.*
 
 ## Abstract
@@ -9,18 +9,17 @@ Kaushik et al. (arXiv 2512.05117, v3) report that about 500 LoRA adapters for Mi
 trained on a different task, share a low-dimensional "universal" subspace, with "most information
 concentrated in 16 or fewer directions across all layers". LoRA initialises its down-projection A
 at random and its up-projection B at zero, and A moves little in training. We therefore asked how
-much of this structure comes from shared initialisation. On the paper's own adapter set (its
-Table 10), 255 of 497 adapters (51%) form one group whose A matrices are nearly identical across
+much of this structure comes from shared initialisation. On the adapters listed in the paper's Table 10 (497 inferred to have been used for fitting;
+including all 502 changes nothing material), 255 of 497 (51%) form one group whose A matrices are nearly identical across
 different tasks (median pairwise cosine 0.90), consistent with a reused random initialisation.
 Across the whole public collection the fraction is 38%, so the paper's set is enriched for it. In
 the paper's analysis, this group puts 86-90% of A's variance in 16 directions; the 242 adapters
 outside it put 2-5%, close to independent random matrices at the same sample size (1.6%). A
 simulated collection with the same grouping and no training at all shows the same rank-16 knee.
 The effect survives a factorisation-invariant analysis of ΔW = BA on the input side. The output
-side behaves differently: it shows shared structure that is the same with or without the shared
-initialisation, exceeds a null that preserves each adapter's singular values in every layer we
-examined, and outside the first layer is not explained by the base model's dominant weight
-directions. In a controlled experiment on Qwen2.5-0.5B, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a subspace fitted on other tasks does not reconstruct a held-out task. We conclude that the input-side
+side behaves differently: it shows shared structure that is present in both inferred groups,
+exceeds a null that preserves each adapter's singular values in every layer we examined, and
+outside the first layer is little reduced by removing the base model's dominant weight directions. In a controlled experiment on Qwen2.5-0.5B, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a subspace fitted on other tasks does not reconstruct a held-out task, and projecting one side at a time shows that within a shared initialisation the output side is what fails. We conclude that the input-side
 (A) evidence for a universal LoRA subspace is largely an initialisation artefact, while a weaker,
 genuinely shared output-side structure deserves separate study. We recommend that analyses of
 adapter collections report seeds, group by inferred initialisation, use factorisation-invariant
@@ -51,13 +50,13 @@ directions whatever the tasks.
 
 Contributions:
 
-1. On the paper's exact adapter set, we identify one large group of adapters with a common,
+1. On the paper's adapter list (the inferred fitting set, Section 2), we identify one large group of adapters with a common,
    initialisation-like A (51%), robust to the grouping threshold and identical in all layers
    examined (Section 3.1).
 2. A matched comparison, size-matched random nulls and a no-training simulation show that the
    rank-16 A spectrum comes from this group (Section 3.2, Figure 1).
-3. A crossed task × initialisation experiment on Qwen2.5-0.5B separates seed from task directly
-   (Section 3.3).
+3. A crossed task × initialisation experiment on Qwen2.5-0.5B separates seed from task directly,
+   and one-sided projections locate where a fitted subspace fails to carry a new task (Section 3.3).
 4. A factorisation-invariant analysis with strength-matched nulls separates what the shared
    initialisation explains (input side) from genuinely shared structure (output side), and tests
    how much of the latter is the base model's dominant directions (Sections 3.4-3.5).
@@ -70,8 +69,10 @@ LoRA initialisation.
 
 **Adapters.** Table 10 of v3 lists 502 adapters `Lots-of-LoRAs/Mistral-7B-Instruct-v0.2-4b-r16-taskNNN`
 (all present in the public collection of 904 rank-16 adapters). Five are coloured as
-out-of-distribution evaluation models; we treat them as held out and analyse the other 497
-**[TODO: confirm with the authors which adapters were used to fit the subspace]**. Each adapter
+out-of-distribution evaluation models. We infer from the colouring that the other 497 were used to
+fit the subspace and call them the *inferred fitting set*; "the paper's set" below means this set.
+The split is not confirmed by the authors, so Section 3.1 reports the sensitivity to including all
+502. Each adapter
 adapts the q, k and v projections of all 32 layers with rank r = 16 and scaling α/r = 2 (constant,
 so it cancels in every normalised statistic below). A is r × d_in (d_in = 4,096); B is
 d_out × r, with d_out = 4,096 for q and 1,024 for k and v (grouped-query attention). A **slot** is
@@ -108,13 +109,22 @@ other multi-member groups. Within the group, pairwise cosine of layer-0 q_proj A
 largest is 0.044. The partition is identical for every threshold from 0.15 to 0.6, and the same
 partition is obtained independently from each of the 15 slots.
 
+*Sensitivity to the inferred split.* Including the five out-of-distribution adapters (all 502)
+leaves the partition unchanged: none of the five joins the group, which stays at 255 members, and
+the other 247 adapters are singletons. The full-set top-16 share of A changes by −0.004 to −0.005 in
+every slot (0.43-0.45; k90 1,632-1,759).
+
 The group's mean A behaves like an initialisation plus a small averaged change. Its kurtosis is
 1.80-1.84 across slots (1.80 for a uniform distribution, 3.0 for a Gaussian); its element standard
 deviation is 0.00901-0.00908 (0.00902 for PEFT's U(−1/64, 1/64)); its largest entries reach
 0.016-0.020, slightly beyond the uniform bound of 0.0156, as expected if the mean includes some
 learned change. Individual adapters lie a median 0.22-0.32 (10th-90th percentile 0.06-0.65) of
-the mean's norm away from it. This is distance from the trained group mean, which also absorbs any
-change common to the group, so it is a lower bound on movement from the true initialisation.
+the mean's norm away from it. These are distances from the trained group mean, not from the
+initialisation, and they bound neither an individual adapter's movement nor the median movement.
+Only an aggregate statement holds: since Σᵢ‖Aᵢ − m‖² ≤ Σᵢ‖Aᵢ − c‖² for the mean m and any common
+point c, the root-mean-square distance from the mean, 0.33-0.39 of the mean's norm across slots,
+cannot exceed the root-mean-square distance from the shared initialisation, measured in the same
+units.
 
 **Collection-wide.** Over all 904 rank-16 adapters, 342 (38%) belong to the group. The fraction
 varies with task number (25-51% across ranges). The paper's set (51%) is enriched relative to a
@@ -190,6 +200,19 @@ columns) on nine tasks and projected the held-out task's adapter onto them
 | All tasks *including the same task*, other initialisation | 0.006 (0.002-0.011) |
 | Other tasks, independent initialisations | 0.002 (0.001-0.004) |
 
+A two-sided projection cannot say which side loses the update, so we also projected one side at a
+time: input only (ΔW′ = B A V Vᵀ, keeping the adapter's own output directions) and output only
+(ΔW′ = U Uᵀ B A, keeping its own input directions).
+
+| Basis fitted on other tasks | Input side only | Output side only | Both sides |
+|---|---|---|---|
+| Same initialisation | 0.945 (0.810-0.993) | 0.074 (0.034-0.127) | 0.070 (0.029-0.115) |
+| Other initialisation | 0.017 (0.016-0.018) | 0.072 (0.033-0.120) | 0.001 (0.001-0.002) |
+| Independent initialisations | 0.019 (0.018-0.021) | 0.085 (0.034-0.130) | 0.002 (0.001-0.004) |
+
+(Share of the held-out ‖ΔW‖²_F captured; median and range over 10 tasks. Rows 1-2 hold out an
+adapter from one shared-initialisation group; row 3 holds out an independently initialised one.)
+
 | Task score (test, n = 200) | Direct adapter | Projected, same init | Projected, other init | Projected, independent | Base model |
 |---|---|---|---|---|---|
 | Paraphrase | 0.99-1.00 | 0.71 | 0.65 | 0.65 | 0.65 |
@@ -197,13 +220,37 @@ columns) on nine tasks and projected the held-out task's adapter onto them
 | Arithmetic | 0.90 | 0.01 | 0.00 | 0.00 | 0.00 |
 | Clinical extraction | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 |
 
+| Task score, one side projected | Same init, input only | Same init, output only | Other init, input only | Other init, output only | Independent, input only | Independent, output only |
+|---|---|---|---|---|---|---|
+| Paraphrase | 0.995 | 0.72 | 0.65 | 0.715 | 0.65 | 0.71 |
+| JSON extraction | 0.75 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| Arithmetic | 0.89 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| Clinical extraction | 0.855 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
 Three points follow. First, the shared input subspace is the initialisation's: a basis from the
 other initialisation captures almost nothing, even when it contains the same task trained from a
 different start. Second, even within one initialisation, a subspace fitted on other tasks
 captures only 3-12% of a new task's update, because the output side of a new task is not spanned
-by the others. Third, projection reduces every held-out task to base-model performance (zero-shot base: 0.65, 0.00, 0.00, 0.00);
-sharing the initialisation does not rescue it (0.71 vs 0.65 on paraphrase is within sampling
-error). This experiment uses a small model and synthetic tasks, so it shows the mechanism rather
+by the others (the side-split capture table above). Third, projection reduces the held-out tasks to base-model performance (zero-shot base: 0.65,
+0.00, 0.00, 0.00). The other-initialisation and independent projections reproduce the base model's
+prediction on every paraphrase example and score zero on the three generation tasks. The
+same-initialisation projection keeps a small effect on paraphrase: 0.71 against 0.65 is a paired
+difference of 0.06 (21 examples gained, 9 lost; exact McNemar p = 0.04; paired bootstrap 95% CI
+0.01-0.115), far below the direct adapter's 0.99-1.00, and it too scores zero on the generation
+tasks.
+
+The one-sided projections locate the loss. With a basis from the same initialisation, projecting
+only the input side keeps 95% of the update's energy and most of each task (0.75-0.995, against
+0.90-1.00 for the direct adapter). Projecting only the output side keeps 7% of the energy and
+returns every task to the base model's level, apart from a small paraphrase gain. Within one
+initialisation, then, the loss comes from the output side. With a basis from another or an
+independent initialisation, each side fails on its own. Input-only projection reproduces the base
+model's prediction on every paraphrase example and scores zero on the generation tasks, and
+output-only projection behaves as it does with the same initialisation. So a new task's input side
+is spanned by other tasks only when they share its initialisation, and its output side is not
+spanned in any condition. The small paraphrase gain survives every output-only projection (0.71-0.72
+against 0.65; paired differences 0.06-0.07, exact McNemar p = 0.008-0.019, uncorrected for the three
+comparisons), consistent with weak output-side structure shared across tasks. This experiment uses a small model and synthetic tasks, so it shows the mechanism rather
 than replicating the paper; it does not test the paper's own held-out procedure, which may
 re-fit coefficients rather than project.
 
@@ -226,8 +273,8 @@ analysis (0.53-0.67 against 0.11-0.37), so the A-side result is not an artefact 
 stored factors. Outside layer 0, singletons exceed the strength-matched null by only 0.003-0.022
 (unit-norm: up to 0.04). Layer 0 shows more (0.034-0.103).
 
-*Output side.* Group and singletons are similar (0.17-0.60 against 0.15-0.62), so the output side
-is not an initialisation effect. Singletons exceed the strength-matched null in every slot: by
+*Output side.* Group and singletons are similar (0.17-0.60 against 0.15-0.62), so the output-side
+concentration is present in both inferred groups and does not track the shared initialisation. Singletons exceed the strength-matched null in every slot: by
 0.019-0.106 outside layer 0 and by 0.22 (q) and 0.36 (k) in layer 0 (v: 0.047). With unit-norm
 updates the gap widens (0.12-0.26 against 0.05-0.09 outside layer 0), so it is not produced by a few
 large adapters.
@@ -241,24 +288,51 @@ concentration is.
 ### 3.5 How much of the remaining structure is the base model?
 
 We compare the singletons' shared subspaces with the base weight's singular subspaces, and recompute
-the excess over the null after projecting out the base weight's top-k directions from both the
+the excess over the null after projecting out the base weight's top-128 directions from both the
 data and the null.
 
-| | Overlap with base top-16 (× chance) | Excess over null | Excess after removing base top-128 |
-|---|---|---|---|
-| Input, layer 0 q / k / v | 44× / 32× / 22× | 0.053 / 0.034 / 0.103 | 0.001 / 0.002 / 0.094 |
-| Input, layers 8-31 | 0.7-6.2× | 0.003-0.022 | 0.000-0.021 |
-| Output, layer 0 q / k / v | 17.6× / 12.4× / 1.8× | 0.220 / 0.362 / 0.047 | 0.176 / 0.146 / 0.048 |
-| Output, layers 8-31 | 0.8-3.0× | 0.019-0.106 | 0.018-0.119 |
+| Singletons | Overlap with base top-16 (× chance) | Energy in base top-128 directions: data (null) |
+|---|---|---|
+| Input, layer 0 q / k / v | 44× / 32× / 22× | 0.19 / 0.14 / 0.09 (0.03) |
+| Input, layers 8-31 | 0.7-6.2× | 0.03-0.06 (0.03) |
+| Output, layer 0 q / k / v | 17.6× / 12.4× / 1.8× | 0.43 / 0.71 / 0.17 (0.03 / 0.13 / 0.13) |
+| Output, layers 8-31 | 0.8-3.0× | q 0.05 (0.03); k, v 0.12-0.14 (0.12-0.13) |
 
 (Overlap is the mean cos² of principal angles between the two 16-dimensional subspaces; chance is
-16/d.) The small input-side excess in layer 0 q and k is accounted for by the base weight's
-dominant input directions. On the output side, the base weight accounts for about 60% of the layer-0
-k excess and about 20% of the layer-0 q excess, and for none of the excess in layers 8-31. The
-output-side shared structure outside layer 0 is therefore real, independent of initialisation and
-not explained by base-weight directions. We do not know what it is; candidates include directions
-favoured by the training data format common to all Natural Instructions tasks, and activation
-statistics that weight singular vectors do not capture.
+16/d. Energy is the share of the stacked rows' squared norm inside the base directions; the null's
+share equals the chance level k/d.)
+
+Projecting directions out changes the denominator of the top-16 share, so we report the excess
+under two conventions. With a *fixed denominator*, the top-16 energy left after projection is
+divided by the total energy before it. With a *renormalised* share, it is divided by the energy
+left after projection.
+
+| Singletons, excess over null | Before | After removing base top-128, fixed denominator | After, renormalised |
+|---|---|---|---|
+| Input, layer 0 q / k / v | 0.053 / 0.034 / 0.103 | −0.049 / −0.025 / 0.078 | 0.001 / 0.002 / 0.094 |
+| Input, layers 8-31 | 0.003-0.022 | −0.004-0.020 | 0.000-0.021 |
+| Output, layer 0 q / k / v | 0.220 / 0.361 / 0.046 | −0.028 / −0.111 / 0.033 | 0.177 / 0.146 / 0.048 |
+| Output, layers 8-31 | 0.019-0.105 | 0.015-0.100 | 0.018-0.119 |
+
+(10 null repeats; the null is the strength-matched null of Section 2, projected the same way.)
+
+In layer 0 q and k the singletons put far more energy in the base weight's top directions than the
+null does (on the output side of k, 71% against 12.5%). Removing those directions therefore takes
+more energy from the data than from the null, and with a fixed denominator the excess turns
+negative. With the renormalised share, the input excess in layer 0 q and k disappears, and the
+output excess falls from 0.36 to 0.15 (k) and from 0.22 to 0.18 (q). The two conventions answer
+different questions: how much of the original concentration survives, and how concentrated the
+remainder is. Neither gives a percentage of the excess "explained" by the base weight, so we report
+both rather than a single figure. In layer 0 the shared structure is strongly aligned with the base
+weight's dominant directions on both sides.
+
+Outside layer 0 the conventions agree. The singletons put roughly as much energy in the base
+directions as the null (1.0-1.5 times on the output side, 1.0-1.8 times on the input side), and the
+output excess changes little under either convention. The output-side shared structure outside
+layer 0 is therefore present in both inferred groups, above a strength-matched null, and little
+reduced by removing base-weight directions. We do not know what it is; candidates include
+directions favoured by the training data format common to all Natural Instructions tasks, and
+activation statistics that weight singular vectors do not capture.
 
 **Learned movement of A.** Within the group, A minus the group mean is modestly more concentrated
 than a strength-matched null (top-16 share 0.09-0.30 against 0.07-0.17; largest in layer 0), so
@@ -289,17 +363,18 @@ quality.
 
 ## 4. Discussion
 
-**What the evidence supports.** On the paper's own adapters, the A-side "universal subspace" is
+**What the evidence supports.** On the adapters the paper lists, the A-side "universal subspace" is
 produced by one large group of adapters with a common initialisation-like A, which training
 changes only modestly. The effect persists in a factorisation-invariant analysis of the input
 side. Without the group, the input side is close to a strength-matched null except in layer 0,
-where the excess follows the base weight. The output side tells a different story: a shared
-structure present with and without the common initialisation, above a strength-matched null in
-every slot and, outside layer 0, not explained by base-weight directions. It is spread over far
+where the excess is aligned with the base weight's dominant directions. The output side tells a different story: a shared
+structure present in both inferred groups, above a strength-matched null in
+every slot and, outside layer 0, little reduced by removing base-weight directions. It is spread over far
 more than 16 directions (k90 of B 140-1,200 on the full set).
 
 **The strongest rebuttals.**
-- *"Our exact analysis differs."* We used the paper's adapter list and its stacking convention;
+- *"Our exact analysis differs."* We used the paper's adapter list (the inferred fitting set; all
+  502 give the same result) and its stacking convention;
   the full-set top-16 share is 0.44-0.46, and the knee at r = 16 is reproduced by a no-training
   simulation. "Most information in 16 or fewer directions" is therefore best read as describing
   this knee.
@@ -326,7 +401,7 @@ more than 16 directions (k90 of B 140-1,200 on the full set).
    clustering, continual-learning methods based on LoRA subspace angles).
 
 **Limitations.** One collection and base model; 15 of 96 slots; the fitting/evaluation split of
-Table 10 inferred from its colouring; the shared seed not recovered; base-model alignment measured
+Table 10 inferred from its colouring (including all 502 changes nothing material); the shared seed not recovered; base-model alignment measured
 with weight singular vectors rather than activation statistics; compression re-implemented without
 clustering or serving evaluation. Our claims concern the LoRA evidence only.
 
@@ -347,10 +422,12 @@ arXiv 2602.06043).
 Code: `scripts/universal_subspace/` (`common.py` helpers; `analyse.py` grouping, spectra, nulls,
 factorisation-invariant and base analyses, compression; `supplement.py` residual movement,
 strength profiles and Figure 1 curves; `excess_subsample.py`; `grouping_all.py`; `figure1.py`;
-seed search scripts). Crossed experiment: `configs/experiments/dev_3080_crossed_*.yaml`,
-`scripts/crossed_test.sh`, `scripts/crossed_eval.py`. Outputs: `results/universal_subspace/`
-(`paper_set.json`, `supplement.json`, `grouping_all.json`, `excess_subsample.json`) and
-`results/crossed_eval/`. The adapter list is
+`sensitivity.py` all-502 check, movement from the group mean and fixed-denominator base
+decomposition; seed search scripts). Crossed experiment: `configs/experiments/dev_3080_crossed_*.yaml`,
+`scripts/crossed_test.sh`, `scripts/crossed_eval.py`, `scripts/crossed_eval_sides.py` (one-sided
+projections and paired tests). Outputs: `results/universal_subspace/` (`paper_set.json`,
+`supplement.json`, `grouping_all.json`, `excess_subsample.json`, `sensitivity.json`) and
+`results/crossed_eval/` (`crossed_eval.json`, `crossed_eval_sides.json`). The adapter list is
 `results/universal_subspace/manifest_paper_v3.json`; all random generators are seeded and the
 seeds recorded in the outputs. **[TODO: public repository link; make data paths configurable.]**
 
@@ -391,3 +468,18 @@ Responses to the ChatGPT review (`review_gpt_note_lora_universal_subspace.md`) a
 | Crossed task × initialisation experiment | Run on Qwen2.5-0.5B (Section 3.3) |
 | 903 vs 904; rank cap; d_out for k/v; define slot, top-16 share, k90; "gauge-free" | Fixed / defined in Section 2 |
 | Performance by group | Not possible from published cards; listed as a limitation |
+
+## Revision log (v2 → v3)
+
+Responses to the second ChatGPT review (of draft v2):
+
+| Point | Change |
+|---|---|
+| "Exact adapter set" is provisional | Called the *inferred fitting set* throughout; all 502 adapters checked: identical partition, no out-of-distribution adapter in the group, top-16 share −0.004 to −0.005 (Section 3.1) |
+| Distance from the mean is not a per-adapter lower bound | Removed; only the aggregate statement kept (root-mean-square distance from the mean, 0.33-0.39, cannot exceed that from the initialisation) |
+| Two-sided projection mixes input and output failure | Input-only and output-only projections added, with captured energy and task scores (Section 3.3): within one initialisation the input side alone keeps the task, the output side alone loses it |
+| "Within sampling error" needs a paired test | Exact McNemar and paired bootstrap on the same examples for every paraphrase variant; the same-initialisation gain is small but significant (0.06, p = 0.04), and the text no longer claims equivalence |
+| Base removal is not a percentage explained | Fixed-denominator and renormalised excess both reported, with energy in base directions (Section 3.5); no "explained" percentages |
+| Title overstates | Retitled "Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces" |
+| "Independent of initialisation" | Replaced by "present in both inferred groups" where the evidence is observational |
+
