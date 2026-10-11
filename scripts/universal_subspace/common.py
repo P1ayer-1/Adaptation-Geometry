@@ -1,6 +1,7 @@
 """Shared helpers for the universal-subspace analysis of Lots-of-LoRAs adapters."""
 import json
 import math
+import os
 from pathlib import Path
 
 import numpy as np
@@ -10,10 +11,14 @@ from safetensors import safe_open
 PFX = "base_model.model.model.layers.{}.self_attn.{}_proj.lora_{}.weight"
 LAYERS = (0, 8, 16, 24, 31)
 SLOTS = [(l, m) for l in LAYERS for m in "qkv"]  # a "slot" is one (layer, projection) pair
+# Data locations; override with environment variables (defaults are the original workstation paths).
+LOL_ROOT = os.environ.get("UAG_LOL_ROOT", "F:/lol")  # one folder per Lots-of-LoRAs adapter
+MISTRAL_DIR = os.environ.get("UAG_MISTRAL_DIR", "F:/mistral")  # Mistral-7B-Instruct-v0.2 weights
 
 
-def load_manifest(path, roles=("pool", "iid"), root="F:/lol"):
+def load_manifest(path, roles=("pool", "iid"), root=None):
     """Adapter files for a manifest written from the paper's Table 10 (roles: pool / iid / ood)."""
+    root = root or LOL_ROOT
     man = json.load(open(path))["adapters"]
     keep = [a for a in man if a["role"] in roles]
     files = [f"{root}/{a['id'].split('/')[1]}/adapter_model.safetensors" for a in keep]

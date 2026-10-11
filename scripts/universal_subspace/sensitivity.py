@@ -1,6 +1,6 @@
 """Sensitivity and decomposition checks for the universal-subspace note (v2 review items).
 
-usage: python sensitivity.py MANIFEST PAPER_SET.json OUT.json [--base F:/mistral] [--root F:/lol]
+usage: python sensitivity.py MANIFEST PAPER_SET.json OUT.json [--base $UAG_MISTRAL_DIR] [--root $UAG_LOL_ROOT]
 
   all502    grouping and the full-set paper-style A spectrum on all 502 Table-10 adapters (pool, iid
             and ood) next to the 497 (pool + iid) used in the note.
@@ -25,15 +25,15 @@ import numpy as np
 import torch
 from safetensors import safe_open
 
-from common import (SLOTS, components, cos_matrix, factors, gram_eigs, load_factors, load_manifest,
+from common import (LOL_ROOT, MISTRAL_DIR, SLOTS, components, cos_matrix, factors, gram_eigs, load_factors, load_manifest,
                     paper_spectrum, quantiles, rand_frames, side_rows)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("manifest")
 ap.add_argument("paper_set")
 ap.add_argument("out")
-ap.add_argument("--base", default="F:/mistral")
-ap.add_argument("--root", default="F:/lol")
+ap.add_argument("--base", default=MISTRAL_DIR)
+ap.add_argument("--root", default=LOL_ROOT)
 ap.add_argument("--threshold", type=float, default=0.5)
 ap.add_argument("--repeats", type=int, default=10)
 args = ap.parse_args()

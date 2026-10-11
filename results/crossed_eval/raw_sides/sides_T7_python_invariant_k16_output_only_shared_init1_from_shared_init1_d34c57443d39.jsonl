@@ -1,0 +1,200 @@
+{"example_id": "T7_python-test-000000", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000001", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000002", "prediction": " def pipeline(xs): def process(x): return x ** 2 return sorted(set(x) for x in xs)[::-1] - max(xs)", "score": 0.0}
+{"example_id": "T7_python-test-000003", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000004", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000005", "prediction": " def f(xs):", "score": 0.0}
+{"example_id": "T7_python-test-000006", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000007", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000008", "prediction": " def pipeline(xs): def process(x): return x if x < -1 else None return xs[::2] + set(x) for x in xs for y in process(x) if y is not None return sum(y)", "score": 0.0}
+{"example_id": "T7_python-test-000009", "prediction": " def compute(xs): def process(x): return x > -2 if x < 0 else 4 elif x % 2 == 1: return x + 4 elif x % 2 == 0: return x - x // 2", "score": 0.0}
+{"example_id": "T7_python-test-000010", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000011", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000012", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000013", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000014", "prediction": " def transform(xs): def is_even(x): return x % 2 == 0 def take_every_second(x): return x[::2] def count_greater_than_15(y): count = 0 for x in y: if is_even(x) and take_every_second(x)[count] > 15: count += 1 return count", "score": 0.0}
+{"example_id": "T7_python-test-000015", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000016", "prediction": " def process(xs): return len([x for x in xs if x + 20] * 2)[:len(xs)]", "score": 0.0}
+{"example_id": "T7_python-test-000017", "prediction": " def solve(xs): def is_divisible_by_4(x): return x % 4 == 0 def abs_value(x): return abs(x) def count_greater_than_twenty_six(xs): xs = filter(is_divisible_by_4, xs) xs = map(abs_value, xs) return sum(1 for x in xs if x > 26)", "score": 0.0}
+{"example_id": "T7_python-test-000018", "prediction": " def compute(xs): def keep_every_second_element(x): return x[1::2] xs = [1, 2, 3, 4, 5] print(compute(xs))", "score": 0.0}
+{"example_id": "T7_python-test-000019", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000020", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000021", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000022", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000023", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000024", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000025", "prediction": " def pipeline(xs): return sum(1 for x in xs[:2] if x % 2 == 0 > 14)", "score": 1.0}
+{"example_id": "T7_python-test-000026", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000027", "prediction": " def process(xs): def multiply(x): return x * 3 return xs", "score": 0.0}
+{"example_id": "T7_python-test-000028", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000029", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000030", "prediction": " def solve(xs): return sum(sorted(xs)[::2])", "score": 0.0}
+{"example_id": "T7_python-test-000031", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000032", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000033", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000034", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000035", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000036", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000037", "prediction": " def pipeline(xs): def sort(xs): return sorted(xs) def odd(xs): return [x for x in xs if x % 2 != 0] return min(odd(xs))", "score": 0.0}
+{"example_id": "T7_python-test-000038", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000039", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000040", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000041", "prediction": " def compute(xs): def reverse(lst): return lst[::-1] def count_greater_than_two(lst): xs = [x for i, x in enumerate(lst) if i % 2 == 0] ys = reverse(xs) return sum(ys > 2)", "score": 0.0}
+{"example_id": "T7_python-test-000042", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000043", "prediction": " def calc(xs): def filter_odd(x): return x % 2 != 0 def filter_greater_than_14(y): return y > 14 def take_first_n(x, n): return x[:n] xs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] ys = [x for x in xs if filter_odd(x)] zs = [y for y in ys if filter_greater_than_14(y)] return sum(take_first_n(z, 4))", "score": 0.0}
+{"example_id": "T7_python-test-000044", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000045", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000046", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000047", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000048", "prediction": " def transform(xs): return len([x for x in xs[:4] if x > max(x)])", "score": 0.0}
+{"example_id": "T7_python-test-000049", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000050", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000051", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000052", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000053", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000054", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000055", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000056", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000057", "prediction": " def solve(xs): def count_every_second_element(x):\n    return len([x[i] for i in range(len(x)) if i % 2 == 0])", "score": 0.0}
+{"example_id": "T7_python-test-000058", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000059", "prediction": " def solve(xs): def drop_first_two(xs): return xs[2:] def multiply_by_five(xs): return [x * 5 for x in xs] def sort_in_ascending_order(xs): return sorted(xs) def count_greater_than_three(sorted_list): return sum(1 for x in sorted_list if x > 3)", "score": 0.0}
+{"example_id": "T7_python-test-000060", "prediction": " def solve(xs): def multiply(x): return x * 6 return xs[::-2] def find_smallest(nums): return min(multiply(n) for n in nums)", "score": 0.0}
+{"example_id": "T7_python-test-000061", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000062", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000063", "prediction": " def calc(xs): def keep_even(x): return x % 2 == 0 return xs def take_every_second(x): return x[::2] return xs def sum_of_keep_every_second(x): return sum(keep_even(take_every_second(x)))", "score": 0.0}
+{"example_id": "T7_python-test-000064", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000065", "prediction": " def process(xs): return len(sorted([x + 16 for x in xs] + [x + 9 for x in xs]))", "score": 0.0}
+{"example_id": "T7_python-test-000066", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000067", "prediction": " def compute(xs): def filter_divisible_by_7(xs): return [x for x in xs if x % 7 == 0] def skip_first_two(xs): return xs[2:] def square_elements(xs): return [x ** 2 for x in xs] return sum(square_elements(filter_divisible_by_7(skip_first_two(xs))))", "score": 0.0}
+{"example_id": "T7_python-test-000068", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000069", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000070", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000071", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000072", "prediction": " def calc(xs): def process(x): return x * 2 if x > 14 else 0 return xs", "score": 0.0}
+{"example_id": "T7_python-test-000073", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000074", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000075", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000076", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000077", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000078", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000079", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000080", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000081", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000082", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000083", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000084", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000085", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000086", "prediction": " def pipeline(xs): def process(x): return abs(x) if x < 20 else [abs(x)] * (len(xs) // 2) + xs[len(xs) // 2:] return sum(1 for i in range(len(xs)) if process(xs[i]))", "score": 0.0}
+{"example_id": "T7_python-test-000087", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000088", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000089", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000090", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000091", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000092", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000093", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000094", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000095", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000096", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000097", "prediction": " def pipeline(xs): return sum(1 for x in xs if x > 12)", "score": 0.0}
+{"example_id": "T7_python-test-000098", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000099", "prediction": " def f(xs): return sum(1 for x in xs if x > 1 and x % 2 != 0)", "score": 1.0}
+{"example_id": "T7_python-test-000100", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000101", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000102", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000103", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000104", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000105", "prediction": " def compute(xs): def keep_every_second(x): return x[1::2] def keep_odd(x): return x[1:] def find_smallest(x): return min(keep_every_second(x), keep_odd(x))", "score": 0.0}
+{"example_id": "T7_python-test-000106", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000107", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000108", "prediction": " def solve(xs): def process(x): return x < -2 if x >= -2 else xs.pop() + xs.pop() return sorted(xs)[::-1] num_greater_than_15 = sum(1 for i in range(len(xs)) if process(xs[i]) > 15)", "score": 0.0}
+{"example_id": "T7_python-test-000109", "prediction": " def apply_rule(xs): return sum(1 for x in xs if x % 2 == 0 and x % 6 == 0)", "score": 0.0}
+{"example_id": "T7_python-test-000110", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000111", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000112", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000113", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000114", "prediction": " def compute(xs): def filter_even(xs): return [x for x in xs if x % 2 == 0] def filter_odd(xs): return [x for x in xs if x % 2 != 0] def find_largest(filteredList): return max(filteredList)", "score": 0.0}
+{"example_id": "T7_python-test-000115", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000116", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000117", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000118", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000119", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000120", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000121", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000122", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000123", "prediction": " def compute(xs): return len([x for x in xs[:3] if x > 0] + sorted(x for x in xs if x > 0) ** 2)", "score": 0.0}
+{"example_id": "T7_python-test-000124", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000125", "prediction": " def solve(xs): def multiply(x): return x * 6 return xs", "score": 0.0}
+{"example_id": "T7_python-test-000126", "prediction": " def pipeline(xs): def abs(x): return x if x >= 0 else -x return xs[:3] + xs[4:-1][:2] return sum(abs(x) for x in xs)", "score": 0.0}
+{"example_id": "T7_python-test-000127", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000128", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000129", "prediction": " def pipeline(xs): def descending_sort(arr): return sorted(arr, reverse=True) def largest_smallest_difference(xs): xs = [x for x in xs if x % 7 == 0] xs.sort() return max(xs) - min(xs)", "score": 0.0}
+{"example_id": "T7_python-test-000130", "prediction": " def solve(xs): def square(x): return x ** 2 return xs", "score": 0.0}
+{"example_id": "T7_python-test-000131", "prediction": " def pipeline(xs): def smallest(x): return min(x[:4] + x[5:])", "score": 0.0}
+{"example_id": "T7_python-test-000132", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000133", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000134", "prediction": " def calc(xs): def is_divisible_by_7(x): return x % 7 == 0 def is_odd(x): return x % 2 != 0", "score": 0.0}
+{"example_id": "T7_python-test-000135", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000136", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000137", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000138", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000139", "prediction": " def compute(xs): def accumulate(x, acc=0): return (x + acc) if x else acc", "score": 0.0}
+{"example_id": "T7_python-test-000140", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000141", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000142", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000143", "prediction": " def pipeline(xs): return len([x for x in xs if x**2 > 0])", "score": 0.0}
+{"example_id": "T7_python-test-000144", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000145", "prediction": " def compute(xs): def process_odd_elements(x): return [x for x in xs if x % 2 != 0] def multiply_by_five(x): return x * 5 def find_largest_element(xs): return max(process_odd_elements(x) for x in xs)", "score": 0.0}
+{"example_id": "T7_python-test-000146", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000147", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000148", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000149", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000150", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000151", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000152", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000153", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000154", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000155", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000156", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000157", "prediction": " def compute(xs): def filter_odd(xs): return [x for x in xs if x % 2 != 0] def unique(xs): seen = set() return max(filter_odd(xs), key=seen.__contains__)", "score": 0.0}
+{"example_id": "T7_python-test-000158", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000159", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000160", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000161", "prediction": " def solve(xs): def get_running_total(nums):\n    total = 0\n    for i in range(len(nums)):\n        total += nums[i]\n    return total", "score": 0.0}
+{"example_id": "T7_python-test-000162", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000163", "prediction": " def pipeline(xs): return sum(1 for x in xs if x % 2 == 0) > 29", "score": 1.0}
+{"example_id": "T7_python-test-000164", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000165", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000166", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000167", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000168", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000169", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000170", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000171", "prediction": " def solve(xs): def is_divisible_by_7(x): return x % 7 == 0 def is_divisible_by_6(x): return x % 6 == 0 def count_elements_in_result(result): for element in xs: if is_divisible_by_7(element): result.append(element) elif is_divisible_by_6(element): result.append(element) else: break return len(result", "score": 0.0}
+{"example_id": "T7_python-test-000172", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000173", "prediction": " def f(xs):", "score": 0.0}
+{"example_id": "T7_python-test-000174", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000175", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000176", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000177", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000178", "prediction": " def calc(xs):", "score": 0.0}
+{"example_id": "T7_python-test-000179", "prediction": " def compute(xs): return len([x for x in xs if x % 2 != 0])", "score": 1.0}
+{"example_id": "T7_python-test-000180", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000181", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000182", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000183", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000184", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000185", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000186", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000187", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000188", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000189", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000190", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000191", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000192", "prediction": " def calc(xs):", "score": 0.0}
+{"example_id": "T7_python-test-000193", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000194", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000195", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000196", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000197", "prediction": "", "score": 0.0}
+{"example_id": "T7_python-test-000198", "prediction": " def calc(xs):", "score": 0.0}
+{"example_id": "T7_python-test-000199", "prediction": "", "score": 0.0}

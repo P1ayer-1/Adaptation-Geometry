@@ -14,14 +14,14 @@ import numpy as np
 import torch
 from safetensors import safe_open
 
-from common import PFX, components, cos_matrix, paper_spectrum, quantiles
+from common import LOL_ROOT, PFX, components, cos_matrix, paper_spectrum, quantiles
 
 ids_path, man_path, out = sys.argv[1:4]
 ids = [l.strip() for l in open(ids_path) if l.strip()]
 task = lambda i: int(re.search(r"task(\d+)$", i).group(1))
 A = []
 for i in ids:
-    with safe_open(f"F:/lol/{i.split('/')[1]}/adapter_model.safetensors", "pt") as h:
+    with safe_open(f"{LOL_ROOT}/{i.split('/')[1]}/adapter_model.safetensors", "pt") as h:
         A.append(h.get_tensor(PFX.format(0, "q", "A")).double())
 A = torch.stack(A)
 C = cos_matrix(A)

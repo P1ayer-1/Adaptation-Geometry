@@ -1,6 +1,6 @@
 """Universal-subspace analysis of the paper's exact Lots-of-LoRAs set (v3 Table 10).
 
-usage: python analyse.py MANIFEST OUT.json [--base F:/mistral] [--quick]
+usage: python analyse.py MANIFEST OUT.json [--base $UAG_MISTRAL_DIR] [--quick]
 
 Sections (all results saved to OUT.json):
   grouping   inferred shared-initialisation groups: cosine distributions, threshold sweep,
@@ -24,14 +24,14 @@ import numpy as np
 import torch
 from safetensors import safe_open
 
-from common import (SLOTS, components, cos_matrix, factors, gram_eigs, kaiming_like, kurtosis,
+from common import (MISTRAL_DIR, SLOTS, components, cos_matrix, factors, gram_eigs, kaiming_like, kurtosis,
                     load_factors, load_manifest, paper_spectrum, quantiles, rand_frames, share_curve,
                     side_rows, uncentred_spectrum)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("manifest")
 ap.add_argument("out")
-ap.add_argument("--base", default="F:/mistral")
+ap.add_argument("--base", default=MISTRAL_DIR)
 ap.add_argument("--threshold", type=float, default=0.5)
 ap.add_argument("--repeats", type=int, default=10)
 ap.add_argument("--quick", action="store_true", help="few slots, few repeats (smoke test)")

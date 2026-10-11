@@ -1,0 +1,200 @@
+{"example_id": "T10_format-test-000000", "prediction": " [urchin, tiger, quartz, maple, olive]", "score": 0.0}
+{"example_id": "T10_format-test-000001", "prediction": " [nectar, hazel, ember, violin, olive, river, yarrow]", "score": 0.0}
+{"example_id": "T10_format-test-000002", "prediction": " [apple, willow, falcon, lagoon, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000003", "prediction": " apple, saffron, river, hazel", "score": 0.0}
+{"example_id": "T10_format-test-000004", "prediction": " kite, river, raven, falcon, lagoon", "score": 0.0}
+{"example_id": "T10_format-test-000005", "prediction": " [thistle, falcon, fern, yarrow, urchin, meadow, ash]", "score": 0.0}
+{"example_id": "T10_format-test-000006", "prediction": " [jade, thistle, violin, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000007", "prediction": " maple, delta, pepper, kite, walnut, garden", "score": 0.0}
+{"example_id": "T10_format-test-000008", "prediction": " walnut, olive, pepper, iris, stone", "score": 0.0}
+{"example_id": "T10_format-test-000009", "prediction": " [prism, iris, jade, comet, glacier, thistle, lamp]", "score": 0.0}
+{"example_id": "T10_format-test-000010", "prediction": " [violin, velvet, olive]", "score": 0.0}
+{"example_id": "T10_format-test-000011", "prediction": " [nectar, stone, beacon, zephyr]", "score": 0.0}
+{"example_id": "T10_format-test-000012", "prediction": " [velvet, zephyr, pepper, falcon, apple, garden, urchin]", "score": 0.0}
+{"example_id": "T10_format-test-000013", "prediction": " apple, fern, meadow, willow", "score": 0.0}
+{"example_id": "T10_format-test-000014", "prediction": " [pepper, copper, raven, thistle, ember, kite, cloud]", "score": 0.0}
+{"example_id": "T10_format-test-000015", "prediction": " [glacier, urchin, thistle, garden, pepper, jade, olive]", "score": 0.0}
+{"example_id": "T10_format-test-000016", "prediction": " apple, aurora, delta, fern, saffron, jade", "score": 0.0}
+{"example_id": "T10_format-test-000017", "prediction": " [yarrow, river, falcon, comet, thistle, urchin, lamp]", "score": 0.0}
+{"example_id": "T10_format-test-000018", "prediction": " [stone, tiger, lamp, river, lagoon, apple]", "score": 0.0}
+{"example_id": "T10_format-test-000019", "prediction": " [prism, willow, maple, comet, fern, ash]", "score": 0.0}
+{"example_id": "T10_format-test-000020", "prediction": " Velvet, Quartz, Raven, Willow", "score": 0.0}
+{"example_id": "T10_format-test-000021", "prediction": " meadow, canyon, olive, nectar, maple, river", "score": 0.0}
+{"example_id": "T10_format-test-000022", "prediction": " [hazel, delta, jade, garden, quartz, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000023", "prediction": " [pepper, ember, kite, river, falcon, urchin]", "score": 0.0}
+{"example_id": "T10_format-test-000024", "prediction": " [harbor, stone, velvet, lagoon, pepper, kite, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000025", "prediction": " falcon, raven, river, iris, canyon, kite, cloud", "score": 0.0}
+{"example_id": "T10_format-test-000026", "prediction": " [copper, ember, cloud, beacon, tiger, thistle]", "score": 0.0}
+{"example_id": "T10_format-test-000027", "prediction": " [beacon, velvet, jade, urchin, quartz, copper]", "score": 0.0}
+{"example_id": "T10_format-test-000028", "prediction": " thistle, stone, walnut, ember", "score": 0.0}
+{"example_id": "T10_format-test-000029", "prediction": " [velvet, pepper, stone, hazel, garden, fern, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000030", "prediction": " [urchin, kite, walnut, garden, olive]", "score": 0.0}
+{"example_id": "T10_format-test-000031", "prediction": " hazelnut, almond, pepperoni, olives", "score": 0.0}
+{"example_id": "T10_format-test-000032", "prediction": " Canyon, Zephyr, Iris, Ash", "score": 0.0}
+{"example_id": "T10_format-test-000033", "prediction": " velvet, garden, canyon, urchin", "score": 0.0}
+{"example_id": "T10_format-test-000034", "prediction": " delta, kite, ember, willow, violin", "score": 0.0}
+{"example_id": "T10_format-test-000035", "prediction": " thistle, fern, saffron, olive, walnut, prism, tiger", "score": 0.0}
+{"example_id": "T10_format-test-000036", "prediction": " lamp, copper, velvet, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000037", "prediction": " [willow, delta, yarrow, pepper, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000038", "prediction": " delta, zephyr, maple, ash, prism, olive", "score": 0.0}
+{"example_id": "T10_format-test-000039", "prediction": " [walnut, thistle, violin, canyon, stone]", "score": 0.0}
+{"example_id": "T10_format-test-000040", "prediction": " [tiger, hazel, harbor, copper, delta, maple, yarrow]", "score": 0.0}
+{"example_id": "T10_format-test-000041", "prediction": " [urchin, thistle, falcon, lamp]", "score": 0.0}
+{"example_id": "T10_format-test-000042", "prediction": " ash, agate, aloe, amaranth, aronia, beech, balsam, birch, brown, chaff, cherry, clover, corn, daisy, elm, elderberry, fennel, fir, flax, grass, hazelnut, holly, hay, icicle, jasper, kalmia, larch, lemon, lime, linen, oak, orchid, oatmeal, orange, oakleaf", "score": 0.0}
+{"example_id": "T10_format-test-000043", "prediction": " [ \"stone\", \"ash\", \"apple\", \"lamp\" ]", "score": 0.0}
+{"example_id": "T10_format-test-000044", "prediction": " stone, garden, prism, jade, velvet, zephyr", "score": 0.0}
+{"example_id": "T10_format-test-000045", "prediction": " velvet, prism, zephyr, violin, kite, hazel, ash", "score": 0.0}
+{"example_id": "T10_format-test-000046", "prediction": " [nectar, canyon, violin, ember, yarrow, stone]", "score": 0.0}
+{"example_id": "T10_format-test-000047", "prediction": " apple, ash, yarrow, canyon", "score": 0.0}
+{"example_id": "T10_format-test-000048", "prediction": " [iris, canyon, zephyr, tiger, urchin, yarrow, meadow]", "score": 0.0}
+{"example_id": "T10_format-test-000049", "prediction": " [quartz, ember, zephyr, saffron]", "score": 0.0}
+{"example_id": "T10_format-test-000050", "prediction": " [fern, quartz, comet, saffron, ember, beacon, garden]", "score": 0.0}
+{"example_id": "T10_format-test-000051", "prediction": " [glacier, lamp, willow, lagoon, urchin]", "score": 0.0}
+{"example_id": "T10_format-test-000052", "prediction": " [falcon, hazel, beacon, stone, canyon, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000053", "prediction": " walnut, beacon, prism, delta, violin, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000054", "prediction": " [prism, falcon, river, iris]", "score": 0.0}
+{"example_id": "T10_format-test-000055", "prediction": " Willow, thistle, Tiger, River", "score": 0.0}
+{"example_id": "T10_format-test-000056", "prediction": " ash, fern, olive, nectar", "score": 0.0}
+{"example_id": "T10_format-test-000057", "prediction": " [violin, pepper, canyon, tiger, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000058", "prediction": " [harbor, canyon, beacon, violin, pepper]", "score": 0.0}
+{"example_id": "T10_format-test-000059", "prediction": " [copper, ember, harbor, saffron, stone, canyon]", "score": 0.0}
+{"example_id": "T10_format-test-000060", "prediction": " comet, beacon, kite, saffron, velvet", "score": 0.0}
+{"example_id": "T10_format-test-000061", "prediction": " Quartz, lagoon, prism, tiger", "score": 0.0}
+{"example_id": "T10_format-test-000062", "prediction": " apple, lagoon, quartz, thistle, walnut, meadow", "score": 0.0}
+{"example_id": "T10_format-test-000063", "prediction": " delta, velvet, quartz, olive, river, jade, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000064", "prediction": " copper, quartz, walnut, fern", "score": 0.0}
+{"example_id": "T10_format-test-000065", "prediction": " [iris, urchin, zephyr, comet, lamp, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000066", "prediction": " apple, comet, raven, canyon, pepper, lagoon, falcon", "score": 0.0}
+{"example_id": "T10_format-test-000067", "prediction": " [canyon, olive, nectar, falcon, jade]", "score": 0.0}
+{"example_id": "T10_format-test-000068", "prediction": " [thistle, willow, falcon, cloud, tiger, pepper]", "score": 0.0}
+{"example_id": "T10_format-test-000069", "prediction": " Velvet, Pepper, Ember, Beacon, Urchin, Thistle", "score": 0.0}
+{"example_id": "T10_format-test-000070", "prediction": " velvet, meadow, lamp, maple, pepper, hazel", "score": 0.0}
+{"example_id": "T10_format-test-000071", "prediction": " Harbor, Quartz, Kite, Ember, Urchin", "score": 0.0}
+{"example_id": "T10_format-test-000072", "prediction": " fern, olive, hazel", "score": 0.0}
+{"example_id": "T10_format-test-000073", "prediction": " stone, saffron, quartz, raven, lamp", "score": 0.0}
+{"example_id": "T10_format-test-000074", "prediction": " Willow, Lamp, Copper, Zephyr", "score": 0.0}
+{"example_id": "T10_format-test-000075", "prediction": " lagoon, prism, hazel, kite", "score": 0.0}
+{"example_id": "T10_format-test-000076", "prediction": " velvet, canyon, lagoon, copper, olive, ember, maple", "score": 0.0}
+{"example_id": "T10_format-test-000077", "prediction": " A list of items is provided. Here are some examples:\n\n1. Apple\n2. Banana\n3. Orange\n4. Grapefruit\n5. Kiwi\n6. Pineapple\n7. Watermelon\n8. Carrot\n9. Potato\n10. Onion\n11. Garlic\n12. Tomatoes\n13. Cucumber\n14. Bell pepper\n15. Cherry tomato\n16. Eggplant\n17.", "score": 0.0}
+{"example_id": "T10_format-test-000078", "prediction": " apple, garden, lagoon, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000079", "prediction": " [ash, comet, harbor, ember, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000080", "prediction": " Willow, Quartz, Walnut, Lagoon", "score": 0.0}
+{"example_id": "T10_format-test-000081", "prediction": " saffron, fern, olive, jade, maple", "score": 0.0}
+{"example_id": "T10_format-test-000082", "prediction": " [urchin, hazel, ember, ash, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000083", "prediction": " apple, saffron, urchin, maple", "score": 0.0}
+{"example_id": "T10_format-test-000084", "prediction": " [copper, tiger, pepper, glacier, beacon, kite]", "score": 0.0}
+{"example_id": "T10_format-test-000085", "prediction": " apple, canyon, lagoon, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000086", "prediction": " [beacon, saffron, iris, delta, olive, maple]", "score": 0.0}
+{"example_id": "T10_format-test-000087", "prediction": " apple, azalea, betony, chrysanthemum, daisy, elderberry, garden", "score": 0.0}
+{"example_id": "T10_format-test-000088", "prediction": " [yarrow, raven, jade, beacon, velvet, lagoon, zephyr]", "score": 0.0}
+{"example_id": "T10_format-test-000089", "prediction": " [glacier, raven, apple, hazel, walnut]", "score": 0.0}
+{"example_id": "T10_format-test-000090", "prediction": " iris, delta, walnut, tiger, olive, prism, ash", "score": 0.0}
+{"example_id": "T10_format-test-000091", "prediction": " [jade, harbor, iris, willow]", "score": 0.0}
+{"example_id": "T10_format-test-000092", "prediction": " [tiger, yarrow, apple, fern, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000093", "prediction": " A list of items could be:\n\nbeacon, quartz, olive, meadow, saffron, harbor, velvet\n\nThese are some common items that can be found in various settings. Beacon is a type of light source used for navigation and communication; quartz is a material commonly used in jewelry and watches; olive is a fruit with a sweet taste; meadow is a natural area with grasses and flowers; saffron is a spice used in cooking and perfumes;", "score": 0.0}
+{"example_id": "T10_format-test-000094", "prediction": " stone, willow, zephyr, violin, kite, tiger", "score": 0.0}
+{"example_id": "T10_format-test-000095", "prediction": " [tiger, lagoon, river, velvet, pepper, urchin]", "score": 0.0}
+{"example_id": "T10_format-test-000096", "prediction": " [iris, willow, yarrow, beacon]", "score": 0.0}
+{"example_id": "T10_format-test-000097", "prediction": " [raven, ember, prism, delta, willow]", "score": 0.0}
+{"example_id": "T10_format-test-000098", "prediction": " [tiger], [raven], [glacier], [meadow]", "score": 0.0}
+{"example_id": "T10_format-test-000099", "prediction": " Velvet, Beacon, Thistle, Willow", "score": 0.0}
+{"example_id": "T10_format-test-000100", "prediction": " [zephyr, falcon, iris, thistle, walnut, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000101", "prediction": " quartz, delta, falcon, zephyr, prism, river, iris", "score": 0.0}
+{"example_id": "T10_format-test-000102", "prediction": " kite, prism, willow, garden, tiger, velvet", "score": 0.0}
+{"example_id": "T10_format-test-000103", "prediction": " [walnut, harbor, quartz, meadow, raven, velvet, copper]", "score": 0.0}
+{"example_id": "T10_format-test-000104", "prediction": " lagoon, glacier, beacon, iris, prism", "score": 0.0}
+{"example_id": "T10_format-test-000105", "prediction": " [beacon, tiger, violin, ember]", "score": 0.0}
+{"example_id": "T10_format-test-000106", "prediction": " [iris, canyon, olive, violin, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000107", "prediction": " [cloud], [yarrow], [river], [ember]", "score": 0.0}
+{"example_id": "T10_format-test-000108", "prediction": " olive, raven, zephyr, lagoon", "score": 0.0}
+{"example_id": "T10_format-test-000109", "prediction": " [willow, maple, comet, violin, falcon, iris]", "score": 0.0}
+{"example_id": "T10_format-test-000110", "prediction": " [olive, lagoon, hazel, velvet, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000111", "prediction": " [ash, meadow, thistle, walnut, hazel]", "score": 0.0}
+{"example_id": "T10_format-test-000112", "prediction": " lagoon, quartz, delta, olive, walnut", "score": 0.0}
+{"example_id": "T10_format-test-000113", "prediction": " [ember, lamp, stone, apple]", "score": 0.0}
+{"example_id": "T10_format-test-000114", "prediction": " [nectar, canyon, hazel, walnut]", "score": 0.0}
+{"example_id": "T10_format-test-000115", "prediction": " garden, iris, velvet, harbor, river, apple", "score": 0.0}
+{"example_id": "T10_format-test-000116", "prediction": " Harbor, saffron, cloud, urchin, hazel, quartz, copper", "score": 0.0}
+{"example_id": "T10_format-test-000117", "prediction": " apple, beacon, field, grass, meadow, stone", "score": 0.0}
+{"example_id": "T10_format-test-000118", "prediction": " [raven, copper, stone, willow]", "score": 0.0}
+{"example_id": "T10_format-test-000119", "prediction": " kite, lamp, garden, river", "score": 0.0}
+{"example_id": "T10_format-test-000120", "prediction": " [copper, willow, garden, lagoon, hazel, delta, yarrow]", "score": 0.0}
+{"example_id": "T10_format-test-000121", "prediction": " [prism, zephyr, cloud, comet, fern, kite]", "score": 0.0}
+{"example_id": "T10_format-test-000122", "prediction": " fern, thistle, jade, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000123", "prediction": " saffron, kite, tiger, willow, zephyr", "score": 0.0}
+{"example_id": "T10_format-test-000124", "prediction": " [quartz, comet, violin, harbor]", "score": 0.0}
+{"example_id": "T10_format-test-000125", "prediction": " [ember, kite, stone, cloud]", "score": 0.0}
+{"example_id": "T10_format-test-000126", "prediction": " [pepper, nectar, glacier, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000127", "prediction": " stone, copper, saffron, zephyr, lagoon, yarrow", "score": 0.0}
+{"example_id": "T10_format-test-000128", "prediction": " lagoon, river, raven, willow, lamp, quartz, canyon", "score": 0.0}
+{"example_id": "T10_format-test-000129", "prediction": " [beacon], [stone], [hazel], [cloud]", "score": 0.0}
+{"example_id": "T10_format-test-000130", "prediction": " Canyon, Copper, Quartz, Hazel, Maple, Beacon", "score": 0.0}
+{"example_id": "T10_format-test-000131", "prediction": " kite, prism, pepper, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000132", "prediction": " delta, pepper, iris, walnut, nectar", "score": 0.0}
+{"example_id": "T10_format-test-000133", "prediction": " copper, lagoon, raven, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000134", "prediction": " [ash, velvet, garden, glacier]", "score": 0.0}
+{"example_id": "T10_format-test-000135", "prediction": " [raven, canyon, violin, jade, fern, copper, tiger]", "score": 0.0}
+{"example_id": "T10_format-test-000136", "prediction": " [beacon, saffron, canyon, jade]", "score": 0.0}
+{"example_id": "T10_format-test-000137", "prediction": " fern, canyon, willow, zephyr, raven, pepper", "score": 0.0}
+{"example_id": "T10_format-test-000138", "prediction": " [raven, maple, harbor, canyon]", "score": 0.0}
+{"example_id": "T10_format-test-000139", "prediction": " [canyon, urchin, tiger, lagoon, willow, nectar]", "score": 0.0}
+{"example_id": "T10_format-test-000140", "prediction": " [glacier, hazel, lamp, cloud, copper, urchin, raven]", "score": 0.0}
+{"example_id": "T10_format-test-000141", "prediction": " urchin, quartz, prism, zephyr, delta, glacier, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000142", "prediction": " [beacon, delta, saffron, meadow, pepper, river, velvet]", "score": 0.0}
+{"example_id": "T10_format-test-000143", "prediction": " [quartz, falcon, urchin, copper, maple]", "score": 0.0}
+{"example_id": "T10_format-test-000144", "prediction": " [jade, zephyr, cloud, violin, saffron]", "score": 0.0}
+{"example_id": "T10_format-test-000145", "prediction": " violin, ember, quartz, tiger, raven, lamp", "score": 0.0}
+{"example_id": "T10_format-test-000146", "prediction": " [ember, comet, pepper, kite]", "score": 0.0}
+{"example_id": "T10_format-test-000147", "prediction": " walnut, glacier, olive, ash", "score": 0.0}
+{"example_id": "T10_format-test-000148", "prediction": " garden, yarrow, olive, prism, kite", "score": 0.0}
+{"example_id": "T10_format-test-000149", "prediction": " [glacier, saffron, garden, nectar, tiger, quartz, jade]", "score": 0.0}
+{"example_id": "T10_format-test-000150", "prediction": " apple, saffron, hazel, pepper, olive", "score": 0.0}
+{"example_id": "T10_format-test-000151", "prediction": " [iris, zephyr, pepper, walnut]", "score": 0.0}
+{"example_id": "T10_format-test-000152", "prediction": " apple, beech, beacon, garden, grass, iron, orchard", "score": 0.0}
+{"example_id": "T10_format-test-000153", "prediction": " [beacon, pepper, canyon, saffron]", "score": 0.0}
+{"example_id": "T10_format-test-000154", "prediction": " raven, jade, saffron, zephyr, yarrow, beacon", "score": 0.0}
+{"example_id": "T10_format-test-000155", "prediction": " [beacon, copper, pepper, lagoon, yarrow, velvet, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000156", "prediction": " stone, glacier, kite", "score": 0.0}
+{"example_id": "T10_format-test-000157", "prediction": " apple, ash, brown, hazel, irish, lamp, river", "score": 0.0}
+{"example_id": "T10_format-test-000158", "prediction": " meadow, willow, glacier, nectar, delta, hazel", "score": 0.0}
+{"example_id": "T10_format-test-000159", "prediction": " maple, nectar, fern, harbor, jade, urchin, river", "score": 0.0}
+{"example_id": "T10_format-test-000160", "prediction": " quartz, glacier, copper, walnut, ash", "score": 0.0}
+{"example_id": "T10_format-test-000161", "prediction": " [quartz, pepper, ash, jade, willow, kite, delta]", "score": 0.0}
+{"example_id": "T10_format-test-000162", "prediction": " [ember, olive, iris, kite, lamp, tiger, copper]", "score": 0.0}
+{"example_id": "T10_format-test-000163", "prediction": " [harbor, falcon, river, violin, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000164", "prediction": " [nectar, violin, iris, comet, apple]", "score": 0.0}
+{"example_id": "T10_format-test-000165", "prediction": " kite, zephyr, cloud, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000166", "prediction": " [saffron, kite, fern, cloud, violin]", "score": 0.0}
+{"example_id": "T10_format-test-000167", "prediction": " maple, quartz, willow, comet, nectar, cloud, ember", "score": 0.0}
+{"example_id": "T10_format-test-000168", "prediction": " hazel, maple, lagoon, ash", "score": 0.0}
+{"example_id": "T10_format-test-000169", "prediction": " [iris, maple, nectar, violin, harbor, hazel, garden]", "score": 0.0}
+{"example_id": "T10_format-test-000170", "prediction": " [raven, quartz, jade, saffron, ash]", "score": 0.0}
+{"example_id": "T10_format-test-000171", "prediction": " [saffron, ember, delta, olive, violin, apple, fern]", "score": 0.0}
+{"example_id": "T10_format-test-000172", "prediction": " [cloud, saffron, lagoon, beacon, violin, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000173", "prediction": " [willow, jade, quartz]", "score": 0.0}
+{"example_id": "T10_format-test-000174", "prediction": " jade, thistle, yarrow, cloud, saffron", "score": 0.0}
+{"example_id": "T10_format-test-000175", "prediction": " [jade, willow, nectar, beacon, olive]", "score": 0.0}
+{"example_id": "T10_format-test-000176", "prediction": " [olive, glacier, yarrow, nectar, prism]", "score": 0.0}
+{"example_id": "T10_format-test-000177", "prediction": " [comet, yarrow, zephyr, lagoon, saffron, harbor]", "score": 0.0}
+{"example_id": "T10_format-test-000178", "prediction": " [pepper, canyon, raven, copper]", "score": 0.0}
+{"example_id": "T10_format-test-000179", "prediction": " [canyon, zephyr, olive, nectar, delta]", "score": 0.0}
+{"example_id": "T10_format-test-000180", "prediction": " copper, quartz, falcon, lamp", "score": 0.0}
+{"example_id": "T10_format-test-000181", "prediction": " [urchin, comet, maple, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000182", "prediction": " [pepper, urchin, beacon, kite, canyon]", "score": 0.0}
+{"example_id": "T10_format-test-000183", "prediction": " [river, beacon, zephyr, falcon]", "score": 0.0}
+{"example_id": "T10_format-test-000184", "prediction": " [falcon, willow, delta, yarrow]", "score": 0.0}
+{"example_id": "T10_format-test-000185", "prediction": " River, Maple, Delta, Fern, Copper, Yarrow, Quartz", "score": 0.0}
+{"example_id": "T10_format-test-000186", "prediction": " [urchin, stone, fern, tiger, lamp]", "score": 0.0}
+{"example_id": "T10_format-test-000187", "prediction": " [beacon], [canyon], [prism], [willow]", "score": 0.0}
+{"example_id": "T10_format-test-000188", "prediction": " lamp, river, glacier", "score": 0.0}
+{"example_id": "T10_format-test-000189", "prediction": " [glacier, prism, violin, delta, willow, apple, pepper]", "score": 0.0}
+{"example_id": "T10_format-test-000190", "prediction": " maple, fern, willow, iris, lamp", "score": 0.0}
+{"example_id": "T10_format-test-000191", "prediction": " urchin, jade, saffron, iris, beacon, falcon, thistle", "score": 0.0}
+{"example_id": "T10_format-test-000192", "prediction": " [cloud, yarrow, pepper, maple, comet]", "score": 0.0}
+{"example_id": "T10_format-test-000193", "prediction": " [ember, kite, willow, saffron, river]", "score": 0.0}
+{"example_id": "T10_format-test-000194", "prediction": " [saffron, willow, raven, quartz, nectar, copper]", "score": 0.0}
+{"example_id": "T10_format-test-000195", "prediction": " [violin, glacier, tiger, saffron, yarrow, urchin, pepper]", "score": 0.0}
+{"example_id": "T10_format-test-000196", "prediction": " [zephyr], [beacon], [lagoon], [copper]", "score": 0.0}
+{"example_id": "T10_format-test-000197", "prediction": " [tiger, walnut, harbor, ember, nectar]", "score": 0.0}
+{"example_id": "T10_format-test-000198", "prediction": " ash, black, blue, brown, gray, hazel", "score": 0.0}
+{"example_id": "T10_format-test-000199", "prediction": " apple, ash, willow, saffron, maple", "score": 0.0}

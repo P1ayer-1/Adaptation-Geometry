@@ -5,21 +5,32 @@ and project the held-out adapter on one side or both:
   input_only   dW' = B A V Vᵀ      (keeps the adapter's own output directions)
   output_only  dW' = U Uᵀ B A      (keeps the adapter's own input directions)
   both         dW' = U Uᵀ B A V Vᵀ (as in crossed_eval.py)
-Two ways to fit the bases:
-  factor     paper-style: top singular vectors of the stacked raw A rows (V) and B columns (U);
-             depends on how each update is split into B and A.
-  invariant  top eigenvectors of C_in = sum_t dW_tᵀ dW_t (V) and C_out = sum_t dW_t dW_tᵀ (U),
-             computed from each update's compact SVD; independent of the factorisation.
+Three ways to fit the bases:
+  centred_factor    paper-style PCA: top principal directions of the stacked raw A rows (V) and
+                    B columns (U) after subtracting their mean; depends on the factorisation.
+  uncentred_factor  the same without centring (top singular vectors of the raw stacks).
+  invariant         top eigenvectors of C_in = sum_t dW_tᵀ dW_t (V) and C_out = sum_t dW_t dW_tᵀ (U),
+                    uncentred, from each update's compact SVD; independent of the factorisation.
 Conditions (held-out group <- basis group): each shared initialisation held out against itself
 and against the other one, and the independent-initialisation group against itself.
-Outputs: captured share of ||dW||_F^2 (all 168 modules) for every condition, basis and side; task
-scores of the projected adapters for the four scored tasks (evaluations already on disk are
-reused); direct shared_init1 scores; and paired comparisons with the base model (exact McNemar
-on discordant pairs, paired bootstrap on the accuracy difference) for every scored variant.
+
+Outputs (results/crossed_eval/crossed_eval_sides.json):
+  capture_by_side  captured share of ||dW||_F^2 (all 168 modules), every basis, condition, side, task
+  scores           test scores (n = 200): projected adapters for all ten tasks with invariant bases
+                   and for EVAL_TASKS with centred factor bases; direct adapters of every group; the
+                   base model. All evaluated in this run's environment.
+  paired_vs_base   exact McNemar on discordant pairs and a paired bootstrap on the score difference,
+                   every scored variant against the base model scored in the same environment.
+
+Caching: every evaluation is named by a fingerprint of its full configuration (kind, task, basis,
+rank, side, groups, SHA-256 of every adapter file involved, evaluation settings, projection code
+version) and stored with a <eval_id>.config.json sidecar. A stored result is reused only when the
+sidecar matches exactly, so changing --k or any input can never mix old scores into a new run.
 
 usage: python scripts/crossed_eval_sides.py [--no-eval] [--paired-only] [--k 16]
 """
 import argparse
+import hashlib
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -44,24 +55,43 @@ ROOT = Path(__file__).resolve().parent.parent
 BASE = "dev_qwen2.5-0.5b"
 TASKS = ["T1_hidden_rule", "T2_nli", "T3_paraphrase", "T4_json", "T5_concise", "T6_verbose",
          "T7_python", "T8_arithmetic", "T9_clinical", "T10_format"]
-EVAL_TASKS = ["T3_paraphrase", "T4_json", "T8_arithmetic", "T9_clinical"]
+EVAL_TASKS = ["T3_paraphrase", "T4_json", "T8_arithmetic", "T9_clinical"]  # factor-basis scores
 OUT = ROOT / "results" / "crossed_eval"
-RAW = OUT / "raw"
+RAW = OUT / "raw_sides"
 PRED = ROOT / "artifacts" / "crossed_eval_sides"
 SIDES = ("input_only", "output_only", "both")
-BASES = ("factor", "invariant")
+BASES = ("centred_factor", "uncentred_factor", "invariant")
+SCORED_BASES = ("centred_factor", "invariant")  # uncentred_factor: captured energy only
 CONDS = [("shared_init0", "shared_init0", "same init"), ("shared_init0", "shared_init1", "other init"),
          ("shared_init1", "shared_init1", "same init"), ("shared_init1", "shared_init0", "other init"),
          ("indep_seed0", "indep_seed0", "independent inits")]
+GROUP_SRC = {"shared_init0": ("dev_3080_crossed_shared", 0), "shared_init1": ("dev_3080_crossed_shared", 1),
+             "indep_seed0": ("dev_a100_v2", 0)}
+PROJECTION_VERSION = 2  # bump whenever basis fitting or projection changes
+EVAL_KW = dict(split="test", max_examples=200, device="auto", dtype="bfloat16", batch_size=16)
 JSON_OUT = OUT / "crossed_eval_sides.json"
 
 
-def run_dir(exp, task, seed):
+def run_dir(group, task):
+    exp, seed = GROUP_SRC[group]
     return ROOT / "artifacts" / exp / "runs" / f"{BASE}_{task}_seed{seed}_r16"
 
 
-def load_ab(exp, task, seed):
-    d = run_dir(exp, task, seed) / "adapter"
+@lru_cache(maxsize=None)
+def adapter_sha(group, task):
+    h = hashlib.sha256()
+    with open(run_dir(group, task) / "adapter" / "adapter_model.safetensors", "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def file_sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def load_ab(group, task):
+    d = run_dir(group, task) / "adapter"
     cfg = json.loads((d / "adapter_config.json").read_text())
     w = load_file(str(d / "adapter_model.safetensors"))
     out = {}
@@ -69,17 +99,6 @@ def load_ab(exp, task, seed):
         name = strip_peft_prefix(ka.split(".lora_A.")[0])
         out[name] = (w[ka].double(), w[ka.replace(".lora_A.", ".lora_B.")].double())
     return out, cfg["lora_alpha"] / cfg["r"]
-
-
-GROUP_SRC = {"shared_init0": ("dev_3080_crossed_shared", 0), "shared_init1": ("dev_3080_crossed_shared", 1),
-             "indep_seed0": ("dev_a100_v2", 0)}
-
-
-def eval_id(t, held, src, basis, side):
-    if basis == "factor":  # names used by crossed_eval.py (both) and the first side-split run
-        return f"crossed_{t}_projected_{held}_from_{src}" if side == "both" else \
-               f"crossed_{t}_projected_{side}_{held}_from_{src}"
-    return f"crossed_{t}_projinv_{side}_{held}_from_{src}"
 
 
 def factors(A, B):
@@ -90,7 +109,9 @@ def factors(A, B):
     return Qb @ u, s, Qa @ vh.transpose(1, 2)
 
 
-def top_right(rows, k):
+def top_right(rows, k, centre=False):
+    if centre:
+        rows = rows - rows.mean(0)
     return torch.linalg.svd(rows, full_matrices=False)[2][:k].T.clone()  # clone frees the full SVD
 
 
@@ -103,26 +124,32 @@ def project(A, B, U, V, side):
     return U @ (U.T @ B), (A @ V) @ V.T
 
 
+def others(task):
+    return [x for x in TASKS if x != task]
+
+
 if args.paired_only:
     res = json.load(open(JSON_OUT))
 else:
-    groups = {g: {t: load_ab(e, t, s) for t in TASKS} for g, (e, s) in GROUP_SRC.items()}
+    RAW.mkdir(parents=True, exist_ok=True)
+    groups = {g: {t: load_ab(g, t) for t in TASKS} for g in GROUP_SRC}
     modules = sorted(groups["shared_init0"]["T3_paraphrase"][0])
-    res = {"base": BASE, "tasks": TASKS, "k": args.k, "n_modules": len(modules), "sides": SIDES,
-           "bases": BASES, "conditions": CONDS}
+    res = {"base": BASE, "tasks": TASKS, "eval_tasks_factor": EVAL_TASKS, "k": args.k, "n_modules": len(modules),
+           "sides": SIDES, "bases": BASES, "scored_bases": SCORED_BASES, "conditions": CONDS, "projection_version": PROJECTION_VERSION,
+           "adapter_sha256": {g: {t: adapter_sha(g, t) for t in TASKS} for g in GROUP_SRC}}
 
     @lru_cache(maxsize=2)
     def bases_for(src, task, basis):
         """{module: (U d_out x k, V d_in x k)} fitted on the nine tasks other than `task`."""
         g = groups[src]
-        others = [x for x in TASKS if x != task]
         out = {}
         for m in modules:
-            A = torch.stack([g[t][0][m][0] for t in others])  # (9, r, d_in)
-            B = torch.stack([g[t][0][m][1] for t in others])  # (9, d_out, r)
-            if basis == "factor":
-                V = top_right(A.reshape(-1, A.shape[-1]), args.k)
-                U = top_right(B.transpose(1, 2).reshape(-1, B.shape[1]), args.k)
+            A = torch.stack([g[t][0][m][0] for t in others(task)])  # (9, r, d_in)
+            B = torch.stack([g[t][0][m][1] for t in others(task)])  # (9, d_out, r)
+            if basis in ("centred_factor", "uncentred_factor"):
+                c = basis == "centred_factor"
+                V = top_right(A.reshape(-1, A.shape[-1]), args.k, centre=c)
+                U = top_right(B.transpose(1, 2).reshape(-1, B.shape[1]), args.k, centre=c)
             else:
                 Uf, S, Vf = factors(A, B)
                 V = top_right((Vf * S[:, None, :]).transpose(1, 2).reshape(-1, Vf.shape[1]), args.k)
@@ -148,7 +175,7 @@ else:
                                 **{s: tot[s] / den for s in SIDES}))
             for s in SIDES:
                 v = [x[s] for x in cap if (x["basis"], x["heldout_group"], x["basis_group"]) == (basis, held, src)]
-                print(f"capture {basis:9s} {held} <- {src} {s:12s}: median {np.median(v):.3f} "
+                print(f"capture {basis:16s} {held} <- {src} {s:12s}: median {np.median(v):.3f} "
                       f"range {min(v):.3f}-{max(v):.3f}", flush=True)
     res["capture_by_side"] = cap
     json.dump(res, open(JSON_OUT, "w"), indent=1)
@@ -159,52 +186,57 @@ else:
         base = load_base(ROOT / "configs/bases/dev_qwen2.5-0.5b.yaml")
         tasks = {t.task_id: t for t in exp.tasks}
         cache, scores = {}, []
-        kw = dict(split="test", data_dir=exp.path("data"), max_examples=200, device="auto", dtype="bfloat16",
-                  model_cache=cache)
+        env = dict(torch=torch.__version__, cuda=torch.version.cuda,
+                   gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu")
+        res["eval_environment"] = env
 
-        def score(t, eid, variant, **extra):
-            f = RAW / f"{eid}.summary.json"
-            if f.exists() and not extra.pop("force", False):
-                s, reused = json.load(open(f)), True
+        def score(cfg, label, build=None, **extra):
+            """Evaluate (or reuse, if the stored config matches exactly) and record one variant."""
+            t = cfg["task"]
+            cfg = dict(cfg, eval=EVAL_KW, env=env, base=BASE, data=exp.path("data").name,
+                       task_config_sha256=file_sha(ROOT / f"configs/tasks/v2/{t}.yaml"))
+            fp = hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:12]
+            eid = f"sides_{t}_{label.replace(' ', '_').replace('<-', '_from_')}_{fp}"
+            side_f, summ_f = RAW / f"{eid}.config.json", RAW / f"{eid}.summary.json"
+            if summ_f.exists() and side_f.exists() and json.load(open(side_f)) == cfg:
+                s, reused = json.load(open(summ_f)), True
             else:
-                extra.pop("force", None)
-                s, reused = run_evaluation(base, tasks[t], RAW, eid, **kw, **extra), False
-            scores.append(dict(task=t, variant=variant, eval_id=eid, score=s["primary"], n=s["n"], reused=reused))
-            print(f"score {t} {variant}: {s['primary']:.3f}{' (reused)' if reused else ''}", flush=True)
-            res["scores_by_side"] = scores
+                if build is not None:
+                    extra["delta_dir"] = build()
+                s, reused = run_evaluation(base, tasks[t], RAW, eid, data_dir=exp.path("data"), model_cache=cache,
+                                           **EVAL_KW, **extra), False
+                json.dump(cfg, open(side_f, "w"), indent=1, sort_keys=True)
+            scores.append(dict(task=t, variant=label, kind=cfg["kind"], basis=cfg.get("basis"), side=cfg.get("side"),
+                               heldout_group=cfg.get("heldout_group"), basis_group=cfg.get("basis_group"),
+                               eval_id=eid, score=s["primary"], n=s["n"], reused=reused))
+            print(f"score {t} {label}: {s['primary']:.3f}{' (reused)' if reused else ''}", flush=True)
+            res["scores"] = scores
             json.dump(res, open(JSON_OUT, "w"), indent=1)
 
-        for t in EVAL_TASKS:
-            score(t, f"crossed_{t}_direct_shared_init1", "direct shared_init1",
-                  adapter_dir=run_dir("dev_3080_crossed_shared", t, 1) / "adapter")
-            for basis in BASES:
+        for t in TASKS:
+            score(dict(kind="base", task=t), "base")
+            for g in GROUP_SRC:
+                score(dict(kind="direct", task=t, group=g, adapter_sha256=adapter_sha(g, t)), f"direct {g}",
+                      adapter_dir=run_dir(g, t) / "adapter")
+            for basis in SCORED_BASES:
+                if basis != "invariant" and t not in EVAL_TASKS:
+                    continue
                 for held, src, _ in CONDS:
                     ad, scale = groups[held][t]
                     for side in SIDES:
-                        eid = eval_id(t, held, src, basis, side)
-                        if not (RAW / f"{eid}.summary.json").exists():
+                        cfg = dict(kind="projected", task=t, basis=basis, k=args.k, side=side, heldout_group=held,
+                                   basis_group=src, projection_version=PROJECTION_VERSION,
+                                   heldout_sha256=adapter_sha(held, t),
+                                   basis_sha256={x: adapter_sha(src, x) for x in others(t)})
+
+                        def build(t=t, basis=basis, held=held, src=src, side=side, ad=ad, scale=scale, cfg=cfg):
                             bs = bases_for(src, t, basis)
-                            mods = {}
-                            for m in modules:
-                                Bp, Ap = project(*ad[m], *bs[m], side)
-                                mods[m] = from_factors(Bp.numpy(), Ap.numpy(), scale)
-                            d = PRED / f"{basis}__{held}__{src}__{t}__{side}"
-                            DeltaSet({"task_id": t, "kind": "projected", "basis": basis, "side": side,
-                                      "heldout_group": held, "basis_group": src, "k": args.k}, mods).save(d)
-                            score(t, eid, f"{basis} {side} {held}<-{src}", delta_dir=d)
-                        else:
-                            score(t, eid, f"{basis} {side} {held}<-{src}")
-        # hardware check: the two-sided factor projections were first scored on an A100; rescore here
-        for t in EVAL_TASKS:
-            for held, src in (("shared_init0", "shared_init0"), ("shared_init0", "shared_init1")):
-                ad, scale = groups[held][t]
-                bs = bases_for(src, t, "factor")
-                mods = {m: from_factors(*[x.numpy() for x in project(*ad[m], *bs[m], "both")], scale) for m in modules}
-                d = PRED / f"hwcheck__{held}__{src}__{t}"
-                DeltaSet({"task_id": t, "kind": "projected", "basis": "factor", "side": "both",
-                          "heldout_group": held, "basis_group": src, "k": args.k}, mods).save(d)
-                score(t, f"hwcheck_{eval_id(t, held, src, 'factor', 'both')}", f"hwcheck factor both {held}<-{src}",
-                      delta_dir=d, force=True)
+                            mods = {m: from_factors(*[x.numpy() for x in project(*ad[m], *bs[m], side)], scale)
+                                    for m in modules}
+                            d = PRED / f"{basis}_k{args.k}__{held}__{src}__{t}__{side}"
+                            DeltaSet({"task_id": t, **{k: v for k, v in cfg.items() if k != "task"}}, mods).save(d)
+                            return d
+                        score(cfg, f"{basis} k{args.k} {side} {held}<-{src}", build=build)
 
 
 # ---------------------------------------------------------------- paired tests
@@ -214,33 +246,36 @@ def load_scores(p):
 
 
 paired = {}
-for t in EVAL_TASKS:
-    base_scores = load_scores(ROOT / "results/raw/dev_a100_v2" / f"base__{BASE}__{t}__v1.jsonl")
+for t in TASKS:
+    entries = [x for x in res.get("scores", []) if x["task"] == t]
+    base_e = next((x for x in entries if x["kind"] == "base"), None)
+    if base_e is None:
+        continue
+    base_scores = load_scores(RAW / f"{base_e['eval_id']}.jsonl")
     ids = sorted(base_scores)
-    b = np.array([base_scores[i][0] for i in ids])
+    b = np.array([base_scores[i][0] for i in ids], dtype=float)
     paired[t] = {}
-    for p in sorted(RAW.glob(f"*crossed_{t}_*.jsonl")):
-        v = load_scores(p)
-        if sorted(v) != ids:
+    for x in entries:
+        if x["kind"] == "base":
             continue
-        a = np.array([v[i][0] for i in ids])
+        v = load_scores(RAW / f"{x['eval_id']}.jsonl")
+        assert sorted(v) == ids, x["eval_id"]
+        a = np.array([v[i][0] for i in ids], dtype=float)
         d = a - b
-        n10 = int(((a > b)).sum()); n01 = int(((a < b)).sum())
-        rng = np.random.default_rng(0)  # per variant, so an interval does not depend on file order
+        n10, n01 = int((a > b).sum()), int((a < b).sum())
+        rng = np.random.default_rng(0)  # per variant, so an interval does not depend on order
         boots = d[rng.integers(0, len(d), (10000, len(d)))].mean(1)
-        k = p.stem.replace(f"crossed_{t}_", "")
-        paired[t][k] = dict(score=float(a.mean()), base=float(b.mean()), diff=float(d.mean()),
-                            ci95_paired_bootstrap=[float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))],
-                            discordant_variant_better=n10, discordant_base_better=n01,
-                            mcnemar_exact_p=float(stats.binomtest(n10, n10 + n01, 0.5).pvalue) if n10 + n01 else 1.0,
-                            prediction_agreement_with_base=float(np.mean([v[i][1] == base_scores[i][1] for i in ids])),
-                            n=len(ids))
+        paired[t][x["variant"]] = dict(
+            eval_id=x["eval_id"], score=float(a.mean()), base=float(b.mean()), diff=float(d.mean()),
+            ci95_paired_bootstrap=[float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))],
+            discordant_variant_better=n10, discordant_base_better=n01,
+            mcnemar_exact_p=float(stats.binomtest(n10, n10 + n01, 0.5).pvalue) if n10 + n01 else 1.0,
+            prediction_agreement_with_base=float(np.mean([v[i][1] == base_scores[i][1] for i in ids])), n=len(ids))
     for k, x in paired[t].items():
         print(f"paired {t} {k}: {x['score']:.3f} vs {x['base']:.3f}, diff {x['diff']:+.3f} "
               f"CI [{x['ci95_paired_bootstrap'][0]:.3f}, {x['ci95_paired_bootstrap'][1]:.3f}] "
               f"+{x['discordant_variant_better']}/-{x['discordant_base_better']} p={x['mcnemar_exact_p']:.3g} "
               f"agree={x['prediction_agreement_with_base']:.2f}", flush=True)
 res["paired_vs_base"] = paired
-res.pop("paired_vs_base_T3_paraphrase", None)
 json.dump(res, open(JSON_OUT, "w"), indent=1)
 print("crossed_eval_sides: done")
