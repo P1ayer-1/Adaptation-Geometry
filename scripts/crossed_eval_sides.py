@@ -22,10 +22,13 @@ Outputs (results/crossed_eval/crossed_eval_sides.json):
   paired_vs_base   exact McNemar on discordant pairs and a paired bootstrap on the score difference,
                    every scored variant against the base model scored in the same environment.
 
-Caching: every evaluation is named by a fingerprint of its full configuration (kind, task, basis,
-rank, side, groups, SHA-256 of every adapter file involved, evaluation settings, projection code
-version) and stored with a <eval_id>.config.json sidecar. A stored result is reused only when the
-sidecar matches exactly, so changing --k or any input can never mix old scores into a new run.
+Caching: every evaluation is named by a fingerprint of its configuration (kind, task, basis, rank,
+side, groups, SHA-256 of every adapter weight file involved, evaluation settings, task-config
+SHA-256, projection code version) and stored with a <eval_id>.config.json sidecar. A stored result
+is reused only when the sidecar matches exactly, so changing --k, the basis or any adapter weights
+cannot mix old scores into a new run. The fingerprint does NOT cover the adapter configuration files
+(LoRA scaling), the test-split contents (verified against the committed dataset manifests on every
+load) or the resolved base-model revision; scripts/crossed_eval_provenance.py records these.
 
 usage: python scripts/crossed_eval_sides.py [--no-eval] [--paired-only] [--k 16]
 """
