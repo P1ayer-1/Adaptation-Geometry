@@ -1,8 +1,8 @@
 # Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces
 
-*Draft v3.2, 2026-10-11. [Author]. Responses to external reviews are kept separately in
+*Draft v3.3, 2026-10-11. [Author]. Responses to external reviews are kept separately in
 [`note_lora_universal_subspace_revisions.md`](note_lora_universal_subspace_revisions.md). Items marked
-**[TODO]** must be resolved before posting.*
+**[TODO]** must be resolved before posting; the only one left is the author line.*
 
 ## Abstract
 
@@ -20,7 +20,7 @@ simulated collection with the same grouping and no training at all shows the sam
 The effect survives a factorisation-invariant analysis of ΔW = BA on the input side. The output
 side behaves differently: it shows shared structure that is present in both inferred groups,
 exceeds a null that preserves each adapter's singular values in every layer we examined, and
-outside the first layer is little reduced by removing the base model's dominant weight directions. In a controlled experiment on Qwen2.5-0.5B-Instruct, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a rank-16 basis fitted on other tasks captures little of a held-out task's update, and projecting one side at a time shows that within a shared initialisation the loss comes mainly from the fitted output basis, for factor-based and factorisation-invariant bases alike. We conclude that the input-side
+outside the first layer is little reduced by removing the base model's dominant weight directions. In a controlled experiment on Qwen2.5-0.5B-Instruct, the same ten tasks show the rank-16 A subspace when they share an initialisation and the random level when they do not; a rank-16 basis fitted on other tasks captures little of a held-out task's update, and projecting one side at a time shows that within a shared initialisation the loss comes mainly from the fitted output basis, for factor-based and factorisation-invariant bases alike. Although the fitted output bases retain little update energy, they preserve partial performance on two of the nine learned tasks (paraphrase and concise rewriting). We conclude that the input-side
 (A) evidence for a universal LoRA subspace is largely an initialisation artefact, while a weaker,
 genuinely shared output-side structure deserves separate study. We recommend that analyses of
 adapter collections report seeds, group by inferred initialisation, use factorisation-invariant
@@ -41,12 +41,12 @@ acknowledges that "the LoRA factorization is not unique", notes that "a gauge-in
 alternative would perform the same analysis directly on ΔW", and states that its analysis
 "characterizes recurring structure in the learned and stored LoRA parameterization, rather than a
 gauge-invariant property of the equivalent full update ΔW=BA". We found no seed information and no
-random-matrix baseline for this analysis in Section 4 or Appendix B.5 **[TODO: check Appendices
-B.7 and C.6 in the PDF]**.
+random-matrix baseline for this analysis anywhere in the paper.
 
 Two facts make initialisation a candidate explanation. First, PEFT initialises A with a
-Kaiming-uniform draw from the global random generator, so adapters trained with the same seed and
-configuration start from an identical A. Second, A moves little in training. In our own controlled
+Kaiming-uniform draw from the global random generator, so adapters created with the same seed and
+configuration start from an identical A, provided the generator is in the same state, with the same
+sequence of earlier draws, when A is drawn. Second, A moves little in training. In our own controlled
 runs on Qwen2.5-0.5B-Instruct and Llama-3.2-1B-Instruct (40 runs; [`dev_scale_report.md`](dev_scale_report.md)),
 ‖A − A₀‖_F / ‖A₀‖_F was 0.04-0.22, and under a shared seed the input subspaces of unrelated tasks
 overlapped by 97-99%. If many adapters in a collection share an initialisation, the stacked A
@@ -262,9 +262,10 @@ the nine tasks or one of higher rank.
    formatting score within 0.04 of the base model, most at or below it. Two tasks keep part of it in every condition,
    including bases from another initialisation: paraphrase (0.71-0.73 against 0.65) and concise
    rewriting (0.375-0.46 against 0, where the direct adapters reach 0.855-0.925). Within one
-   initialisation, then, the two-sided loss comes mainly from the output side, while the
-   exceptions show that the shared output-side structure of Sections 3.4-3.5 can carry part of a
-   task.
+   initialisation, then, the two-sided loss comes mainly from the output side. The exceptions show
+   that, in this model, output directions shared across tasks can carry part of a task; they do not
+   establish what the residual output-side structure of the Mistral collection (Sections 3.4-3.5)
+   represents.
 4. *Two-sided projection with the same initialisation leaves most learned tasks near the base
    model.* NLI, JSON extraction, verbose rewriting, arithmetic, clinical extraction and formatting
    score 0-0.01 above the base model or below it. Three tasks keep a partial effect: concise
@@ -280,8 +281,17 @@ the nine tasks or one of higher rank.
 
 The experiment covers two shared initialisations, each held out in turn, one independent group and
 one training run per task and initialisation. It uses a small model and synthetic tasks, so it
-shows the mechanism rather than replicating the paper. It also does not test the paper's own
-held-out procedure, which may re-fit coefficients rather than project.
+shows the mechanism rather than replicating the paper. The paper's own held-out test also projects
+held-out adapters onto the fitted subspace, with "analytically reconstructed" coefficients (its
+Section 4 and Appendix B.7). There the subspace is fitted on up to 450 adapters with an unstated
+number of components, and nine held-out tasks reach Rouge-L 72.3 against 73.7 for the original
+adapters (its Table 17). All nine are singletons under our grouping, so their input sides do not
+share the group's initialisation; four of them are in the set we infer as the fitting set of
+Table 10, so B.7 uses a different split. The paper does not report the base model's score on these
+tasks. Its stated 19-fold memory saving would be consistent with roughly 140 components per factor
+if each adapter's coefficients are stored densely, about nine times our rank 16. Our rank-16
+projections from nine tasks therefore test a much smaller basis and do not contradict that
+result.
 
 ### 3.4 Factorisation-invariant updates: input side and output side differ
 
@@ -397,8 +407,9 @@ quality.
 ## 4. Discussion
 
 **What the evidence supports.** On the adapters the paper lists, the A-side "universal subspace" is
-produced by one large group of adapters with a common initialisation-like A, which training
-changes only modestly. The effect persists in a factorisation-invariant analysis of the input
+produced by one large group of adapters with a common initialisation-like A. Group members lie
+close to their mean (a median 0.22-0.32 of its norm), which suggests that training changed A only
+modestly; we could not measure this against the true initialisation, which is not available. The effect persists in a factorisation-invariant analysis of the input
 side. Without the group, the input side is close to a strength-matched null except in layer 0,
 where the excess is aligned with the base weight's dominant directions. The output side tells a different story: a shared
 structure present in both inferred groups, above a strength-matched null in
@@ -406,7 +417,8 @@ every slot and, outside layer 0, little reduced by removing base-weight directio
 more than 16 directions (k90 of B 140-1,200 on the full set). In the controlled experiment, output
 bases fitted on other tasks carried part of two of the nine learned tasks, paraphrase and concise
 rewriting, even when they came from another initialisation; for the other seven they carried
-almost nothing.
+almost nothing. This shows that shared output directions can carry task information in a small
+model on synthetic tasks. It does not show what the Mistral residual represents.
 
 **The strongest rebuttals.**
 - *"Our exact analysis differs."* We used the paper's adapter list (the inferred fitting set; all
@@ -479,14 +491,20 @@ decomposition; seed search scripts). Crossed experiment: `configs/experiments/de
 onto fitted bases, scores and paired tests). Outputs: `results/universal_subspace/` (`paper_set.json`,
 `supplement.json`, `grouping_all.json`, `excess_subsample.json`, `sensitivity.json`) and
 `results/crossed_eval/` (`crossed_eval.json`, `crossed_eval_sides.json`, per-example predictions in
-`raw/` and `raw_sides/`). Every evaluation in `raw_sides/` is named by a fingerprint of its full
-configuration (rank, basis, side, SHA-256 of each adapter file involved, evaluation settings) and
-stored with that configuration, so a stored score is reused only for an identical configuration.
+`raw/` and `raw_sides/`). Every evaluation in `raw_sides/` is named by a fingerprint of its configuration
+(rank, basis, side, SHA-256 of each adapter weight file involved, evaluation settings, task
+configuration) and stored with it, so a stored score is reused only when these match. The
+fingerprint does not cover the adapter configuration files, the test-split contents or the
+resolved base-model revision; `crossed_eval_sides_provenance.json` records them (LoRA scale 2 for
+all adapters, test splits matching the SHA-256 values in the committed dataset manifests,
+Qwen2.5-0.5B-Instruct revision 7ae5576) and confirms that none of these files changed after the
+scoring run began.
 The adapter list is `results/universal_subspace/manifest_paper_v3.json`; all random generators are
 seeded and the seeds recorded in the outputs. Data locations are set with the environment variables
 `UAG_LOL_ROOT` (adapters) and `UAG_MISTRAL_DIR` (base model). Repository:
-https://github.com/P1ayer-1/Adaptation-Geometry, branch `claude/task-design-fixes` **[TODO: tag the
-commit that produced the posted version and cite the tag]**.
+https://github.com/P1ayer-1/Adaptation-Geometry. All code and results reported here are at commit
+35296cb03172d6fee33797979a4e4e5d03e90318
+(https://github.com/P1ayer-1/Adaptation-Geometry/tree/35296cb03172d6fee33797979a4e4e5d03e90318).
 
 ## References
 

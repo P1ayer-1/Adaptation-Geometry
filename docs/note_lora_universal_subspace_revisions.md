@@ -69,3 +69,15 @@ Responses to the fourth ChatGPT review (of draft v3.1):
 | Why four of ten tasks were scored | All ten tasks are now scored with invariant bases. The four-task subset (used for centred factor bases) was fixed in the script before any projection was computed; this is documented in Appendix A. The ten-task results add one uninformative task (hidden-rule sentiment was not learned) and two tasks whose output-side projection keeps part of the effect (paraphrase, concise rewriting) |
 | Task-score table hard to read | Tasks in rows; full condition matrix moved to Appendix B |
 | References, methods, release, TODOs, review logs | References verified and completed; quotes checked against the papers (one is a figure caption); stacking convention confirmed from Appendix B.5; Compress-then-Serve threshold described as stated there; methods appendix added; model names corrected to the Instruct variants; data paths configurable through environment variables; repository linked; review logs moved to this file. Remaining: check Appendices B.7 and C.6 of the paper for seeds or baselines, and tag the posted commit |
+
+## Revision log (v3.2 → v3.3)
+
+Responses to the fifth ChatGPT review (of draft v3.2):
+
+| Point | Change |
+|---|---|
+| Abstract should mention the output-side exception | Added: the fitted output bases retain little update energy but preserve partial performance on paraphrase and concise rewriting |
+| Qwen and Mistral residual structures are not the same phenomenon | Section 3.3 and the discussion now say the Qwen results show that shared output directions can carry task information in that model, without establishing what the Mistral residual represents |
+| Same seed guarantees identical A only with the same generator state; "training changes A only modestly" is inferred | Both qualified: identical A requires the same generator state and draw sequence; modest change is inferred from closeness to the group mean, not measured against the unavailable initialisation |
+| Cache guarantee too broad | The note and script now list exactly what the fingerprint covers. A new provenance record covers what it omits (adapter configs and LoRA scale, test-split hashes against the committed manifests, resolved base-model revision) and confirms none changed after the run began |
+| Remaining TODOs | Appendices B.7 and C.6 checked: no seeds or random baselines. B.7 turned out to describe the paper's own held-out reconstruction (projection with "analytically reconstructed" coefficients, up to 450 fitting adapters, Rouge-L 72.3 against 73.7). All nine held-out tasks are singletons under our grouping; Section 3.3 now compares the two settings. Code and results cited by immutable commit. The author line is left for the author |
