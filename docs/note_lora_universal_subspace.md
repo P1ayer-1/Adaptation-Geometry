@@ -1,8 +1,10 @@
 # Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces
 
-*Draft v3.3, 2026-10-11. [Author]. Responses to external reviews are kept separately in
-[`note_lora_universal_subspace_revisions.md`](note_lora_universal_subspace_revisions.md). Items marked
-**[TODO]** must be resolved before posting; the only one left is the author line.*
+**Noah Persaud**\
+Holdout Labs\
+noah@holdoutlabs.ai
+
+*October 11, 2026*
 
 ## Abstract
 
@@ -501,7 +503,8 @@ Qwen2.5-0.5B-Instruct revision 7ae5576) and confirms that none of these files ch
 scoring run began.
 The adapter list is `results/universal_subspace/manifest_paper_v3.json`; all random generators are
 seeded and the seeds recorded in the outputs. Data locations are set with the environment variables
-`UAG_LOL_ROOT` (adapters) and `UAG_MISTRAL_DIR` (base model). Repository:
+`UAG_LOL_ROOT` (adapters) and `UAG_MISTRAL_DIR` (base model). Responses to pre-publication reviews
+are in `docs/note_lora_universal_subspace_revisions.md`. Repository:
 https://github.com/P1ayer-1/Adaptation-Geometry. All code and results reported here are at commit
 35296cb03172d6fee33797979a4e4e5d03e90318
 (https://github.com/P1ayer-1/Adaptation-Geometry/tree/35296cb03172d6fee33797979a4e4e5d03e90318).

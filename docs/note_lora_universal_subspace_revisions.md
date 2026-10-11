@@ -11,7 +11,7 @@ Responses to the ChatGPT review (`review_gpt_note_lora_universal_subspace.md`) a
 | Point | Change |
 |---|---|
 | Paper's adapter list exists (v3 Table 10); headline not reproduced on our sample | All analyses rerun on the paper's set (497 after excluding 5 OOD); top-16 share 0.44-0.46; the knee is reproduced by a no-training simulation; the paper's set is shown to be enriched for the group (51% vs 38% collection-wide) |
-| Stacking convention | Row stacking, as in the paper's Appendix B.5 **[TODO: confirm in v3]** |
+| Stacking convention | Row stacking, as in the paper's Appendix B.5 (confirmed against v3 in revision v3.2) |
 | v3 acknowledges factorisation dependence | Quoted in the introduction |
 | Centring breaks factorisation invariance | Invariant analyses now use uncentred C_in, C_out |
 | Base-alignment numbers wrong (10-50×); causal claim too strong | Corrected (Section 3.5); excess after removing base directions now measured; conclusion limited to layer-0 q/k |
