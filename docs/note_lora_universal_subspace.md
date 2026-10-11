@@ -504,10 +504,19 @@ scoring run began.
 The adapter list is `results/universal_subspace/manifest_paper_v3.json`; all random generators are
 seeded and the seeds recorded in the outputs. Data locations are set with the environment variables
 `UAG_LOL_ROOT` (adapters) and `UAG_MISTRAL_DIR` (base model). Responses to pre-publication reviews
-are in `docs/note_lora_universal_subspace_revisions.md`. Repository:
+are in `docs/note_lora_universal_subspace_revisions.md`; the reviews themselves are in `docs/review_*.md`. Repository:
 https://github.com/P1ayer-1/Adaptation-Geometry. All code and results reported here are at commit
 35296cb03172d6fee33797979a4e4e5d03e90318
 (https://github.com/P1ayer-1/Adaptation-Geometry/tree/35296cb03172d6fee33797979a4e4e5d03e90318).
+
+## AI assistance
+
+This work was carried out with AI assistance, and we state the division of labour plainly. Noah
+Persaud chose the research question, directed the work and made the decisions about scope and
+publication. Claude (Anthropic), working through Claude Code, wrote the code, ran the experiments
+and analyses, and drafted the text. Pre-publication reviews came from ChatGPT (OpenAI) and from a
+separate Claude review pass. Each round of comments was checked against the code and saved results
+and answered in the revision logs (Section 6). The author is responsible for the content.
 
 ## References
 
