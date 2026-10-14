@@ -20,6 +20,28 @@ blocks for Stages 1–3.
 | 3 | Latent arithmetic vs LoRA composition baselines | `composition.py`, `configs/tasks/composition/` | Library functions + one factorial task |
 | 4 | Routing / mixture of adaptations | — | Deliberately not started (spec §9) |
 
+## Paper: shared initialisation and universal LoRA subspaces
+
+**Shared Initialisation Confounds the LoRA Evidence for Universal Weight Subspaces**, Noah Persaud
+(Holdout Labs), 2026. PDF: [`paper/main.pdf`](paper/main.pdf); LaTeX source:
+[`paper/main.tex`](paper/main.tex), built from
+[`docs/note_lora_universal_subspace.md`](docs/note_lora_universal_subspace.md) by
+[`paper/build.py`](paper/build.py). arXiv link to follow.
+
+The paper grew out of this project. The cross-model transfer hypothesis above did not hold at dev
+scale, and finding out why showed that LoRA's A matrix barely moves from its random
+initialisation, so adapters that share a seed look aligned whatever their tasks. Applied to the
+Mistral-7B adapters behind the "Universal Weight Subspace Hypothesis" (Kaushik et al., arXiv
+2512.05117), this explains the rank-16 subspace on the input (A) side: half of the adapters share
+one initialisation-like A. A weaker shared structure on the output (B) side survives.
+
+Code: [`scripts/universal_subspace/`](scripts/universal_subspace/) (Mistral adapter analyses),
+[`scripts/crossed_eval.py`](scripts/crossed_eval.py) and
+[`scripts/crossed_eval_sides.py`](scripts/crossed_eval_sides.py) (controlled Qwen experiment).
+Results: [`results/universal_subspace/`](results/universal_subspace/) and
+[`results/crossed_eval/`](results/crossed_eval/). The exact version cited in the paper is tag
+`shared-init-paper-v1` (commit 35296cb).
+
 ## Install
 
 ```bash
