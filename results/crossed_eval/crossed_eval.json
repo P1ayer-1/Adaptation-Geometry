@@ -1,0 +1,563 @@
+{
+ "base": "dev_qwen2.5-0.5b",
+ "tasks": [
+  "T1_hidden_rule",
+  "T2_nli",
+  "T3_paraphrase",
+  "T4_json",
+  "T5_concise",
+  "T6_verbose",
+  "T7_python",
+  "T8_arithmetic",
+  "T9_clinical",
+  "T10_format"
+ ],
+ "k": 16,
+ "n_modules": 168,
+ "hardware_check": {
+  "T3_paraphrase seed0": {
+   "dW_cosine_3080_vs_A100": 0.879850129175488,
+   "A_cosine": 0.9986013969151484
+  },
+  "T3_paraphrase seed1": {
+   "dW_cosine_3080_vs_A100": 0.9298917766689015,
+   "A_cosine": 0.9991677517471512
+  },
+  "T8_arithmetic seed0": {
+   "dW_cosine_3080_vs_A100": 0.9235581273376665,
+   "A_cosine": 0.9973156000826423
+  },
+  "T8_arithmetic seed1": {
+   "dW_cosine_3080_vs_A100": 0.9389186499150336,
+   "A_cosine": 0.9980916882056612
+  }
+ },
+ "A_pairwise_cosine_first_module": {
+  "shared_init0": {
+   "mean": 0.9487155104109992,
+   "min": 0.8703624502501606,
+   "max": 0.9895533336394637
+  },
+  "shared_init1": {
+   "mean": 0.9539368626532648,
+   "min": 0.8818769168914073,
+   "max": 0.9908392318920928
+  },
+  "indep_seed0": {
+   "mean": 0.0007546826047305882,
+   "min": -0.009165550965037895,
+   "max": 0.008039948667041715
+  },
+  "indep_seed1": {
+   "mean": 0.0004553959865363814,
+   "min": -0.0068254770533668595,
+   "max": 0.006961450842796951
+  }
+ },
+ "geometry_top16_A": {
+  "shared_init0": {
+   "median": 0.9915963278496874,
+   "p10": 0.9631447679573166,
+   "p90": 0.9940228566265651
+  },
+  "shared_init1": {
+   "median": 0.991544299687718,
+   "p10": 0.9635367687696357,
+   "p90": 0.994150544579784
+  },
+  "indep_seed0": {
+   "median": 0.17947912953499084,
+   "p10": 0.1491833451833872,
+   "p90": 0.18145641202743273
+  },
+  "indep_seed1": {
+   "median": 0.1793857698509465,
+   "p10": 0.14458765555377895,
+   "p90": 0.1810671835897097
+  },
+  "shared_both_inits": {
+   "median": 0.5880278011570605,
+   "p10": 0.5280182359312255,
+   "p90": 0.5918775802320972
+  },
+  "independent_random_inits": {
+   "median": 0.17897744162328216,
+   "p10": 0.1321769988674652,
+   "p90": 0.18020682640155966
+  }
+ },
+ "capture": [
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T1_hidden_rule",
+   "captured": 0.07123792978539754
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T2_nli",
+   "captured": 0.08307160597431203
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T3_paraphrase",
+   "captured": 0.11510814546292415
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T4_json",
+   "captured": 0.041371870903883064
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T5_concise",
+   "captured": 0.11425377750655824
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T6_verbose",
+   "captured": 0.06409046946675942
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T7_python",
+   "captured": 0.0694937212603168
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T8_arithmetic",
+   "captured": 0.10829251039995728
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T9_clinical",
+   "captured": 0.04534688535117468
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init0",
+   "desc": "same init, other tasks",
+   "task": "T10_format",
+   "captured": 0.028926101334955896
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T1_hidden_rule",
+   "captured": 0.001195385586908121
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T2_nli",
+   "captured": 0.0017812030557794953
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T3_paraphrase",
+   "captured": 0.0023386135349490636
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T4_json",
+   "captured": 0.0007384297871051011
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T5_concise",
+   "captured": 0.0019850311309875996
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T6_verbose",
+   "captured": 0.0012395496195975885
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T7_python",
+   "captured": 0.0012901216313246952
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T8_arithmetic",
+   "captured": 0.002194203552933476
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T9_clinical",
+   "captured": 0.0007604971512214388
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, other tasks",
+   "task": "T10_format",
+   "captured": 0.000530206995290714
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T1_hidden_rule",
+   "captured": 0.0012165782394423885
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T2_nli",
+   "captured": 0.002200868542059744
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T3_paraphrase",
+   "captured": 0.0028255290038559813
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T4_json",
+   "captured": 0.0009927085904992304
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T5_concise",
+   "captured": 0.002982233652648884
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T6_verbose",
+   "captured": 0.0015906915483466727
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T7_python",
+   "captured": 0.0019151192683375276
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T8_arithmetic",
+   "captured": 0.0035735737068078393
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T9_clinical",
+   "captured": 0.001089532244189298
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T10_format",
+   "captured": 0.0007357966244080386
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T1_hidden_rule",
+   "captured": 0.002158523579628284
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T2_nli",
+   "captured": 0.00238159867619899
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T3_paraphrase",
+   "captured": 0.002757903432478418
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T4_json",
+   "captured": 0.0011410105115503284
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T5_concise",
+   "captured": 0.003116812932867984
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T6_verbose",
+   "captured": 0.0015801256117376802
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T7_python",
+   "captured": 0.002273959001445119
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T8_arithmetic",
+   "captured": 0.003641160703286812
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T9_clinical",
+   "captured": 0.0010463909468825295
+  },
+  {
+   "heldout_group": "indep_seed0",
+   "basis_group": "indep_seed0",
+   "desc": "independent inits, other tasks",
+   "task": "T10_format",
+   "captured": 0.0007560928330587204
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T1_hidden_rule",
+   "captured": 0.002124504632859184
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T2_nli",
+   "captured": 0.006579134045536761
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T3_paraphrase",
+   "captured": 0.0045762194770113535
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T4_json",
+   "captured": 0.007923940147797941
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T5_concise",
+   "captured": 0.004191945385323856
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T6_verbose",
+   "captured": 0.007863738537744745
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T7_python",
+   "captured": 0.00626686176703579
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T8_arithmetic",
+   "captured": 0.007415917940607077
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T9_clinical",
+   "captured": 0.005687455189596076
+  },
+  {
+   "heldout_group": "shared_init0",
+   "basis_group": "shared_init1",
+   "desc": "other init, all tasks incl. same task",
+   "task": "T10_format",
+   "captured": 0.010649209759093113
+  }
+ ],
+ "scores": [
+  {
+   "task": "T3_paraphrase",
+   "variant": "direct shared_init0",
+   "score": 1.0,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "direct indep_seed0",
+   "score": 0.99,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected shared_init0<-shared_init0",
+   "score": 0.71,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected shared_init0<-shared_init1",
+   "score": 0.65,
+   "n": 200
+  },
+  {
+   "task": "T3_paraphrase",
+   "variant": "projected indep_seed0<-indep_seed0",
+   "score": 0.65,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "direct shared_init0",
+   "score": 1.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "direct indep_seed0",
+   "score": 1.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected shared_init0<-shared_init0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T4_json",
+   "variant": "projected indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "direct shared_init0",
+   "score": 0.9,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "direct indep_seed0",
+   "score": 0.905,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected shared_init0<-shared_init0",
+   "score": 0.01,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T8_arithmetic",
+   "variant": "projected indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "direct shared_init0",
+   "score": 1.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "direct indep_seed0",
+   "score": 1.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected shared_init0<-shared_init0",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected shared_init0<-shared_init1",
+   "score": 0.0,
+   "n": 200
+  },
+  {
+   "task": "T9_clinical",
+   "variant": "projected indep_seed0<-indep_seed0",
+   "score": 0.0,
+   "n": 200
+  }
+ ]
+}

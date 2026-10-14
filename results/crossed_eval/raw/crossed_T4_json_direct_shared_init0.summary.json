@@ -1,0 +1,36 @@
+{
+ "task_id": "T4_json",
+ "dataset_key": "T4_json.v2",
+ "metric": "json_exact",
+ "direction": "higher",
+ "primary": 1.0,
+ "ci95": [
+  1.0,
+  1.0
+ ],
+ "n": 200,
+ "template": "v1",
+ "shots": 0,
+ "shot_example_ids": [],
+ "stop_markers": [],
+ "mean_output_words": 22.56,
+ "eval_seconds": 49.23423981666565,
+ "eval_id": "crossed_T4_json_direct_shared_init0",
+ "base": "dev_qwen2.5-0.5b",
+ "family": "qwen2",
+ "split": "test",
+ "kind": "adapter",
+ "adapter_dir": "/workspace/ag/artifacts/dev_3080_crossed_shared/runs/dev_qwen2.5-0.5b_T4_json_seed0_r16/adapter",
+ "delta_dir": null,
+ "provenance": {
+  "base_name": "dev_qwen2.5-0.5b",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_revision": null,
+  "resolved_commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": null,
+  "family": "qwen2",
+  "model_type": "qwen2",
+  "dtype": "bfloat16"
+ },
+ "fewshot_seed": null
+}

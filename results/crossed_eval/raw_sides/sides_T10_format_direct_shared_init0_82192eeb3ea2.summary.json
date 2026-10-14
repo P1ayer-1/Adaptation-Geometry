@@ -1,0 +1,36 @@
+{
+ "task_id": "T10_format",
+ "dataset_key": "T10_format.v2",
+ "metric": "format_v2",
+ "direction": "higher",
+ "primary": 0.98,
+ "ci95": [
+  0.955,
+  0.995
+ ],
+ "n": 200,
+ "template": "v1",
+ "shots": 0,
+ "shot_example_ids": [],
+ "stop_markers": [],
+ "mean_output_words": 12.93,
+ "eval_seconds": 31.48800563812256,
+ "eval_id": "sides_T10_format_direct_shared_init0_82192eeb3ea2",
+ "base": "dev_qwen2.5-0.5b",
+ "family": "qwen2",
+ "split": "test",
+ "kind": "adapter",
+ "adapter_dir": "/home/noahp/Adaptation-Geometry/artifacts/dev_3080_crossed_shared/runs/dev_qwen2.5-0.5b_T10_format_seed0_r16/adapter",
+ "delta_dir": null,
+ "provenance": {
+  "base_name": "dev_qwen2.5-0.5b",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_revision": null,
+  "resolved_commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": null,
+  "family": "qwen2",
+  "model_type": "qwen2",
+  "dtype": "bfloat16"
+ },
+ "fewshot_seed": null
+}

@@ -1,0 +1,19 @@
+{
+ "base": "dev_qwen2.5-0.5b",
+ "data": "data",
+ "env": {
+  "cuda": "13.0",
+  "gpu": "NVIDIA GeForce RTX 3080 Laptop GPU",
+  "torch": "2.14.0+cu130"
+ },
+ "eval": {
+  "batch_size": 16,
+  "device": "auto",
+  "dtype": "bfloat16",
+  "max_examples": 200,
+  "split": "test"
+ },
+ "kind": "base",
+ "task": "T2_nli",
+ "task_config_sha256": "a538812a2bbd1951f3a4e2227a1ef342bed4d95040d13ec739b73f8bbc28aa15"
+}

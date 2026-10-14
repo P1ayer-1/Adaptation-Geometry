@@ -1,0 +1,21 @@
+{
+ "adapter_sha256": "d5df0e9a6b3394ad21f9f614ba292de718c07618ea7f2cc296eaa7414f2ce6ab",
+ "base": "dev_qwen2.5-0.5b",
+ "data": "data",
+ "env": {
+  "cuda": "13.0",
+  "gpu": "NVIDIA GeForce RTX 3080 Laptop GPU",
+  "torch": "2.14.0+cu130"
+ },
+ "eval": {
+  "batch_size": 16,
+  "device": "auto",
+  "dtype": "bfloat16",
+  "max_examples": 200,
+  "split": "test"
+ },
+ "group": "shared_init0",
+ "kind": "direct",
+ "task": "T6_verbose",
+ "task_config_sha256": "8cc3d8977c44c3b43dae31f8219cfff5d79f5381c47760d7562014cb307ae9c4"
+}

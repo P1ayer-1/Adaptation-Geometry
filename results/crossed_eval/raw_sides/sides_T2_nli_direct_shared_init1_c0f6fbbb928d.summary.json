@@ -1,0 +1,37 @@
+{
+ "task_id": "T2_nli",
+ "dataset_key": "T2_nli.v2",
+ "metric": "accuracy",
+ "direction": "higher",
+ "primary": 0.76,
+ "ci95": [
+  0.7,
+  0.815
+ ],
+ "n": 200,
+ "template": "v1",
+ "shots": 0,
+ "shot_example_ids": [],
+ "stop_markers": [],
+ "mean_output_words": 1.0,
+ "eval_seconds": 2.945436716079712,
+ "macro_f1": 0.754087090309368,
+ "eval_id": "sides_T2_nli_direct_shared_init1_c0f6fbbb928d",
+ "base": "dev_qwen2.5-0.5b",
+ "family": "qwen2",
+ "split": "test",
+ "kind": "adapter",
+ "adapter_dir": "/home/noahp/Adaptation-Geometry/artifacts/dev_3080_crossed_shared/runs/dev_qwen2.5-0.5b_T2_nli_seed1_r16/adapter",
+ "delta_dir": null,
+ "provenance": {
+  "base_name": "dev_qwen2.5-0.5b",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_revision": null,
+  "resolved_commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": null,
+  "family": "qwen2",
+  "model_type": "qwen2",
+  "dtype": "bfloat16"
+ },
+ "fewshot_seed": null
+}

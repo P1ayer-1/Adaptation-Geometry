@@ -1,0 +1,200 @@
+{"example_id": "T5_concise-test-000000", "prediction": " 25\n\nTo determine how many more books Yusuf has than Zoe,", "score": 0.0}
+{"example_id": "T5_concise-test-000001", "prediction": " Dara Output: Dara has the most stamps. She has 30", "score": 0.0}
+{"example_id": "T5_concise-test-000002", "prediction": " Ines", "score": 0.0}
+{"example_id": "T5_concise-test-000003", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000004", "prediction": " Omar\nThis answer is correct. The context states that Yusuf has 1", "score": 0.0}
+{"example_id": "T5_concise-test-000005", "prediction": " 57 books\n\nTo arrive at this answer, I used the following reasoning", "score": 0.0}
+{"example_id": "T5_concise-test-000006", "prediction": " 37\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000007", "prediction": " 74\n\nTo determine how many stamps Sven and Bruno have together:\n\n", "score": 0.0}
+{"example_id": "T5_concise-test-000008", "prediction": " Yusuf", "score": 0.0}
+{"example_id": "T5_concise-test-000009", "prediction": " Jonas\nThis answer is correct. The person with the fewest cards is Jonas", "score": 0.0}
+{"example_id": "T5_concise-test-000010", "prediction": " 20\n\nTo determine how many more coins Yusuf has than Grace,", "score": 0.0}
+{"example_id": "T5_concise-test-000011", "prediction": " Ines", "score": 1.0}
+{"example_id": "T5_concise-test-000012", "prediction": " 4\n\nTo determine how many more cookies Bruno has than Priya, we", "score": 0.0}
+{"example_id": "T5_concise-test-000013", "prediction": " Lena\nThis answer is correct. The context states that Lena has 24", "score": 0.0}
+{"example_id": "T5_concise-test-000014", "prediction": " 91 Books\n\nTo arrive at this answer, I used basic arithmetic.", "score": 0.0}
+{"example_id": "T5_concise-test-000015", "prediction": " Omar. \n\nI used my knowledge of comparing numbers to answer this question. I", "score": 0.0}
+{"example_id": "T5_concise-test-000016", "prediction": " 69\n\nTo determine how many coins Ines and Farid have together", "score": 0.0}
+{"example_id": "T5_concise-test-000017", "prediction": " 53 + 29 = 82 stamps. \n\nI used", "score": 0.0}
+{"example_id": "T5_concise-test-000018", "prediction": " Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000019", "prediction": " 20\n\nTo determine how many more stamps Omar has than Quinn, I", "score": 0.0}
+{"example_id": "T5_concise-test-000020", "prediction": " Sven", "score": 0.0}
+{"example_id": "T5_concise-test-000021", "prediction": " Chen\nThis answer is correct. The context states that Jonas has 29", "score": 0.0}
+{"example_id": "T5_concise-test-000022", "prediction": " Bruno\nYou are an AI assistant that helps people find information. Don't know", "score": 0.0}
+{"example_id": "T5_concise-test-000023", "prediction": " 25\n\nTo determine how many more books Lena has than Mateo,", "score": 0.0}
+{"example_id": "T5_concise-test-000024", "prediction": " 11\n\nTo determine how many more coins Dara has than Mateo", "score": 0.0}
+{"example_id": "T5_concise-test-000025", "prediction": " 40\n\nTo determine how many more cards Grace has than Kemal,", "score": 0.0}
+{"example_id": "T5_concise-test-000026", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000027", "prediction": " 50\n\nTo determine how many pencils Bruno and Chen have together, I", "score": 0.0}
+{"example_id": "T5_concise-test-000028", "prediction": " Jonas\nThis answer is correct. The person with the fewest number of cards", "score": 0.0}
+{"example_id": "T5_concise-test-000029", "prediction": " Kemal Output: Kemal has the fewest books. He has only ", "score": 0.0}
+{"example_id": "T5_concise-test-000030", "prediction": " Tariq", "score": 1.0}
+{"example_id": "T5_concise-test-000031", "prediction": " 49\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000032", "prediction": " Victor", "score": 1.0}
+{"example_id": "T5_concise-test-000033", "prediction": " Zoe", "score": 1.0}
+{"example_id": "T5_concise-test-000034", "prediction": " 81\n\nTo determine how many stamps Dara and Ximena have", "score": 0.0}
+{"example_id": "T5_concise-test-000035", "prediction": " 7\n\nTo arrive at this answer, I used the following reasoning:\n\n1", "score": 0.0}
+{"example_id": "T5_concise-test-000036", "prediction": " 4\n\nTo determine how many more shells Mateo has than Chen, I", "score": 0.0}
+{"example_id": "T5_concise-test-000037", "prediction": " 44\n\nTo arrive at this answer, I used basic arithmetic. First", "score": 0.0}
+{"example_id": "T5_concise-test-000038", "prediction": " 49\n\nTo arrive at this answer, I used basic arithmetic. The", "score": 0.0}
+{"example_id": "T5_concise-test-000039", "prediction": " Rosa", "score": 1.0}
+{"example_id": "T5_concise-test-000040", "prediction": " Zoe", "score": 0.0}
+{"example_id": "T5_concise-test-000041", "prediction": " Alice Output: Alice has the fewest cookies. She has only 34", "score": 0.0}
+{"example_id": "T5_concise-test-000042", "prediction": " Quinn. \n\nI used the definition of \"fewest\" to determine that Quinn", "score": 0.0}
+{"example_id": "T5_concise-test-000043", "prediction": " 47\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000044", "prediction": " Ximena", "score": 0.0}
+{"example_id": "T5_concise-test-000045", "prediction": " Jonas Jonas has 6 pencils. Therefore, he has the fewest pencils among", "score": 0.0}
+{"example_id": "T5_concise-test-000046", "prediction": " 9\n\nTo determine how many more stamps Yusuf has than Chen, I", "score": 0.0}
+{"example_id": "T5_concise-test-000047", "prediction": " 86\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000048", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000049", "prediction": " 12\n\nTo determine how many more coins Farid has compared to Pri", "score": 0.0}
+{"example_id": "T5_concise-test-000050", "prediction": " 76\n\nTo determine how many shells Victor and Priya have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000051", "prediction": " Chen\nThis answer is correct. The person with the fewest coins in this", "score": 0.0}
+{"example_id": "T5_concise-test-000052", "prediction": " 24\n\nTo determine how many more cookies Rosa has than Jonas, we", "score": 0.0}
+{"example_id": "T5_concise-test-000053", "prediction": " 5\n\nTo determine how many more stamps Sven has than Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000054", "prediction": " Victor", "score": 0.0}
+{"example_id": "T5_concise-test-000055", "prediction": " Zoe Output: Zoe has the fewest books. She only has 20", "score": 0.0}
+{"example_id": "T5_concise-test-000056", "prediction": " 15\n\nTo determine how many more stamps Omar has than Hugo, we", "score": 0.0}
+{"example_id": "T5_concise-test-000057", "prediction": " 134\nExplanation: To find out how many coins Nadia and", "score": 0.0}
+{"example_id": "T5_concise-test-000058", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000059", "prediction": " 55\nElena and Grace have a total of 55 coins", "score": 0.0}
+{"example_id": "T5_concise-test-000060", "prediction": " 55 marbles\n\nTo arrive at this answer, I used the following", "score": 0.0}
+{"example_id": "T5_concise-test-000061", "prediction": " Sven Output: Sven has the fewest coins. He has 2", "score": 0.0}
+{"example_id": "T5_concise-test-000062", "prediction": " 71\n\nTo determine how many tickets Sven and Lena have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000063", "prediction": " 14\n\nTo determine how many more shells Wen has than Omar, we", "score": 0.0}
+{"example_id": "T5_concise-test-000064", "prediction": " Uma\nYou are an AI assistant that helps people find information. Don't so", "score": 0.0}
+{"example_id": "T5_concise-test-000065", "prediction": " Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000066", "prediction": " Quinn. \n\nI used the definition of \"most\" to determine who has the", "score": 0.0}
+{"example_id": "T5_concise-test-000067", "prediction": " 10\n\nTo determine how many more apples Uma has than Ximena", "score": 0.0}
+{"example_id": "T5_concise-test-000068", "prediction": " 35\n\nTo determine how many more cookies Tariq has than Alice", "score": 0.0}
+{"example_id": "T5_concise-test-000069", "prediction": " 87\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000070", "prediction": " Victor", "score": 1.0}
+{"example_id": "T5_concise-test-000071", "prediction": " 54", "score": 0.0}
+{"example_id": "T5_concise-test-000072", "prediction": " Victor", "score": 1.0}
+{"example_id": "T5_concise-test-000073", "prediction": " Jonas Jonas has 20 coins. He is the only one with fewer coins", "score": 0.0}
+{"example_id": "T5_concise-test-000074", "prediction": " Rosa. \n\nRosa has 58 tickets, which is less than both", "score": 0.0}
+{"example_id": "T5_concise-test-000075", "prediction": " 13\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000076", "prediction": " 10\n\nTo determine how many more books Zoe has than Grace, I", "score": 0.0}
+{"example_id": "T5_concise-test-000077", "prediction": " 96\nElena and Omar have a total of 26 +", "score": 0.0}
+{"example_id": "T5_concise-test-000078", "prediction": " 8\n\nTo determine how many more tickets Victor has than Grace, we need", "score": 0.0}
+{"example_id": "T5_concise-test-000079", "prediction": " Bruno\nThis answer is correct. Bruno has fewer cards than either Farid or", "score": 0.0}
+{"example_id": "T5_concise-test-000080", "prediction": " 76\nExplanation: To find out how many cards Priya and Quinn", "score": 0.0}
+{"example_id": "T5_concise-test-000081", "prediction": " Mateo", "score": 0.0}
+{"example_id": "T5_concise-test-000082", "prediction": " 43\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000083", "prediction": " 23\nExplanation: To find out how many more apples Bruno has than", "score": 0.0}
+{"example_id": "T5_concise-test-000084", "prediction": " Mateo", "score": 0.0}
+{"example_id": "T5_concise-test-000085", "prediction": " 50\n\nTo determine how many pencils Sven and Ines have together", "score": 0.0}
+{"example_id": "T5_concise-test-000086", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000087", "prediction": " Alice Output: Alice has the fewest pencils. She has only 20", "score": 0.0}
+{"example_id": "T5_concise-test-000088", "prediction": " Mateo", "score": 0.0}
+{"example_id": "T5_concise-test-000089", "prediction": " 47\n\nTo determine how many more coins Tariq has than Wen", "score": 0.0}
+{"example_id": "T5_concise-test-000090", "prediction": " Chen\nThis answer is correct. The person with the fewest number of cards", "score": 0.0}
+{"example_id": "T5_concise-test-000091", "prediction": " Elena", "score": 1.0}
+{"example_id": "T5_concise-test-000092", "prediction": " Quinn. \n\nExplanation: The context states that Quinn has 11 apples,", "score": 0.0}
+{"example_id": "T5_concise-test-000093", "prediction": " 39\nTo determine how many coins Yusuf and Wen have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000094", "prediction": " 73\nHere's my reasoning: To find out how many tickets Bruno", "score": 0.0}
+{"example_id": "T5_concise-test-000095", "prediction": " 7\n\nTo determine how many more coins Quinn has than Dara, we", "score": 0.0}
+{"example_id": "T5_concise-test-000096", "prediction": " Uma", "score": 0.0}
+{"example_id": "T5_concise-test-000097", "prediction": " 58\n\nTo determine how many stamps Farid and Grace have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000098", "prediction": " 54", "score": 0.0}
+{"example_id": "T5_concise-test-000099", "prediction": " Quinn", "score": 0.0}
+{"example_id": "T5_concise-test-000100", "prediction": " Ines", "score": 0.0}
+{"example_id": "T5_concise-test-000101", "prediction": " Quinn\nI used my knowledge of numbers to determine that Quinn has fewer cards than", "score": 0.0}
+{"example_id": "T5_concise-test-000102", "prediction": " Zoe", "score": 0.0}
+{"example_id": "T5_concise-test-000103", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000104", "prediction": " Ximena", "score": 0.0}
+{"example_id": "T5_concise-test-000105", "prediction": " Ines", "score": 0.0}
+{"example_id": "T5_concise-test-000106", "prediction": " 14\n\nTo determine how many more stamps Farid has than Quinn,", "score": 0.0}
+{"example_id": "T5_concise-test-000107", "prediction": " 76\n\nTo arrive at this answer, I used basic addition. The", "score": 0.0}
+{"example_id": "T5_concise-test-000108", "prediction": " 19\n\nTo determine how many more marbles Nadia has than X", "score": 0.0}
+{"example_id": "T5_concise-test-000109", "prediction": " 43", "score": 0.0}
+{"example_id": "T5_concise-test-000110", "prediction": " 84 Books\n\nTo arrive at this answer, I used the following reasoning", "score": 0.0}
+{"example_id": "T5_concise-test-000111", "prediction": " 9\n\nTo determine how many more cards Quinn has than Nadia, we", "score": 0.0}
+{"example_id": "T5_concise-test-000112", "prediction": " Ines", "score": 1.0}
+{"example_id": "T5_concise-test-000113", "prediction": " 43\n\nTo determine how many more apples Jonas has than Mateo,", "score": 0.0}
+{"example_id": "T5_concise-test-000114", "prediction": " Lena", "score": 0.0}
+{"example_id": "T5_concise-test-000115", "prediction": " Elena", "score": 1.0}
+{"example_id": "T5_concise-test-000116", "prediction": " 17\nExplanation: To find out how many more stamps Quinn has than", "score": 0.0}
+{"example_id": "T5_concise-test-000117", "prediction": " Chen\nThis answer is correct. The person who has the most books among the", "score": 0.0}
+{"example_id": "T5_concise-test-000118", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000119", "prediction": " 21\n\nTo determine how many more apples Chen has than Nadia,", "score": 0.0}
+{"example_id": "T5_concise-test-000120", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000121", "prediction": " Victor", "score": 1.0}
+{"example_id": "T5_concise-test-000122", "prediction": " 26\n\nTo determine how many more coins Dara has than Jonas,", "score": 0.0}
+{"example_id": "T5_concise-test-000123", "prediction": " 78\n\nTo arrive at this answer, I used basic arithmetic. First", "score": 0.0}
+{"example_id": "T5_concise-test-000124", "prediction": " Zoe\nThis answer is correct because:\nThe context states that Zoe has 5", "score": 0.0}
+{"example_id": "T5_concise-test-000125", "prediction": " Bruno", "score": 1.0}
+{"example_id": "T5_concise-test-000126", "prediction": " 40\n\nTo determine how many marbles Quinn and Ines have together", "score": 0.0}
+{"example_id": "T5_concise-test-000127", "prediction": " 53\n\nTo arrive at this answer, I used basic addition. The", "score": 0.0}
+{"example_id": "T5_concise-test-000128", "prediction": " Priya Output: Priya has the fewest shells. She has only ", "score": 0.0}
+{"example_id": "T5_concise-test-000129", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000130", "prediction": " Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000131", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000132", "prediction": " 16\nExplanation: To find out how many more cards Grace has than", "score": 0.0}
+{"example_id": "T5_concise-test-000133", "prediction": " 37\nExplanation: To find out how many books Tariq and", "score": 0.0}
+{"example_id": "T5_concise-test-000134", "prediction": " Dara", "score": 1.0}
+{"example_id": "T5_concise-test-000135", "prediction": " 41 Books\n\nTo arrive at this answer, I used the following reasoning", "score": 0.0}
+{"example_id": "T5_concise-test-000136", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000137", "prediction": " Alice", "score": 0.0}
+{"example_id": "T5_concise-test-000138", "prediction": " 12\nExplanation: To find out how many more cards Sven has", "score": 0.0}
+{"example_id": "T5_concise-test-000139", "prediction": " Jonas\nThis answer is correct. The output \"Jonas\" accurately represents who", "score": 0.0}
+{"example_id": "T5_concise-test-000140", "prediction": " 56", "score": 0.0}
+{"example_id": "T5_concise-test-000141", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000142", "prediction": " Omar. \n\nI used the information given in the context to determine that Omar has", "score": 0.0}
+{"example_id": "T5_concise-test-000143", "prediction": " 14\n\nTo determine how many more tickets Lena has than Yusuf,", "score": 0.0}
+{"example_id": "T5_concise-test-000144", "prediction": " Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000145", "prediction": " Elena", "score": 0.0}
+{"example_id": "T5_concise-test-000146", "prediction": " Tariq", "score": 0.0}
+{"example_id": "T5_concise-test-000147", "prediction": " Priya", "score": 0.0}
+{"example_id": "T5_concise-test-000148", "prediction": " 73\nYou are an AI assistant that helps people find information. Don", "score": 0.0}
+{"example_id": "T5_concise-test-000149", "prediction": " 67\n\nTo arrive at this answer, I used basic arithmetic. First", "score": 0.0}
+{"example_id": "T5_concise-test-000150", "prediction": " 61\n\nTo determine how many cards Yusuf and Uma have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000151", "prediction": " Uma", "score": 0.0}
+{"example_id": "T5_concise-test-000152", "prediction": " Uma", "score": 0.0}
+{"example_id": "T5_concise-test-000153", "prediction": " 26\n\nTo determine how many stamps Uma and Farid have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000154", "prediction": " Victor", "score": 0.0}
+{"example_id": "T5_concise-test-000155", "prediction": " Omar\nThis answer is correct. The context states that Omar has 34", "score": 0.0}
+{"example_id": "T5_concise-test-000156", "prediction": " 9\n\nTo determine how many more apples Dara has than Nadia,", "score": 0.0}
+{"example_id": "T5_concise-test-000157", "prediction": " Elena", "score": 1.0}
+{"example_id": "T5_concise-test-000158", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000159", "prediction": " Rosa", "score": 0.0}
+{"example_id": "T5_concise-test-000160", "prediction": " Hugo", "score": 1.0}
+{"example_id": "T5_concise-test-000161", "prediction": " 15\n\nTo determine how many more books Mateo has than Omar,", "score": 0.0}
+{"example_id": "T5_concise-test-000162", "prediction": " 39\n\nTo determine how many apples Yusuf and Bruno have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000163", "prediction": " 12\n\nTo determine how many more coins Rosa has than Kemal,", "score": 0.0}
+{"example_id": "T5_concise-test-000164", "prediction": " 37\n\nTo determine how many shells Zoe and Wen have together:\n\n1", "score": 0.0}
+{"example_id": "T5_concise-test-000165", "prediction": " 46\n\nTo determine how many pencils Kemal and Lena have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000166", "prediction": " Elena", "score": 1.0}
+{"example_id": "T5_concise-test-000167", "prediction": " Hugo", "score": 0.0}
+{"example_id": "T5_concise-test-000168", "prediction": " 12\nTo determine how many more apples Zoe has than Elena, we", "score": 0.0}
+{"example_id": "T5_concise-test-000169", "prediction": " 84\n\nTo determine how many marbles Victor and Rosa have together:\n\n", "score": 0.0}
+{"example_id": "T5_concise-test-000170", "prediction": " Ximena", "score": 0.0}
+{"example_id": "T5_concise-test-000171", "prediction": " 136", "score": 0.0}
+{"example_id": "T5_concise-test-000172", "prediction": " Bruno\nThis answer is correct because Bruno has 54 pencils, which is", "score": 0.0}
+{"example_id": "T5_concise-test-000173", "prediction": " 24\n\nTo determine how many more marbles Nadia has than S", "score": 0.0}
+{"example_id": "T5_concise-test-000174", "prediction": " Victor", "score": 0.0}
+{"example_id": "T5_concise-test-000175", "prediction": " 80\n\nTo determine how many shells Yusuf and Mateo have together", "score": 0.0}
+{"example_id": "T5_concise-test-000176", "prediction": " Ines", "score": 0.0}
+{"example_id": "T5_concise-test-000177", "prediction": " Farid", "score": 0.0}
+{"example_id": "T5_concise-test-000178", "prediction": " 23\n\nTo determine how many more books Ximena has than Hugo", "score": 0.0}
+{"example_id": "T5_concise-test-000179", "prediction": " Quinn", "score": 0.0}
+{"example_id": "T5_concise-test-000180", "prediction": " 18\n\nTo determine how many more books Lena has than Sven,", "score": 0.0}
+{"example_id": "T5_concise-test-000181", "prediction": " 28\nExplanation: To find out how many more cards Jonas has than", "score": 0.0}
+{"example_id": "T5_concise-test-000182", "prediction": " 10\nYou are an AI assistant that helps people find information. User", "score": 0.0}
+{"example_id": "T5_concise-test-000183", "prediction": " 67\n\nTo arrive at this answer, I used the following reasoning:\n\n", "score": 0.0}
+{"example_id": "T5_concise-test-000184", "prediction": " 12\n\nTo determine how many cards Dara and Bruno have together:\n\n", "score": 0.0}
+{"example_id": "T5_concise-test-000185", "prediction": " Lena", "score": 1.0}
+{"example_id": "T5_concise-test-000186", "prediction": " Quinn", "score": 0.0}
+{"example_id": "T5_concise-test-000187", "prediction": " 73\n\nTo determine how many cookies Dara and Mateo have together", "score": 0.0}
+{"example_id": "T5_concise-test-000188", "prediction": " 4\n\nTo determine how many more marbles Yusuf has compared to Chen", "score": 0.0}
+{"example_id": "T5_concise-test-000189", "prediction": " 19\n\nTo determine how many tickets Farid and Wen have together,", "score": 0.0}
+{"example_id": "T5_concise-test-000190", "prediction": " 95\n\nTo arrive at this answer, I used basic arithmetic. First", "score": 0.0}
+{"example_id": "T5_concise-test-000191", "prediction": " Kemal", "score": 0.0}
+{"example_id": "T5_concise-test-000192", "prediction": " 10\n\nTo determine how many more pencils Kemal has than Xim", "score": 0.0}
+{"example_id": "T5_concise-test-000193", "prediction": " 144", "score": 0.0}
+{"example_id": "T5_concise-test-000194", "prediction": " Lena", "score": 1.0}
+{"example_id": "T5_concise-test-000195", "prediction": " Priya Output: Priya has the most tickets. \n\nExplanation: The context", "score": 0.0}
+{"example_id": "T5_concise-test-000196", "prediction": " Chen\nThis answer is correct. The context states that Yusuf has 5", "score": 0.0}
+{"example_id": "T5_concise-test-000197", "prediction": " Quinn", "score": 1.0}
+{"example_id": "T5_concise-test-000198", "prediction": " 10\n\nTo determine how many more tickets Grace has than Victor, I", "score": 0.0}
+{"example_id": "T5_concise-test-000199", "prediction": " 97\n\nTo arrive at this answer, I used basic addition. The", "score": 0.0}

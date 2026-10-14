@@ -1,0 +1,36 @@
+{
+ "task_id": "T7_python",
+ "dataset_key": "T7_python.v2",
+ "metric": "unit_test_pass",
+ "direction": "higher",
+ "primary": 0.995,
+ "ci95": [
+  0.985,
+  1.0
+ ],
+ "n": 200,
+ "template": "v1",
+ "shots": 0,
+ "shot_example_ids": [],
+ "stop_markers": [],
+ "mean_output_words": 27.445,
+ "eval_seconds": 50.06512498855591,
+ "eval_id": "sides_T7_python_direct_indep_seed0_35233ab43445",
+ "base": "dev_qwen2.5-0.5b",
+ "family": "qwen2",
+ "split": "test",
+ "kind": "adapter",
+ "adapter_dir": "/home/noahp/Adaptation-Geometry/artifacts/dev_a100_v2/runs/dev_qwen2.5-0.5b_T7_python_seed0_r16/adapter",
+ "delta_dir": null,
+ "provenance": {
+  "base_name": "dev_qwen2.5-0.5b",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_revision": null,
+  "resolved_commit": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "tokenizer_revision": null,
+  "family": "qwen2",
+  "model_type": "qwen2",
+  "dtype": "bfloat16"
+ },
+ "fewshot_seed": null
+}

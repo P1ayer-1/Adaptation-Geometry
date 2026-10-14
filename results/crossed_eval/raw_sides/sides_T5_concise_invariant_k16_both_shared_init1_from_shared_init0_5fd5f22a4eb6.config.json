@@ -1,0 +1,37 @@
+{
+ "base": "dev_qwen2.5-0.5b",
+ "basis": "invariant",
+ "basis_group": "shared_init0",
+ "basis_sha256": {
+  "T10_format": "3a059277a22d18460f66eac1a690038ac076912161808f1932da5309b2452dc3",
+  "T1_hidden_rule": "e8b9f339587b54424ef3f4337a24bf6e920ade034eb812d7e933fcc3814c074d",
+  "T2_nli": "ca400b414e101adb7ff801b693ce581cbee666e0c9ad432e97bba25523a1f3c0",
+  "T3_paraphrase": "56343003e718b9fdd34e634127761b712e62a8e09362a24964d22369682b87cd",
+  "T4_json": "9f87d2387c7bcb3d3ab96a288bff21aa8c1df609986e3f042f2ef42f853790ec",
+  "T6_verbose": "d5df0e9a6b3394ad21f9f614ba292de718c07618ea7f2cc296eaa7414f2ce6ab",
+  "T7_python": "ea6e414bad4a648efc8bc2428bdd0c718e6c53cc6cce1efa4553f23892d36e83",
+  "T8_arithmetic": "c600f3cfd0b9b4c85c0788bdb07cfcd4b9f9340847e38ef271fed6f815b83299",
+  "T9_clinical": "d89f6d7f70830f590c0c7671d580dd00e777c0087df167bf59b2d6dca557de41"
+ },
+ "data": "data",
+ "env": {
+  "cuda": "13.0",
+  "gpu": "NVIDIA GeForce RTX 3080 Laptop GPU",
+  "torch": "2.14.0+cu130"
+ },
+ "eval": {
+  "batch_size": 16,
+  "device": "auto",
+  "dtype": "bfloat16",
+  "max_examples": 200,
+  "split": "test"
+ },
+ "heldout_group": "shared_init1",
+ "heldout_sha256": "73319edb811885b465d559bf7e7ea4975c664b459db52a27b610817589f72124",
+ "k": 16,
+ "kind": "projected",
+ "projection_version": 2,
+ "side": "both",
+ "task": "T5_concise",
+ "task_config_sha256": "3783b24ed2b3ecdd88b9c2102616a35f06f86f4be03deb8a40384bb466a99b68"
+}
